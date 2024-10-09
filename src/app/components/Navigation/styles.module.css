@@ -1,0 +1,44 @@
+.nav {
+    display: flex;
+    justify-content: safe center;
+    flex-wrap: wrap;
+    grid-area: primary-nav;
+    align-items: center;
+    gap: .625rem 6.25rem;
+    padding: 24px 0;
+
+    /* background-color: rgb(233 229 229 / 61%);
+    position: absolute;
+    width: 100%; */
+}
+
+.navList {
+    display: contents;
+}
+
+.navItem {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    letter-spacing: var(--letter-spacing);
+    text-transform: uppercase;
+}
+
+.navItem:hover::before {
+    transform: scaleX(1);
+}
+
+.navItem::before {
+    content: attr(data-title);
+    color: #0000;
+    pointer-events: none;
+    width: max-content;
+    height: 2px;
+    transition: transform .2s ease-in-out;
+    position: absolute;
+    inset-block-end: 0;
+    transform: scaleX(0);
+    background-color: #000;
+    width: 100%;
+}

@@ -1,0 +1,49 @@
+.categoriesContainer {
+    display: grid;
+    /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */
+    grid-gap: 8px;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.categorySection {}
+
+.categoryImg {
+    height: 100%;
+    width: 100%;
+    min-width: 100%;
+    display: block;
+    -o-object-fit: cover;
+    object-fit: cover;
+}
+
+.square {
+    aspect-ratio: 1 / 1;
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    -o-object-fit: cover;
+    object-fit: cover;
+    position: relative;
+}
+
+.categoryContent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    color: #fff;
+    text-align: center;
+    padding: 24px;
+}
+
+.categoryLinkCtn {
+    padding: 24px;
+}
+
+.categoryTitle {
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: var(--letter-spacing);
+    text-transform: uppercase;
+    line-height: 1.6;
+}

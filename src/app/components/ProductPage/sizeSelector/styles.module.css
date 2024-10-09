@@ -1,0 +1,21 @@
+.toggleButtonGroup {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.toggleButton {
+  width: 3rem;
+  height: 3rem;
+  margin: 4px;
+  border-radius: 0 !important;
+  border: 1px solid #bdbdbd !important;
+  transition: border-color 0.3s;
+  font-size: 12px !important;
+}
+
+.selected {
+  color: #000 !important;
+  background-color: #fff !important;
+  border-color: #000 !important;
+}
