@@ -1,6 +1,7 @@
 "use client";
 import { useContext  } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'
 import { Drawer, List, ListItem, IconButton, Typography } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -12,11 +13,9 @@ import ProductBuyButton from '../Buttons/ProductBuy/ProductBuy';
 import styles from './styles.module.css';
 
 const BasketDrawer = () => {
-  const { cartItems, removeFromCart, clearCart, cartOpen, setCartOpen } = useContext(CartContext);
-  const totalPrice = cartItems.reduce(
-    (accumulator, item) => accumulator + item.price * item.quantity,
-    0
-  );
+  const router = useRouter();
+  const { cartItems, removeFromCart, clearCart, cartOpen, setCartOpen, getTotalPrice } = useContext(CartContext);
+  const totalPrice = getTotalPrice();
   const buyButtonText = `Замовити ${totalPrice.toFixed(2)} ₴`;
 
   const getItemPrice = (item) => {
@@ -27,21 +26,28 @@ const BasketDrawer = () => {
     return item.price;
   };
 
+  const closeCart = () => setCartOpen(false);
+
+  const handleBuyClick = () => {
+    closeCart();
+    router.push('/order');
+  };
+
   return (
     <>
       <IconButton onClick={() => setCartOpen(true)}>
         <ShoppingCartIcon />
       </IconButton>
-      <Drawer anchor="right" open={cartOpen} onClose={() => setCartOpen(false)}>
+      <Drawer anchor="right" open={cartOpen} onClose={closeCart} className={styles.drawerEl}>
         {cartItems?.length > 0 ? 
           <>
             <div className={styles.cartTitleContainer}>
               <Typography variant="h4">Кошик</Typography>
-              <IconButton className={styles.closeCart} onClick={() => setCartOpen(false)}>
+              <IconButton className={styles.closeCart} onClick={closeCart}>
                 <CloseRoundedIcon />
               </IconButton>
             </div>
-            <List>
+            <List className={styles.cartList}>
               {cartItems.map((item, index) => (
                 <ListItem key={index} className={styles.cartListItem} divider>
                   <div className={styles.basketItemContainer}>
@@ -77,7 +83,7 @@ const BasketDrawer = () => {
               ))}
             </List>
             <div className={styles.buttonContainer}>
-              <ProductBuyButton text={buyButtonText} width="95%"/>
+              <ProductBuyButton text={buyButtonText} onClick={handleBuyClick} width="85%" />
             </div>
           </> : <Typography variant="h3" className={styles.emptyCartMessage}>Кошик порожній</Typography>}
       </Drawer>

@@ -1,13 +1,19 @@
 "use client";
+
 import styles from './styles.module.css';
 
-export default function ProductBuyButton({ disabled, onClick, text='КУПИТИ', width='auto' }) {
+export default function ProductBuyButton({
+  disabled,
+  onClick,
+  text='КУПИТИ',
+  width='auto',
+  ...rest
+}) {
 
   const handleBtnClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    console.log('BuyButton clicked');
-    onClick?.();
+    onClick?.(event);
   };
 
   return (
@@ -17,6 +23,7 @@ export default function ProductBuyButton({ disabled, onClick, text='КУПИТИ
       onClick={handleBtnClick}
       disabled={disabled}
       style={{ width }}
+      {...rest}
     >
       {text}
     </button>

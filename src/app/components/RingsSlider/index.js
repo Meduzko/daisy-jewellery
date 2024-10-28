@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import SwiperCarousel from '../SwiperCarousel/carousel';
-import { fetchRings } from '../../api/ring/index';
+import { fetchRings } from '../../../pages/api/ring/index';
 import styles from './styles.module.css';
 
 export default async function RingsSlider() {

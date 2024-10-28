@@ -17,6 +17,13 @@
   min-width: 300px;
   display: flex;
   flex-direction: column;
+
+  position: sticky;
+  inset-block-start: 25px;
+  position: sticky;
+  padding: 10px;
+  z-index: 1000;
+  height: 100%;
 }
 
 .productTitle {
@@ -83,11 +90,13 @@
 @media (max-width: 768px) {
   .productPageContainer {
     flex-direction: column;
+    padding: 16px;
   }
 
   .leftSection,
   .rightSection {
     margin-right: 0;
     margin-bottom: 24px;
+    padding: 0;
   }
 }

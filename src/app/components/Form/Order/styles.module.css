@@ -1,0 +1,24 @@
+.container {
+    display: flex;
+    justify-content: center;
+}
+
+.formTitle {
+    text-align: left;
+}
+
+.formGrid {
+    padding-bottom: 72px;
+}
+
+.dialogTitle {
+    text-align: center;
+}
+
+.dialogText {
+    font-size: 16px;
+}
+
+.dialogPaper {
+    padding: 16px;
+}

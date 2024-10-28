@@ -1,20 +1,31 @@
 import React from 'react';
 import styles from './ProductPage.module.css';
 import ImageGallery from './imageGallery/imageGallery';
+import ImageGallery2 from './imageGallery/imageGallery2';
 import SizeSelector from './sizeSelector/sizeSelector';
 // import ProductCounter from './counter/productCounter';
 // import ProductBuyButton from '../Buttons/ProductBuy/ProductBuy';
 
 import CounterWithSubmit from './CounterWithSubmit/CounterWithSubmit';
 
-const ProductPageNew = ({ item }) => {
+const ProductPageNew = ({ item = {} }) => {
+
+  const {
+    product_id,
+    code,
+    title,
+    short_description,
+    image_path,
+    images,
+    price
+  } = item;
   // Sample data
   const product = {
-    id: item,
-    title: `Elegant Silver Ring ${item}`,
-    description: 'A beautifully crafted silver ring perfect for any occasion.',
-    price: 99.99,
-    images: [
+    id: product_id || item,
+    title: title || `Elegant Silver Ring ${item}`,
+    description: short_description || 'A beautifully crafted silver ring perfect for any occasion.',
+    price: Number(price) || 99.99,
+    images: images || [
       '/images/productLarge2.webp',
       '/images/productSmall4.webp',
       '/images/productSmall4.webp',
@@ -41,7 +52,7 @@ const ProductPageNew = ({ item }) => {
     <div className={styles.productPageContainer}>
       {/* Left Section: Images */}
       <section className={styles.leftSection}>
-        <ImageGallery images={product.images} />
+        <ImageGallery2 images={product.images} />
       </section>
 
       {/* Right Section: Product Details */}

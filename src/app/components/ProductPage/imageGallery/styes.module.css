@@ -2,25 +2,51 @@
   /* display: flex;
   flex-wrap: wrap; */
   width: 100%;
-  max-height: calc(100vh - 180px);
+  /* max-height: calc(100vh - 180px); */
   display: flex;
+  gap: 16px;
+
+  flex-wrap: wrap;
 }
 
 .mainImageContainer {
   width: 100%;
   height: 100%;
   position: relative;
-  flex: 1 1 60%;
+  flex: 1 1 50%;
+  background-color: #eee;
 }
 
 .mainImage {
+  /* object-fit: cover;
+  object-position: top; */
+
   object-fit: cover;
-  object-position: top;
+  /* object-position: top; */
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  object-fit: none;
+}
+
+.transparentImgContainer {
+  background-color: #eee;
+}
+
+.transparentImg {
+
+}
+
+.imgContainer {
+  width: 48%;
 }
 
 .thumbnailColumn {
   display: flex;
-  flex: 1 1 40%;
+  flex: 1 1 50%;
   flex-direction: column;
 }
 
@@ -43,4 +69,10 @@
   height: 100%;
   object-fit: cover;
   object-position: top;
+}
+
+@media (max-width: 1024px) {
+  .imgContainer {
+    width: 100%;
+  }
 }

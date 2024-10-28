@@ -37,11 +37,17 @@
 
 .buttonContainer {
     position: absolute;
-    bottom: 14px;
     left: 0;
     right: 0;
     margin: auto;
     text-align: center;
+    z-index: 3;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    bottom: 0;
+    background-color: #fff;
 }
 
 .deleteContainer {
@@ -55,4 +61,13 @@
     height: 100%;
     display: flex;
     align-items: center;
+}
+
+.drawerEl {
+    overflow: hidden;
+}
+
+.cartList {
+    max-height: calc(100% - 66px);
+    overflow-y: auto;
 }

@@ -14,7 +14,11 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.7",
     "@mui/material-nextjs": "^5.16.6",
+    "googleapis": "^144.0.0",
+    "ioredis": "^5.4.1",
     "next": "14.2.4",
+    "nodemailer": "^6.9.15",
+    "rate-limiter-flexible": "^5.0.3",
     "react": "^18",
     "react-dom": "^18",
     "swiper": "^11.1.9"
