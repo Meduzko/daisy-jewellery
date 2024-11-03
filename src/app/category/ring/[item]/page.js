@@ -1,15 +1,53 @@
-import Link from "next/link"
-// import ProductItemPage from '../../../components/ProductPage';
-import ProductPageNew from '../../../components/ProductPage/ProductPageNew';
-// import { usePathname } from "next/navigation";
+import ProductPageNew from '../../../../components/ProductPage/ProductPageNew';
+import { fetchProduct } from '../../../../actions/fetchProduct';
+import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
 
-export default function RingItem({ params }) {
-    console.log(params.item);
-    return (
-        // <div>
-        //     <h1>{`Ring Item #${params.item}`}</h1>
-        //     <Link href={`/category/${params.item += 1}`}>Go to ring item #2</Link>
-        // </div>
-        <ProductPageNew item={params.item} />
-    )
+export async function generateMetadata({ params, searchParams }, parent) {
+  // fetch data
+  const [product] = await fetchProduct({
+    code: params.item,
+    categoryId: process.env.RING_CATEGORY_ID,
+  });
+
+  const previousImages = (await parent).openGraph?.images || [];
+  const siteName = 'Daisy Jewellery';
+  const keywords = 'Срібло, Каблучки'
+  const shortDescription = product.short_description.replace(/<[^>]*>/g, '');
+  const description = shortDescription.replace(/&[^;\s]+;/g, '');
+
+  return {
+    title: `${product.title} | ${siteName}`,
+    description,
+    keywords: keywords,
+    url: `https://www.yourwebsite.com/category/ring/${product.code}`,
+    openGraph: {
+      images: ['/some-specific-page-image.jpg', ...previousImages],
+    },
+  }
+}
+
+export async function generateStaticParams() {
+  try {
+    const products = await fetchAllProducts({
+      categoryId: process.env.RING_CATEGORY_ID,
+    });
+
+    const productCodes = products.map((product) => ({
+      item: product.code.toString(),
+    }));
+
+    return productCodes;
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error);
+    return [];
+  }
+}
+
+export default async function Page({ params }) {
+  const [product] = await fetchProduct({
+    code: params.item,
+    categoryId: process.env.RING_CATEGORY_ID,
+  });
+
+  return <ProductPageNew item={product} />;
 }

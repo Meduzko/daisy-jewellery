@@ -1,0 +1,87 @@
+.basketItemContainer {
+    display: flex;
+}
+
+.basketImage {
+    width: 120px;
+}
+
+.cartTitleContainer {
+    padding: 14px 8px 14px 24px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+}
+
+.cartListItem {
+    padding: 8px 24px !important;
+}
+
+.itemDetails {
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.itemTitle {
+    font-size: 18px;
+    font-weight: 800;
+    max-width: 296px;
+}
+
+.price {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.buttonContainer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: center;
+    z-index: 3;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    bottom: 0;
+    background-color: #fff;
+}
+
+.deleteContainer {
+    width: 35px;
+    align-items: flex-end;
+    display: flex;
+}
+
+.emptyCartMessage {
+    padding: 24px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.drawerEl {
+    overflow: hidden;
+}
+
+.cartList {
+    max-height: calc(100% - 66px);
+    overflow-y: auto;
+}
+
+.badge {
+
+}
+
+.cartIcon {
+    font-size: 2rem !important;
+}
+
+@media (max-width: 1024px) {
+    .cartButton {
+        padding: 0 !important;
+    }
+}

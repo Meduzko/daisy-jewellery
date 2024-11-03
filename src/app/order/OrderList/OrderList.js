@@ -2,8 +2,9 @@
 import { useContext  } from 'react';
 import Link from 'next/link';
 import { List, ListItem, Divider } from '@mui/material';
-import { CartContext } from '../../context/CartContext';
-import ProductBuyButton from '../../components/Buttons/ProductBuy/ProductBuy';
+// import { CartContext } from '../../../context/CartContext';
+import { CartContext } from '../../../context/CartContext';
+import ProductBuyButton from '../../../components/Buttons/ProductBuy/ProductBuy';
 
 import styles from './styles.module.css';
 
@@ -48,14 +49,8 @@ const OrderList = ({ handleSubmit }) => {
       </List>
       <div className={styles.orderSummary}>
         <div className={styles.summaryItem}>
-          <p>Проміжний підсумок</p>
-          <p>{`${fixedPrice} ₴`}</p>
-        </div>
-        <div className={styles.summaryItem}>
           <p>Доставка</p>
-          <div>
-            <p>{`За тарифами 'Нової Пошти' - від 70 грн`}</p>
-          </div>
+          <p className={styles.deliveryTax}>{`За тарифами 'Нової Пошти' - від 70 грн`}</p>
         </div>
       </div>
       <Divider />

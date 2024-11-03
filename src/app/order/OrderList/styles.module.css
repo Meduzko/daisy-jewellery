@@ -36,8 +36,6 @@
 }
 
 .orderListContainer {
-    /* min-width: 25%;
-    padding: 46px 16px; */
     padding: 46px 0;
 }
 
@@ -73,7 +71,7 @@
 
 .summaryItem {
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     justify-content: space-between;
 }
 
@@ -87,4 +85,10 @@
 
 .submitButton {
     padding-top: 16px;
+}
+
+@media (max-width: 1024px) {
+    .deliveryTax {
+        max-width: 60%;
+    }
 }

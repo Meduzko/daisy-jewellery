@@ -1,10 +1,6 @@
 export default async function handler(req, res) {
   const { cityName } = req.query;
 
-  // if (!search) {
-  //   return res.status(400).json({ error: 'City search is required' });
-  // }
-
   const API_KEY = process.env.NOVA_POSHTA_API_KEY;
 
   try {

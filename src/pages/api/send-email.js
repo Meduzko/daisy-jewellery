@@ -1,23 +1,23 @@
 import nodemailer from 'nodemailer';
-import { RateLimiterRedis } from 'rate-limiter-flexible';
-import Redis from 'ioredis';
+// import { RateLimiterRedis } from 'rate-limiter-flexible';
+// import Redis from 'ioredis';
 
-const redisClient = new Redis({
-  host: 'localhost', // Update with your Redis host
-  port: 6379,        // Update with your Redis port if needed
-});
+// const redisClient = new Redis({
+//   host: 'localhost', // Update with your Redis host
+//   port: 6379,        // Update with your Redis port if needed
+// });
 
-// Set up rate limiter
-const rateLimiter = new RateLimiterRedis({
-  storeClient: redisClient,
-  keyPrefix: 'rateLimiter',
-  points: 5,          // Maximum of 5 requests
-  duration: 60 * 15,  // Per 15 minutes per IP address
-});
+// // Set up rate limiter
+// const rateLimiter = new RateLimiterRedis({
+//   storeClient: redisClient,
+//   keyPrefix: 'rateLimiter',
+//   points: 5,          // Maximum of 5 requests
+//   duration: 60 * 15,  // Per 15 minutes per IP address
+// });
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { formData = {}, cartItems } = req.body;
+    const { formData = {}, cartItems, totalPrice } = req.body;
     const {
       firstName,
       lastName,
@@ -28,7 +28,6 @@ export default async function handler(req, res) {
     } = formData;
 
     console.log('send-email cartItems', cartItems);
-    const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
 
     // Set up the Nodemailer transporter using Gmail SMTP
     const transporter = nodemailer.createTransport({
@@ -42,14 +41,12 @@ export default async function handler(req, res) {
       },
     });
 
-    const mailText = '';
-
     const itemsDetails = cartItems
     .map(
       (item) => `
         <tr>
           <td style="padding: 8px;">${item.title}</td>
-          <td style="padding: 8px;">$${item.price.toFixed(2)}</td>
+          <td style="padding: 8px;">${item.price}</td>
         </tr>
       `
     )
@@ -72,7 +69,7 @@ export default async function handler(req, res) {
           ${itemsDetails}
         </tbody>
       </table>
-      <p>Загальна вартість: <strong>$${totalPrice.toFixed(2)}</strong></p>
+      <p>Загальна вартість: <strong>$${totalPrice}</strong></p>
       <p>Ваше замовлення прийнято і буде взято в обробку найближчим часом!</p>
       <p>Наш менеджер звяжеться з вами</p>
       <ul>
@@ -86,10 +83,9 @@ export default async function handler(req, res) {
 
     try {
       // Consume a point from the rate limiter
-      await rateLimiter.consume(req.headers['x-real-ip'] || req.connection.remoteAddress);
+      // await rateLimiter.consume(req.headers['x-real-ip'] || req.connection.remoteAddress);
 
-      // Your existing logic to handle the email sending
-      const result = await transporter.sendMail(mailOptions); // This represents your email sending function
+      const result = await transporter.sendMail(mailOptions);
 
       console.log('result', result);
       

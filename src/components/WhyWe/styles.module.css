@@ -1,0 +1,35 @@
+.whyWeContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.listItem {
+    width: 50% !important;
+    margin: 0 auto;
+}
+
+.listItem svg {
+    font-size: 42px;
+}
+
+.textPrimary {
+    font-size: 24px;
+}
+
+.textSecondary {
+    font-size: 18px;
+}
+
+.whyTitle {
+    font-size: 36px;
+    letter-spacing: 6px;
+}
+
+
+@media (max-width: 1024px) {
+    .listItem {
+        width: 100% !important;
+    }
+}

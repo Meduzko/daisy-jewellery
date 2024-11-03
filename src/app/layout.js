@@ -1,14 +1,15 @@
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import Header from './components/Header/page';
-import Footer from './components/Footer/page';
+// import Header from './components/Header/page';
+import Header from '../components/Header/page';
+import Footer from '../components/Footer/page';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-import { CartProvider } from './context/CartContext';
+import { CartProvider } from '../context/CartContext';
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
 
 export const metadata = {
-  title: "Daisy jewerly",
+  title: "Daisy Jewerly",
   description: "Daisy jewerly store app",
 };
 
