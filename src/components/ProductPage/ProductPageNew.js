@@ -1,5 +1,5 @@
 import React from 'react';
-import ImageGallery from './imageGallery/ImageGallery';
+import ImageGallery from './ImageGallery';
 import SizeSelector from './sizeSelector/sizeSelector';
 import CounterWithSubmit from './CounterWithSubmit/CounterWithSubmit';
 
@@ -45,7 +45,7 @@ const ProductPageNew = ({ item = {} }) => {
         {/* Right Section: Product Details */}
         <section className={styles.rightSection}>
           <h1 className={styles.productTitle}>{title}</h1>
-          {/* <p className={styles.productDescription} dangerouslySetInnerHTML={{ __html: description }} /> */}
+          <p className={styles.productDescription} dangerouslySetInnerHTML={{ __html: description }} />
           <div className={styles.productPrice}>{`${price} грн`}</div>
 
           <div className={styles.productInfoContainer}>
