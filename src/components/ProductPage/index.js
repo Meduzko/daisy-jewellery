@@ -1,32 +1,46 @@
 import React from 'react';
-import Link from 'next/link';
-// import Image from 'next/image';
+import ProductImageGallery from './ProductImageGallery/ProductImageGallery';
 import SizeSelector from './sizeSelector/sizeSelector';
-import ProductCounter from './counter/productCounter';
-import BuyButton from '../Buttons/Buy/BuyBtn';
-import styles from './styles.module.css';
+import CounterWithSubmit from './CounterWithSubmit/CounterWithSubmit';
 
-export default function ProductItemPage({ product }) {
-  const availableSizes = [5, 6, 7, 8, 9];
+import styles from './ProductPage.module.css';
+
+const ProductPageNew = ({ item = {} }) => {
+  const {
+    product_id,
+    code,
+    title,
+    short_description: description,
+    image_path,
+    images,
+    price,
+    sizes = [55, 56, 57, 58, 59]
+  } = item;
 
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.container}>
-        <div className={styles.productGallery}>
-          <div>Image #1</div>
-          <div>Image #2</div>
-          <div>Image #3</div>
-        </div>
-        <div className={styles.productInfoContainer}>
-          <h3>Item title</h3>
-          <div>Price</div>
-          <div className={styles.sizesContainer}>
-            <SizeSelector sizes={availableSizes} />
+    <>
+      <div className={styles.productPageContainer}>
+        {/* Left Section: Images */}
+        <section className={styles.leftSection}>
+          <ProductImageGallery images={images} title={title} />
+        </section>
+
+        {/* Right Section: Product Details */}
+        <section className={styles.rightSection}>
+          <h1 className={styles.productTitle}>{title}</h1>
+          <p className={styles.productDescription} dangerouslySetInnerHTML={{ __html: description }} />
+          <div className={styles.productPrice}>{`${price} грн`}</div>
+
+          <div className={styles.productInfoContainer}>
+            <h3>Розмір:</h3>
+            <SizeSelector sizes={sizes} />
           </div>
-          <ProductCounter />
-          <BuyButton />
-        </div>
+
+          <CounterWithSubmit product={item} />
+        </section>
       </div>
-    </div>
-  )
+    </>
+  );
 };
+
+export default ProductPageNew;

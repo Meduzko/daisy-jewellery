@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import styles from './styes.module.css';
 
-const ImageGallery = ({ images, title }) => {
+const ProductImageGallery = ({ images, title }) => {
   const thumbnails = images.slice(1);
 
   return (
@@ -36,4 +36,4 @@ const ImageGallery = ({ images, title }) => {
   );
 };
 
-export default ImageGallery;
+export default ProductImageGallery;

@@ -1,4 +1,4 @@
-import ProductPageNew from '../../../../components/ProductPage/ProductPageNew';
+import ProductPageNew from '../../../../components/ProductPage';
 import { fetchProduct } from '../../../../actions/fetchProduct';
 import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
 import { getProductMetadata } from '../../../../helpers';

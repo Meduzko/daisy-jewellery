@@ -2,7 +2,7 @@ export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, p
   try {
     const ROOT_URI = process.env.API_ROOT_URI;
     const API_KEY = process.env.API_KEY;
-    const baseURL = `${ROOT_URI}/products/list?`
+    const baseURL = `${ROOT_URI}/products/list?`;
   
     const params = new URLSearchParams({
       category_id: categoryId,
