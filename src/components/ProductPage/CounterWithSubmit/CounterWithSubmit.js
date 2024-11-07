@@ -9,12 +9,18 @@ import styles from './styes.module.css';
 
 const CounterWithSubmit = ({ product }) => {
   const { cartItems, addToCart, setCartOpen } = useContext(CartContext);
-  const cartItem = cartItems.find((item) => item.id === product.id);
   const [count, setCount] = useState(1);
+  const cartItem = cartItems.find((item) => item.product_id === product.product_id);
 
   const handleButtonClick = () => {
-    addToCart(product, count);
     setCartOpen(true);
+
+    if (!cartItem) {
+      addToCart(product, count);
+    }
+    // console.log('handleButtonClick', product);
+    // addToCart(product, count);
+    // setCartOpen(true);
   };
 
   return (
@@ -30,7 +36,7 @@ const CounterWithSubmit = ({ product }) => {
         />
       </div>
       <ProductBuyButton
-        disabled={cartItem}
+        // disabled={cartItem}
         onClick={handleButtonClick}
       />
     </>

@@ -9,8 +9,8 @@ import { CartProvider } from '../context/CartContext';
 const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
 
 export const metadata = {
-  title: "Daisy Jewerly",
-  description: "Daisy jewerly store app",
+  title: "Магазин Daisy Jewellery",
+  description: "Срібні товар на будь який смак",
 };
 
 export default function RootLayout({ children }) {

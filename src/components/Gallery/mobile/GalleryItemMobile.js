@@ -6,7 +6,6 @@ import styles from './styles.module.css';
 
 export default async function GalleryItemMobile({ item, baseURL = '/category/ring' }) {
   const {
-    id,
     product_id,
     code,
 
@@ -20,7 +19,7 @@ export default async function GalleryItemMobile({ item, baseURL = '/category/rin
     images,
     price
   } = item;
-  const priceSymbol = '₴';
+  const priceSymbol = 'грн';
 
   return (
       <div className={styles.itemWrapper}>
@@ -42,7 +41,7 @@ export default async function GalleryItemMobile({ item, baseURL = '/category/rin
         <div className={styles.itemInfo}>
             <div className={styles.titleContainer}>
               <Link href={`${baseURL}/${code}`} className={styles.title}>{title}</Link>
-              <Link href={`${baseURL}/${id}`} className={styles.subTitle} dangerouslySetInnerHTML={{ __html: short_description }} />
+              <Link href={`${baseURL}/${code}`} className={styles.subTitle} dangerouslySetInnerHTML={{ __html: short_description }} />
               <div className={styles.price}>{`${price} ${priceSymbol}`}</div>
             </div>
             <div className={styles.itemBottomCnt}>

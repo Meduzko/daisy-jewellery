@@ -31,6 +31,12 @@
 
 .imgContainer {
   width: 48%;
+  position: relative;
+  aspect-ratio: 2 / 3;
+}
+
+.image {
+  object-fit: cover;
 }
 
 .thumbnailColumn {

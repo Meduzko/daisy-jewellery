@@ -1,5 +1,5 @@
 import Banner from '../components/Banner/page';
-// import RingsSlider from '../components/RingsSlider/index';
+import RingsSlider from '../components/RingsSlider/index';
 import Categories from '../components/Categories/categories';
 import HowToOreder from '../components/HowToOrder/page';
 import WhyWe from '../components/WhyWe/WhyWe';
@@ -13,7 +13,7 @@ export default function Home() {
     <>
       <main className="main">
         <Banner />
-        {/* <RingsSlider /> */}
+        <RingsSlider />
         <Categories />
         <WhyWe />
         <HowToOreder isMobile={isMobile} />

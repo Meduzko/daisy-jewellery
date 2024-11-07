@@ -26,7 +26,7 @@ const CartDrawler = () => {
   const router = useRouter();
   const { cartItems, removeFromCart, clearCart, cartOpen, setCartOpen, getTotalPrice } = useContext(CartContext);
   const totalPrice = getTotalPrice();
-  const buyButtonText = `Замовити ${totalPrice.toFixed(2)} ₴`;
+  const buyButtonText = `Замовити ${totalPrice.toFixed(2)} грн`;
   const itemsLength = cartItems.length;
 
   const getItemPrice = (item) => {
@@ -88,7 +88,7 @@ const CartDrawler = () => {
                         <div className={styles.counterWrapper}>
                           <ProductCounter initialCount={item.quantity} maxCount={10} cartItem={item} />
                         </div>
-                        <div className={styles.price}>{`${getItemPrice(item)} ₴`}</div>
+                        <div className={styles.price}>{`${getItemPrice(item)} грн`}</div>
                       </div>
                       <div className={styles.deleteContainer}>
                         <IconButton className={styles.deleteItem} onClick={() => removeFromCart(item.id)}>

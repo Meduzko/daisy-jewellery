@@ -28,7 +28,7 @@ export default function SwiperCarousel({ data }) {
       // new
       // slidesPerView={4}
       slidesPerView="auto"
-      spaceBetween={8}
+      spaceBetween={16}
       freeMode={true}
       // centeredSlides={true}
       // centeredSlidesBounds={true}
@@ -43,13 +43,7 @@ export default function SwiperCarousel({ data }) {
     >
       {data?.map(item => (
         <SwiperSlide key={item.product_id}>
-          <ProductItem
-            id={item.product_id}
-            title={item.title}
-            description={item.short_description}
-            price={item.price}
-            imageLink={item.image_path}
-          />
+          <ProductItem product={item} />
         </SwiperSlide>
       ))}
     </Swiper>

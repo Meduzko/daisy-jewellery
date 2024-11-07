@@ -28,3 +28,48 @@ export const getPaginationData = (paramsPage) => {
     currentPage
   }
 };
+
+const getKeywords = (categoryName, productTitle) => {
+  const keywords = {
+    ring: `Срібло, Каблучки`,
+    earring: `Срібло, Сережки`,
+    necklace: `Срібло, Кольє`,
+    bracer: `Срібло, Браслети`,
+  }
+
+  return `${keywords[categoryName]}, ${productTitle}`;
+};
+
+export const getProductMetadata = ({ product, categoryName }) => {
+  const { title, short_description, code } = product;
+  const siteName = 'Daisy Jewellery';
+  const keywords = getKeywords(categoryName, title);
+  const shortDescription = short_description.replace(/<[^>]*>/g, '');
+  const description = shortDescription.replace(/&[^;\s]+;/g, '');
+  const canonicalUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/category/${categoryName}/${code}`;
+
+  return {
+    title: `${title} | ${siteName}`,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    keywords,
+    url: `${process.env.NEXT_PUBLIC_BASE_URL}/category/${categoryName}/${code}`,
+    openGraph: {
+      title: `${title} | ${siteName}`,
+      description,
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/category/${categoryName}/${code}`,
+      siteName,
+      locale: 'uk_UA',
+      type: 'website',
+    }
+  }
+};
+
+export const categoryMap = {
+  ring: process.env.RING_CATEGORY_ID,
+  necklace: process.env.NECKLACE_CATEGORY_ID,
+  earring: process.env.EARING_CATEGORY_ID,
+  bracer: process.env.BRACER_CATEGORY_ID
+};

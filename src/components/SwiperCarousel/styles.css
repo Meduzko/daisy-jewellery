@@ -33,6 +33,8 @@ Taken from another site
   margin-left: auto;
   overflow: hidden;
   /* padding: 120px 0 32px; */
+
+  padding: 16px;
 }
 
 
@@ -50,4 +52,14 @@ Taken from another site
 .swiper-pagination-bullet-active {
   color: #fff;
   background: #007aff;
+}
+
+@media (max-width: 1024px) {
+  .manualCarousel {
+    padding: 8px;
+  }
+
+  .swiper-slide {
+    flex: 0 0 90%;
+  }
 }

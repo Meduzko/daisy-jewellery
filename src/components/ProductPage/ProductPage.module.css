@@ -19,7 +19,8 @@
   flex-direction: column;
 
   position: sticky;
-  inset-block-start: 177px;
+  /* inset-block-start: 177px; */
+  inset-block-start: 244px;
   padding: 10px;
   z-index: 100;
   height: 100%;

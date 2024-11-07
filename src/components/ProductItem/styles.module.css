@@ -2,11 +2,13 @@
     width: 100%;
     height: 100%;
     /* background-color: #F2F2F3; */
-    aspect-ratio: auto;
+    /* aspect-ratio: auto; */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
+
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
 }
 
 .itemContentCnt {
@@ -15,6 +17,7 @@
 
 .itemImageCnt {
     height: 100%;
+    aspect-ratio: 2 / 3;
 }
 
 .itemLink {
@@ -32,7 +35,14 @@
     font-weight: 500;
     font-size: 14px;
     letter-spacing: var(--letter-spacing);
-    padding: 16px 0;
+    padding: 12px;
+
+    z-index: 1;
+    background: #fff;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     /* position: absolute;
     bottom: 0;
@@ -46,10 +56,6 @@
     text-transform: uppercase;
 }
 
-.infoCtn {
-    /* padding-bottom: 8px; */
-}
-
 .bottomGradient {
     position: absolute;
     width: 100%;
@@ -57,4 +63,10 @@
     left: 0;
     top: 0;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 60%);
+}
+
+@media (max-width: 1024px) {
+    .itemBottomInfo {
+        font-size: 12px;
+    }
 }

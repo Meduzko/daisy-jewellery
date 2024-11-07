@@ -43,7 +43,8 @@ const OrderForm = () => {
 
   const handleChange = (e, newName, newVal) => {
     const { name, value } = e.target;
-    const n = newName || name;
+    const validName = typeof newName === "string" ? newName : name;
+    const n = validName || name;
     const v = newVal || value;
 
     setFormData({
@@ -212,7 +213,7 @@ const OrderForm = () => {
 
         <Grid container spacing={2} className={styles.formGrid}>
           <Grid item xs={12}>
-            <Typography className={styles.formTitle} variant="h4">Спосіб доставки</Typography>
+            <Typography className={styles.formTitle} variant="h4">Відділення Нової Пошти</Typography>
           </Grid>
 
           <Grid item xs={12}>
@@ -241,8 +242,6 @@ const OrderForm = () => {
                   name="contact"
                   onChange={handleChange}
                   required
-                  // error={!!formErrors.contact}
-                  // helperText={formErrors.contact}
                   fullWidth
                   className={styles.contactSelect}
                 >
@@ -257,6 +256,7 @@ const OrderForm = () => {
             <TextField
               id="comments"
               label="Коментар"
+              name="comments"
               multiline
               maxRows={16}
               value={formData.comments}

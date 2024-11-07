@@ -23,6 +23,8 @@ export default async function handler(req, res) {
       lastName,
       email,
       phone,
+      contact,
+      comments,
       cityName,
       department,
     } = formData;
@@ -46,7 +48,8 @@ export default async function handler(req, res) {
       (item) => `
         <tr>
           <td style="padding: 8px;">${item.title}</td>
-          <td style="padding: 8px;">${item.price}</td>
+          <td style="padding: 8px;">${item.short_description}</td>
+          <td style="padding: 8px;">${item.price} грн</td>
         </tr>
       `
     )
@@ -55,6 +58,7 @@ export default async function handler(req, res) {
     const mailOptions = {
       from: process.env.GMAIL_USER, // sender address
       to: email, // recipient address (send to yourself)
+      cc: 'daisyjewellery.info@gmail.com',
       subject: 'Замовлення прийнято', // Subject line
       html: `
       <p>Дякуємо за замовлення!</p>
@@ -62,6 +66,7 @@ export default async function handler(req, res) {
         <thead>
           <tr>
             <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left;">Назва</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left;">Опис</th>
             <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left;">Ціна</th>
           </tr>
         </thead>
@@ -69,12 +74,16 @@ export default async function handler(req, res) {
           ${itemsDetails}
         </tbody>
       </table>
-      <p>Загальна вартість: <strong>$${totalPrice}</strong></p>
+      <p>Загальна вартість: <strong>${totalPrice}</strong> грн</p>
       <p>Ваше замовлення прийнято і буде взято в обробку найближчим часом!</p>
       <p>Наш менеджер звяжеться з вами</p>
       <ul>
+        <li>Населений пункт: ${cityName}</li>
+        <li>Відділення Нової Пошти: ${department}</li>
+        <li>Спосіб зв'язку: ${contact}</li>
         <li>Email: ${email}</li>
-        <li>Phone: ${phone}</li>
+        <li>Телефон: ${phone}</li>
+        <li>Коментар: ${comments}</li>
       </ul>
       <p>З повагою,</p>
       <p>Daisy Jewellery</p>
@@ -84,11 +93,8 @@ export default async function handler(req, res) {
     try {
       // Consume a point from the rate limiter
       // await rateLimiter.consume(req.headers['x-real-ip'] || req.connection.remoteAddress);
-
       const result = await transporter.sendMail(mailOptions);
 
-      console.log('result', result);
-      
       if (result.response?.includes('OK')) {
         return res.status(200).json({ message: 'Email sent successfully!' });
       } else {

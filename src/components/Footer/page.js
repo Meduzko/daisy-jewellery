@@ -8,7 +8,7 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import styles from './styles.module.css';
 
-const pagesWithoutFooter = ['/order', '/category/earring/'];
+const pagesWithoutFooter = ['/order'];
 
 export default function Footer() {
   const pathname = usePathname();
@@ -25,16 +25,16 @@ export default function Footer() {
           <h3 className={styles.footerCategoryTitle}>Категорії</h3>
           <ul className={styles.footerList}>
             <li className={styles.footerListItem}>
-              <Link href="/category/ring">Каблучки</Link>
+              <Link href="/category/ring/page/1">Каблучки</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/category/earring">Сережки</Link>
+              <Link href="/category/earring/page/1">Сережки</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/category/necklace">Кольє</Link>
+              <Link href="/category/necklace/page/1">Кольє</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/category/bracer">Браслет</Link>
+              <Link href="/category/bracer/page/1">Браслет</Link>
             </li>
           </ul>
         </div>
@@ -63,13 +63,13 @@ export default function Footer() {
           <h3 className={styles.footerCategoryTitle}>Інформація</h3>
           <ul className={styles.footerList}>
             <li className={styles.footerListItem}>
-              <Link href="/category/ring">Повернення та обмін</Link>
+              <Link href="/">Повернення та обмін</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/category/ring">Доставка та оплата</Link>
+              <Link href="/">Доставка та оплата</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/category/ring">PRIVACY POLICY</Link>
+              <Link href="/">PRIVACY POLICY</Link>
             </li>
           </ul>
         </div>

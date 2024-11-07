@@ -12,7 +12,8 @@
 .galleryItem {
     text-align: center;
     position: relative;
-    min-height: 720px;
+    /* min-height: 720px; */
+    aspect-ratio: 2 / 3;
     height: 100%;
 }
 

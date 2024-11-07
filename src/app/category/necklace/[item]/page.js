@@ -1,29 +1,17 @@
 import ProductPageNew from '../../../../components/ProductPage/ProductPageNew';
 import { fetchProduct } from '../../../../actions/fetchProduct';
 import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
+import { getProductMetadata } from '../../../../helpers';
 
-export async function generateMetadata({ params, searchParams }, parent) {
-  // fetch data
+export async function generateMetadata({ params }) {
   const [product] = await fetchProduct({
     code: params.item,
     categoryId: process.env.NECKLACE_CATEGORY_ID,
   });
 
-  const previousImages = (await parent).openGraph?.images || [];
-  const siteName = 'Daisy Jewellery';
-  const keywords = 'Срібло';
-  const shortDescription = product.short_description.replace(/<[^>]*>/g, '');
-  const description = shortDescription.replace(/&[^;\s]+;/g, '');
+  const productMetaData = getProductMetadata({ product, categoryName: 'necklace' });
 
-  return {
-    title: `${product.title} | ${siteName}`,
-    description,
-    keywords: keywords,
-    url: `https://www.yourwebsite.com/category/necklace/${product.code}`,
-    openGraph: {
-      images: ['/some-specific-page-image.jpg', ...previousImages],
-    },
-  }
+  return productMetaData;
 }
 
 export async function generateStaticParams() {

@@ -19,8 +19,6 @@ export default async function handler(req, res) {
 
     const url = `${baseURL}${params.toString()}`;
 
-    console.log('FETCH PRODUCT HANDLER URL', url);
-
     const response = await fetch(url, {
       method: 'POST',
       headers: {

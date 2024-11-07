@@ -1,0 +1,847 @@
+[
+  {
+    "product_id": "2CF2588D-9BAD-4661-92C4-E244CDF917A3",
+    "sku": "633р",
+    "code": 8774,
+    "title": "Срібне кольє з оніксом Клевер 3 вставки",
+    "short_description": "<p><span data-sheets-root=\"1\">Елегантне срібне кольє на три вставки з оніксом. Довжина регулюється &ndash; 40-45 см.&nbsp;</span></p>",
+    "description": "",
+    "unit_id": 33,
+    "unit_title": "шт",
+    "note": "",
+    "image_path": "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/633_1.jpg",
+    "images": [
+        "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/633_1.jpg",
+        "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/633_2.jpg",
+        "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/633_3.jpg"
+    ],
+    "price": "1600.00",
+    "pices": [
+        {
+            "price": "100.00",
+            "price_id": 1,
+            "price_title": "Закупка",
+            "currency": "грн.",
+            "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+        },
+        {
+            "price": "1600.00",
+            "price_id": 2,
+            "price_title": "Роздрібна",
+            "currency": "грн.",
+            "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+        }
+    ],
+    "balance": "1.00000",
+    "barcode": "7060002068340",
+    "uktezed": "",
+    "expiration_date": "",
+    "store_id": null,
+    "currency": "грн.",
+    "currency_id": "1",
+    "add_step": 1,
+    "is_weight": 0,
+    "website_synch": 1,
+    "category": "necklace",
+    "tags": [
+        {
+            "id": 1,
+            "title": "довжина",
+            "items": [
+                {
+                    "id": 1,
+                    "title": "40см",
+                    "color": null,
+                    "status": 1
+                }
+            ]
+        },
+        {
+            "id": 17,
+            "title": "постачальник",
+            "items": [
+                {
+                    "id": 217,
+                    "title": "Роман",
+                    "color": null,
+                    "status": 1
+                }
+            ]
+        },
+        {
+            "id": 20,
+            "title": "вставка",
+            "items": [
+                {
+                    "id": 176,
+                    "title": "онікс",
+                    "color": null,
+                    "status": 1
+                }
+            ]
+        },
+        {
+            "id": 18,
+            "title": "виробник",
+            "items": [
+                {
+                    "id": 182,
+                    "title": "Poli",
+                    "color": null,
+                    "status": 1
+                }
+            ]
+        }
+    ],
+    "labels": [],
+    "composite": null,
+    "composite_quantity": null,
+    "status": 1
+},
+{
+  "product_id": "75666D68-2BEE-4B06-B96C-70B226005928",
+  "sku": "424р",
+  "code": 8775,
+  "title": "Срібний браслет онікс Клевер 3 вставки ",
+  "short_description": "<p><span data-sheets-root=\"1\">Вишуканий срібний браслет з трьома вставками з оніксу. Довжина регулюється &ndash; 16-19 см.</span></p>",
+  "description": "",
+  "unit_id": 33,
+  "unit_title": "шт",
+  "note": "",
+  "image_path": "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/424_2.jpg",
+  "images": [
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/424_2.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/424_3.jpg"
+  ],
+  "price": "1465.00",
+  "pices": [
+      {
+          "price": "100.00",
+          "price_id": 1,
+          "price_title": "Закупка",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      },
+      {
+          "price": "1465.00",
+          "price_id": 2,
+          "price_title": "Роздрібна",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      }
+  ],
+  "balance": "1.00000",
+  "barcode": "7060001717652",
+  "uktezed": "",
+  "expiration_date": "",
+  "store_id": null,
+  "currency": "грн.",
+  "currency_id": "1",
+  "add_step": 1,
+  "is_weight": 0,
+  "website_synch": 1,
+  "category": "bracer",
+  "tags": [
+      {
+          "id": 20,
+          "title": "вставка",
+          "items": [
+              {
+                  "id": 176,
+                  "title": "онікс",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 17,
+          "title": "постачальник",
+          "items": [
+              {
+                  "id": 105,
+                  "title": "Poli",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 1,
+          "title": "довжина",
+          "items": [
+              {
+                  "id": 25,
+                  "title": "16см",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      }
+  ],
+  "labels": [],
+  "composite": null,
+  "composite_quantity": null,
+  "status": 1
+},
+{
+  "product_id": "72057E7F-1E90-4155-B311-8ED1FB367157",
+  "sku": "2043р",
+  "code": 9090,
+  "title": "Срібна каблучка перламутр та позолота Клевер ",
+  "short_description": "<p><span data-sheets-root=\"1\">Вишукана срібна каблучка у позолоті зі вставкою перламутр та фіанітами.</span></p>",
+  "description": "",
+  "unit_id": 33,
+  "unit_title": "шт",
+  "note": "",
+  "image_path": "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2043_1_.png",
+  "images": [
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2043_1_.png",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2043_2.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2043_3.jpg"
+  ],
+  "price": "1050.00",
+  "pices": [
+      {
+          "price": "100.00",
+          "price_id": 1,
+          "price_title": "Закупка",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      },
+      {
+          "price": "1050.00",
+          "price_id": 2,
+          "price_title": "Роздрібна",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      }
+  ],
+  "balance": "1.00000",
+  "barcode": "7060002224647",
+  "uktezed": "",
+  "expiration_date": "",
+  "store_id": null,
+  "currency": "грн.",
+  "currency_id": "1",
+  "add_step": 1,
+  "is_weight": 0,
+  "website_synch": 1,
+  "category": "ring",
+  "tags": [
+      {
+          "id": 2,
+          "title": "розмір",
+          "items": [
+              {
+                  "id": 15,
+                  "title": "18",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 17,
+          "title": "постачальник",
+          "items": [
+              {
+                  "id": 105,
+                  "title": "Poli",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 20,
+          "title": "вставка",
+          "items": [
+              {
+                  "id": 171,
+                  "title": "перламутр",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      }
+  ],
+  "labels": [],
+  "composite": null,
+  "composite_quantity": null,
+  "status": 1
+},
+{
+  "product_id": "E1D3FC18-4108-4FB0-B286-B37C04420511",
+  "sku": "1106",
+  "code": 8636,
+  "title": "Срібні сережки з позолотою та перламутром Клевер",
+  "short_description": "<p><span data-sheets-root=\"1\">Срібні сережки з позолотою та вставкою перламутр.</span></p>",
+  "description": "",
+  "unit_id": 33,
+  "unit_title": "шт",
+  "note": "",
+  "image_path": "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1106_1.jpg",
+  "images": [
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1106_1.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1106_2.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1106_4.jpg"
+  ],
+  "price": "1750.00",
+  "pices": [
+      {
+          "price": "100.00",
+          "price_id": 1,
+          "price_title": "Закупка",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      },
+      {
+          "price": "1750.00",
+          "price_id": 2,
+          "price_title": "Роздрібна",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      }
+  ],
+  "balance": "1.00000",
+  "barcode": "7060002208784",
+  "uktezed": "",
+  "expiration_date": "",
+  "store_id": null,
+  "currency": "грн.",
+  "currency_id": "1",
+  "add_step": 1,
+  "is_weight": 0,
+  "website_synch": 1,
+  "category": "earring",
+  "tags": [
+      {
+          "id": 20,
+          "title": "вставка",
+          "items": [
+              {
+                  "id": 171,
+                  "title": "перламутр",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 17,
+          "title": "постачальник",
+          "items": [
+              {
+                  "id": 105,
+                  "title": "Poli",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      }
+  ],
+  "labels": [],
+  "composite": null,
+  "composite_quantity": null,
+  "status": 1
+},
+{
+  "product_id": "159CA6B4-7B3B-475A-BC44-3FBCCF6B6963",
+  "sku": "1215р",
+  "code": 8256,
+  "title": "Срібні пусети \"Heart\"",
+  "short_description": "<p><span data-sheets-root=\"1\">Мінімалістичні пусети зі срібла 925 проби.</span></p>",
+  "description": "",
+  "unit_id": 33,
+  "unit_title": "шт",
+  "note": "",
+  "image_path": "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1215_1.png",
+  "images": [
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1215_1.png",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1215_2.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1215_3.jpg"
+  ],
+  "price": "850.00",
+  "pices": [
+      {
+          "price": "100.00",
+          "price_id": 1,
+          "price_title": "Закупка",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      },
+      {
+          "price": "850.00",
+          "price_id": 2,
+          "price_title": "Роздрібна",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      }
+  ],
+  "balance": "4.00000",
+  "barcode": "7060002133697",
+  "uktezed": "",
+  "expiration_date": "",
+  "store_id": null,
+  "currency": "грн.",
+  "currency_id": "1",
+  "add_step": 1,
+  "is_weight": 0,
+  "website_synch": 1,
+  "category": "earring",
+  "tags": [
+      {
+          "id": 20,
+          "title": "вставка",
+          "items": [
+              {
+                  "id": 186,
+                  "title": "б/в",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 2,
+          "title": "розмір",
+          "items": [
+              {
+                  "id": 11,
+                  "title": "18,5",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 17,
+          "title": "постачальник",
+          "items": [
+              {
+                  "id": 105,
+                  "title": "Poli",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      }
+  ],
+  "labels": [],
+  "composite": null,
+  "composite_quantity": null,
+  "status": 1
+},
+{
+  "product_id": "3BC57F5F-02D4-4C8E-8588-4924B678C64C",
+  "sku": "2052р",
+  "code": 8249,
+  "title": "Срібна каблучка \"Heart\"",
+  "short_description": "<p><span data-sheets-root=\"1\">Мінімалістична жіноча каблучка зі срібла 925 проби.</span></p>",
+  "description": "",
+  "unit_id": 33,
+  "unit_title": "шт",
+  "note": "",
+  "image_path": "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2052_1.png",
+  "images": [
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2052_1.png",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2052_2.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2052_3.jpg"
+  ],
+  "price": "650.00",
+  "pices": [
+      {
+          "price": "100.00",
+          "price_id": 1,
+          "price_title": "Закупка",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      },
+      {
+          "price": "650.00",
+          "price_id": 2,
+          "price_title": "Роздрібна",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      }
+  ],
+  "balance": "1.00000",
+  "barcode": "7060002131853",
+  "uktezed": "",
+  "expiration_date": "",
+  "store_id": null,
+  "currency": "грн.",
+  "currency_id": "1",
+  "add_step": 1,
+  "is_weight": 0,
+  "website_synch": 1,
+  "category": "ring",
+  "tags": [
+      {
+          "id": 2,
+          "title": "розмір",
+          "items": [
+              {
+                  "id": 15,
+                  "title": "18",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 17,
+          "title": "постачальник",
+          "items": [
+              {
+                  "id": 105,
+                  "title": "Poli",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      }
+  ],
+  "labels": [],
+  "composite": null,
+  "composite_quantity": null,
+  "status": 1
+},
+{
+  "product_id": "48D60F70-1EF2-47B3-88B2-9767176A1FD4",
+  "sku": "2054р",
+  "code": 8291,
+  "title": "Срібна каблучка з фіанітами ",
+  "short_description": "<p><span data-sheets-root=\"1\">Вишукана срібна каблучка з розсипом фіанітів.</span></p>",
+  "description": "",
+  "unit_id": 33,
+  "unit_title": "шт",
+  "note": "",
+  "image_path": "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2054%D1%80_2.jpg",
+  "images": [
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2054%D1%80_2.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2054%D1%80_3.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2054%D1%80_4.jpg"
+  ],
+  "price": "700.00",
+  "pices": [
+      {
+          "price": "100.00",
+          "price_id": 1,
+          "price_title": "Закупка",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      },
+      {
+          "price": "700.00",
+          "price_id": 2,
+          "price_title": "Роздрібна",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      }
+  ],
+  "balance": "1.00000",
+  "barcode": "7060002107681",
+  "uktezed": "",
+  "expiration_date": "",
+  "store_id": null,
+  "currency": "грн.",
+  "currency_id": "1",
+  "add_step": 1,
+  "is_weight": 0,
+  "website_synch": 1,
+  "category": "ring",
+  "tags": [
+      {
+          "id": 2,
+          "title": "розмір",
+          "items": [
+              {
+                  "id": 15,
+                  "title": "18",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 17,
+          "title": "постачальник",
+          "items": [
+              {
+                  "id": 142,
+                  "title": "Полі/Poli",
+                  "color": "",
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 18,
+          "title": "виробник",
+          "items": [
+              {
+                  "id": 182,
+                  "title": "Poli",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      }
+  ],
+  "labels": [],
+  "composite": null,
+  "composite_quantity": null,
+  "status": 1
+},
+{
+  "product_id": "7655B966-6D59-44AD-B77D-3A2A13D5A976",
+  "sku": "1086",
+  "code": 8631,
+  "title": "Пусети срібло 925° з фіанітами",
+  "short_description": "<p><span data-sheets-root=\"1\">Стильні срібні пусети з розсипом фіанітів.</span></p>",
+  "description": "",
+  "unit_id": 33,
+  "unit_title": "шт",
+  "note": "",
+  "image_path": "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1086_1.png",
+  "images": [
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1086_1.png",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1086_2.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/1086_3.jpg"
+  ],
+  "price": "1050.00",
+  "pices": [
+      {
+          "price": "100.00",
+          "price_id": 1,
+          "price_title": "Закупка",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      },
+      {
+          "price": "1050.00",
+          "price_id": 2,
+          "price_title": "Роздрібна",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      }
+  ],
+  "balance": "1.00000",
+  "barcode": "7060002080311",
+  "uktezed": "",
+  "expiration_date": "",
+  "store_id": null,
+  "currency": "грн.",
+  "currency_id": "1",
+  "add_step": 1,
+  "is_weight": 0,
+  "website_synch": 1,
+  "category": "earring",
+  "tags": [
+      {
+          "id": 20,
+          "title": "вставка",
+          "items": [
+              {
+                  "id": 180,
+                  "title": "фіаніт білий",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 17,
+          "title": "постачальник",
+          "items": [
+              {
+                  "id": 105,
+                  "title": "Poli",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      }
+  ],
+  "labels": [],
+  "composite": null,
+  "composite_quantity": null,
+  "status": 1
+},
+{
+  "product_id": "908DA8E3-A4C6-4DDE-9C28-65032BDE42DD",
+  "sku": "436р",
+  "code": 5893,
+  "title": "Браслет срібло 925° з фіанітами",
+  "short_description": "<p><span data-sheets-root=\"1\">Стильний срібний браслет з трьома вставками, прикрашеними розсипом фіанітів. Довжина регулюється &ndash; 16-19 см.</span></p>",
+  "description": "",
+  "unit_id": 33,
+  "unit_title": "шт",
+  "note": "",
+  "image_path": "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/436%D1%80_1.jpg",
+  "images": [
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/436%D1%80_1.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/436%D1%80_3.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/436%D1%80_4.jpg"
+  ],
+  "price": "1400.00",
+  "pices": [
+      {
+          "price": "100.00",
+          "price_id": 1,
+          "price_title": "Закупка",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      },
+      {
+          "price": "1400.00",
+          "price_id": 2,
+          "price_title": "Роздрібна",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      }
+  ],
+  "balance": "4.00000",
+  "barcode": "7060001680635",
+  "uktezed": "",
+  "expiration_date": "",
+  "store_id": null,
+  "currency": "грн.",
+  "currency_id": "1",
+  "add_step": 1,
+  "is_weight": 0,
+  "website_synch": 1,
+  "category": "bracer",
+  "tags": [
+      {
+          "id": 20,
+          "title": "вставка",
+          "items": [
+              {
+                  "id": 180,
+                  "title": "фіаніт білий",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 17,
+          "title": "постачальник",
+          "items": [
+              {
+                  "id": 105,
+                  "title": "Poli",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 1,
+          "title": "довжина",
+          "items": [
+              {
+                  "id": 25,
+                  "title": "16см",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 18,
+          "title": "виробник",
+          "items": [
+              {
+                  "id": 182,
+                  "title": "Poli",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      }
+  ],
+  "labels": [],
+  "composite": null,
+  "composite_quantity": null,
+  "status": 1
+},
+{
+  "product_id": "2B710827-98F4-4BA0-A8A3-234FFEF555FB",
+  "sku": "2041р",
+  "code": 8544,
+  "title": "Каблучка срібло 925° з фіанітами ",
+  "short_description": "<p><span data-sheets-root=\"1\">Вишукана каблучка зі срібла 925&deg; прикрашена розсипом фіанітів.&nbsp;</span></p>",
+  "description": "",
+  "unit_id": 33,
+  "unit_title": "шт",
+  "note": "",
+  "image_path": "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2041_1.png",
+  "images": [
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2041_1.png",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2041_2.jpg",
+      "https://cdn.dntrade.com.ua/D696FCD1-FB06-470D-9088-C5F062485E1E/2041_4.jpg"
+  ],
+  "price": "700.00",
+  "pices": [
+      {
+          "price": "100.00",
+          "price_id": 1,
+          "price_title": "Закупка",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      },
+      {
+          "price": "700.00",
+          "price_id": 2,
+          "price_title": "Роздрібна",
+          "currency": "грн.",
+          "store_id": "833a605c-fa32-46b6-9735-067239c68634"
+      }
+  ],
+  "balance": "1.00000",
+  "barcode": "7060002196012",
+  "uktezed": "",
+  "expiration_date": "",
+  "store_id": null,
+  "currency": "грн.",
+  "currency_id": "1",
+  "add_step": 1,
+  "is_weight": 0,
+  "website_synch": 1,
+  "category": "ring",
+  "tags": [
+      {
+          "id": 2,
+          "title": "розмір",
+          "items": [
+              {
+                  "id": 10,
+                  "title": "17",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      },
+      {
+          "id": 17,
+          "title": "постачальник",
+          "items": [
+              {
+                  "id": 105,
+                  "title": "Poli",
+                  "color": null,
+                  "status": 1
+              }
+          ]
+      }
+  ],
+  "labels": [],
+  "composite": null,
+  "composite_quantity": null,
+  "status": 1
+}
+]

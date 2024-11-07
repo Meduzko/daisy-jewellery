@@ -40,7 +40,7 @@ const OrderList = ({ handleSubmit }) => {
                 <Link href={`/category/ring/${item.id}`}>
                   <h4 className={styles.itemTitle}>{item.title}</h4>
                 </Link>
-                <div className={styles.price}>{`${getItemPrice(item)} ₴`}</div>
+                <div className={styles.price}>{`${getItemPrice(item)} грн`}</div>
                 <div>{`Кількість: ${item.quantity}`}</div>
               </div>
             </div>
@@ -56,7 +56,7 @@ const OrderList = ({ handleSubmit }) => {
       <Divider />
       <div className={styles.totalSum}>
         <p className={styles.totalSumTitle}>Загалом</p>
-        <p className={styles.totalSumPrice}>{`${fixedPrice} ₴`}</p>
+        <p className={styles.totalSumPrice}>{`${fixedPrice} грн`}</p>
       </div>
 
       <div className={styles.submitButton}>

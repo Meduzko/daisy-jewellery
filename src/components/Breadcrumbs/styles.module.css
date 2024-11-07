@@ -1,0 +1,29 @@
+.nav {
+  position: sticky;
+  inset-block-start: 193px;
+  z-index: 101;
+  background-color: #fff;
+  padding: 24px 46px;
+}
+
+.nav[aria-label="Breadcrumb"] ol {
+  list-style: none;
+  display: flex;
+}
+  
+.nav[aria-label="Breadcrumb"] li + li:before {
+  content: '>';
+  padding: 0 8px;
+}
+
+.linkItem:hover {
+  text-decoration: underline;
+}
+
+
+@media (max-width: 768px) {
+  .nav {
+    padding: 14px 12px;
+    inset-block-start: 125px;
+  }
+}
