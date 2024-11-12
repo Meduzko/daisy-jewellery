@@ -1,13 +1,13 @@
 import { fetchProduct } from '../actions/fetchProduct';
 
 export default async function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const baseUrl = process.env.SITE_DOMAIN;
   const ringProducts = await fetchProduct({ categoryId: process.env.RING_CATEGORY_ID, limit: 100 });
   const necklaceProducts = await fetchProduct({ categoryId: process.env.NECKLACE_CATEGORY_ID, limit: 100 });
   const earringProducts = await fetchProduct({ categoryId: process.env.EARING_CATEGORY_ID, limit: 100 });
   const bracerProducts = await fetchProduct({ categoryId: process.env.BRACER_CATEGORY_ID, limit: 100 });
 
-  const categories = ['/category/ring/page/1', '/category/earring/page/1', '/category/necklace/page/1', '/category/bracer/page/1'];
+  const categories = ['category/ring/page/1', 'category/earring/page/1', 'category/necklace/page/1', 'category/bracer/page/1'];
   const staticRoutes = ['', 'about', 'contact', ...categories];
 
   const dynamicRingRoutes = ringProducts.map((ring) => ({

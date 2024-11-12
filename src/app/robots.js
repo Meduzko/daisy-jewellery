@@ -1,10 +1,9 @@
 export default function robots() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const baseUrl = process.env.SITE_DOMAIN;
   return {
     rules: {
       userAgent: '*',
-      allow: '/',
-      disallow: '/private/',
+      allow: '/'
     },
     sitemap: `${baseUrl}/sitemap.xml`,
   }

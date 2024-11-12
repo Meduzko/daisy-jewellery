@@ -46,7 +46,7 @@ export const getProductMetadata = ({ product, categoryName }) => {
   const keywords = getKeywords(categoryName, title);
   const shortDescription = short_description.replace(/<[^>]*>/g, '');
   const description = shortDescription.replace(/&[^;\s]+;/g, '');
-  const canonicalUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/category/${categoryName}/${code}`;
+  const canonicalUrl = `${process.env.SITE_DOMAIN}/category/${categoryName}/${code}`;
 
   return {
     title: `${title} | ${siteName}`,
@@ -55,11 +55,11 @@ export const getProductMetadata = ({ product, categoryName }) => {
       canonical: canonicalUrl,
     },
     keywords,
-    url: `${process.env.NEXT_PUBLIC_BASE_URL}/category/${categoryName}/${code}`,
+    url: `${process.env.SITE_DOMAIN}/category/${categoryName}/${code}`,
     openGraph: {
       title: `${title} | ${siteName}`,
       description,
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/category/${categoryName}/${code}`,
+      url: `${process.env.SITE_DOMAIN}/category/${categoryName}/${code}`,
       siteName,
       locale: 'uk_UA',
       type: 'website',
