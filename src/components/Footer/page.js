@@ -41,20 +41,24 @@ export default function Footer() {
         <div className={`${styles.footerContacts}  ${styles.footerCol}`}>
           <h3 className={styles.footerCategoryTitle}>Контакти</h3>
           <ul className={styles.footerList}>
-            <li className={styles.footerListItem}>Корець, вул. Старомонастирська, 1</li>
-            <li className={styles.footerListItem}>380935492985</li>
-            <li className={styles.footerListItem}>daisy.jewellery@gmail.com</li>
+            <li className={styles.footerListItem}>м. Корець, площа Київська 3/3</li>
+            <li className={styles.footerListItem}>+380935492985</li>
+            <li className={styles.footerListItem}>daisyjewellery.info@gmail.com</li>
             <li className={styles.footerListItem}>
               <div className={styles.footerSocials}>
-                <IconButton className={styles.social}>
-                  <InstagramIcon />
-                </IconButton>
+                <Link href="https://www.instagram.com/daisy.jewellery">
+                  <IconButton className={styles.social}>
+                    <InstagramIcon />
+                  </IconButton>
+                </Link>
                 <IconButton className={styles.social}>
                   <TelegramIcon />
                 </IconButton>
-                <IconButton className={styles.social}>
-                  <FacebookIcon />
-                </IconButton>
+                <Link href="https://www.facebook.com/profile.php?id=100085472847797">
+                  <IconButton className={styles.social}>
+                    <FacebookIcon />
+                  </IconButton>
+                </Link>
               </div>
             </li>
           </ul>

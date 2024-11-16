@@ -42,9 +42,10 @@ export default async function GalleryItemMobile({ item, baseURL = '/category/rin
             <div className={styles.titleContainer}>
               <Link href={`${baseURL}/${code}`} className={styles.title}>{title}</Link>
               <Link href={`${baseURL}/${code}`} className={styles.subTitle} dangerouslySetInnerHTML={{ __html: short_description }} />
-              <div className={styles.price}>{`${price} ${priceSymbol}`}</div>
+              {/* <div className={styles.price}>{`${price} ${priceSymbol}`}</div> */}
             </div>
             <div className={styles.itemBottomCnt}>
+              <div className={styles.price}>{`${price} ${priceSymbol}`}</div>
               <BuyButton item={item} />
             </div>
           </div>

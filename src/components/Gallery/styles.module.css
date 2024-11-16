@@ -77,6 +77,7 @@
     align-items: flex-start;
     padding: 16px 0;
     min-height: 186px;
+    flex-direction: column;
 }
 
 .titleContainer {
@@ -119,7 +120,10 @@
 }
 
 .itemBottomCnt {
-    width: 20%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
 @media (max-width: 1024px) {

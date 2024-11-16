@@ -8,6 +8,7 @@
 .listItem {
     width: 50% !important;
     margin: 0 auto;
+    gap: 14px;
 }
 
 .listItem svg {

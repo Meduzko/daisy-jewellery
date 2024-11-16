@@ -43,16 +43,17 @@ export default async function GalleryItem({ item, baseURL = '/category/ring' }) 
           </div>
         </Link>
         <div className={styles.itemInfo}>
-          <header  className={styles.titleContainer}>
+          <header className={styles.titleContainer}>
             <h2 className={styles.title}>
               <Link href={`${baseURL}/${code}`}>{title}</Link>
             </h2>
             <Link href={`${baseURL}/${code}`} className={styles.subTitle} dangerouslySetInnerHTML={{ __html: short_description }} />
-            <div className={styles.price}>{`${price} ${priceSymbol}`}</div>
+            {/* <div className={styles.price}>{`${price} ${priceSymbol}`}</div> */}
           </header >
-          <footer  className={styles.itemBottomCnt}>
+          <div className={styles.itemBottomCnt}>
+            <div className={styles.price}>{`${price} ${priceSymbol}`}</div>
             <BuyButton item={item} />
-          </footer >
+          </div >
         </div>
       </article >
   );

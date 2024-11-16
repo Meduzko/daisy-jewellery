@@ -1,10 +1,8 @@
+import Image from 'next/image';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined'; // money
-import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined'; // delivery
-import CardGiftcardOutlinedIcon from '@mui/icons-material/CardGiftcardOutlined'; // gift
 
 import styles from './styles.module.css';
 
@@ -12,22 +10,22 @@ const list = [
   {
     title: 'Срібні прикраси від українського виробника',
     description: 'У нашому інтернет-магазині ви знайдете прикраси зі срібла 925° від українського виробника. Кожен виріб має клеймо, пробу Держзразка, пломбу та бірку від виробника.',
-    icon: <HandshakeOutlinedIcon />
+    icon: <Image src="/coat_of_arms.png" alt="coat_of_arms" width={56} height={56} />
   },
   {
     title: 'Швидка доставка',
     description: 'Ми відправляємо замовлення щодня, доставка по Україні займає 1-3 дні. Доставка здійснюється через Нову пошту – у відділення, поштомат або ж кур\'єром.',
-    icon: <LocalShippingOutlinedIcon />
+    icon: <Image src="/delivery.png" alt="coat_of_arms" width={56} height={56} />
   },
   {
     title: 'Безкоштовне подарункове пакування',
     description: 'До усіх замовлень ми додаємо безкоштовне подарункове пакування – нашу фірмову коробочку. Пакування чудово підійде на подарунок.',
-    icon: <HandshakeOutlinedIcon />
+    icon: <Image src="/gift.png" alt="coat_of_arms" width={56} height={56} />
   },
   {
     title: 'Післяплата',
     description: 'У нас є післяплата по частковій передоплаті 150 грн, тому ви зможете оглянути прикраси на пошті та приміряти їх.',
-    icon: <CardGiftcardOutlinedIcon />
+    icon: <Image src="/receive-cash.png" alt="coat_of_arms" width={56} height={56} />
   }
 ];
 

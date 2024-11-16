@@ -29,7 +29,7 @@ export default function ProductItem({ product }) {
         <Link href={productLink}>
           <p className={styles.itemTitle}>{title}</p>
         </Link>
-          <p className={styles.itemDescription} dangerouslySetInnerHTML={{ __html: short_description }} />
+          {/* <p className={styles.itemDescription} dangerouslySetInnerHTML={{ __html: short_description }} /> */}
         </div>
         <div className={styles.priceCnt}>
           <span>{price} грн</span>
