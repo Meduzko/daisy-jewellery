@@ -1,49 +1,43 @@
 import Image from 'next/image';
-import { List, ListItem, Divider } from '@mui/material';
-
 import styles from './styles.module.css';
 
 export default function DeliveryPage() {
   return (
     <div className={styles.deliveryWrapper}>
-      <h1>Доставка та оплата</h1>
-      <div>
+      <h1 className={styles.title}>Доставка та оплата</h1>
+      <div className={styles.content}>
         <div className={styles.deliveryBlock}>
-          <Image src="/delivery_2.jpg" alt="coat_of_arms" width={250} height={250} />
-          <div>
-            <h3>Доставка</h3>
-            <p>
-              Доставка здійснюється:
-            </p>
-            <List>
-              <ListItem>
+          <Image src="/delivery_2.jpg" alt="Delivery image 1" width={350} height={350} />
+          <div className={styles.deliveryTextBlock}>
+            <h2>Доставка</h2>
+            <ul>
+              <li className={styles.li}>
                 На відділення/поштомат;
-              </ListItem>
-              <ListItem>
+              </li>
+              <li className={styles.li}>
                 Адресна доставка кур’єром.
-              </ListItem>
-            </List>
+              </li>
+            </ul>
             <p>Безкоштовна доставка при замовленні на суму від 2 500 грн.</p>
           </div>
         </div>
         <div className={styles.deliveryBlock}>
-          <div>
-            <h3>Варіанти оплати: </h3>
-            <List>
-              <ListItem>
+          <div className={styles.deliveryTextBlock}>
+            <h2>Варіанти оплати: </h2>
+            <ul>
+              <li className={styles.li}>
                 Оплата при отриманні замовлення.
                 Відправляємо післяплатою з частковою передоплатою 150 грн, залишок суми при отриманні на Новій пошті.
                 Комісія Нової пошти за переказ коштів 20 грн.+2% від суми замовлення.
-              </ListItem>
-              <ListItem>
+              </li>
+              <li className={styles.li}>
                 Повна оплата на рахунок.
-              </ListItem>
-            </List>
+              </li>
+            </ul>
           </div>
-          <Image src="/delivery_1.jpg" alt="coat_of_arms" width={250} height={250} />
+          <Image src="/delivery_1.jpg" alt="Delivery image 2" width={350} height={350} />
         </div>
       </div>
     </div>
-
   )
 }

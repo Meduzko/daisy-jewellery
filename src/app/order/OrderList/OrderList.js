@@ -9,7 +9,7 @@ import ProductBuyButton from '../../../components/Buttons/ProductBuy/ProductBuy'
 import styles from './styles.module.css';
 
 const OrderList = ({ handleSubmit }) => {
-  const { cartItems, getTotalPrice } = useContext(CartContext);
+  const { cartItems, getTotalPrice, getItemSize } = useContext(CartContext);
   const totalPrice = getTotalPrice();
   const fixedPrice = totalPrice.toFixed(2);
 
@@ -24,28 +24,36 @@ const OrderList = ({ handleSubmit }) => {
   return (
     <div className={styles.orderListContainer}>
       <List className={styles.orderList}>
-        {cartItems.map((item, index) => (
-          <ListItem key={index} className={styles.cartListItem} divider>
-            <div className={styles.basketItemContainer}>
-              <div className={styles.basketImageContainer}>
-              <picture>
-                <img
-                  src={item.images[0]}
-                  alt={item.title}
-                  className={styles.basketImage}
-                />
-              </picture>
+        {cartItems.map((item, index) => {
+          const price = getItemPrice(item);
+          const size = getItemSize(item);
+
+          return (
+            <ListItem key={index} className={styles.cartListItem} divider>
+              <div className={styles.basketItemContainer}>
+                <div className={styles.basketImageContainer}>
+                <picture>
+                  <img
+                    src={item.images[0]}
+                    alt={item.title}
+                    className={styles.basketImage}
+                  />
+                </picture>
+                </div>
+                <div className={styles.itemDetails}>
+                  <Link href={`/category/ring/${item.id}`}>
+                    <h4 className={styles.itemTitle}>{item.title}</h4>
+                  </Link>
+                  <div className={styles.price}>{`${price} грн`}</div>
+                  {size && (
+                    <div>{`Розмір: ${size}`}</div>
+                  )}
+                  <div>{`Кількість: ${item.quantity}`}</div>
+                </div>
               </div>
-              <div className={styles.itemDetails}>
-                <Link href={`/category/ring/${item.id}`}>
-                  <h4 className={styles.itemTitle}>{item.title}</h4>
-                </Link>
-                <div className={styles.price}>{`${getItemPrice(item)} грн`}</div>
-                <div>{`Кількість: ${item.quantity}`}</div>
-              </div>
-            </div>
-          </ListItem>
-        ))}
+            </ListItem>
+          )
+        })}
       </List>
       <div className={styles.orderSummary}>
         <div className={styles.summaryItem}>

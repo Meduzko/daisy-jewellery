@@ -13,7 +13,8 @@ import {
   DialogTitle,
   InputLabel,
   MenuItem,
-  FormControl
+  FormControl,
+  CircularProgress
 } from '@mui/material';
 import Select from '@mui/material/Select'
 import { CartContext } from '../../../context/CartContext';
@@ -39,7 +40,8 @@ const OrderForm = () => {
   const [formErrors, setFormErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
   const [showModal, setShowModal] = useState(false);
-  const { cartItems, getTotalPrice } = useContext(CartContext);
+  const [loading, setLoading] = useState(false);
+  const { cartItems, getTotalPrice, getItemSize } = useContext(CartContext);
 
   const handleChange = (e, newName, newVal) => {
     const { name, value } = e.target;
@@ -73,9 +75,22 @@ const OrderForm = () => {
 
   const getOrderData = () => {
     const totalPrice = getTotalPrice();
+    const cartItemsWithSize = cartItems.map(item => {
+      const size = getItemSize(item);
+
+      if (size) {
+        return {
+          ...item,
+          size
+        }
+      }
+
+      return item;
+    });
+
     return {
       formData,
-      cartItems,
+      cartItems: cartItemsWithSize,
       totalPrice
     };
   };
@@ -118,9 +133,13 @@ const OrderForm = () => {
       cityName: true,
       department: true,
     });
+
     if (!validateForm()) {
       return;
     }
+
+    setLoading(true)
+
     try {
       const orderData = getOrderData();
       const res = await fetch('/api/send-email', {
@@ -141,6 +160,8 @@ const OrderForm = () => {
     } catch (error) {
       console.error('Error sending email:', error);
       setStatusMessage('Failed to submit order.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -151,6 +172,12 @@ const OrderForm = () => {
 
   return (
     <>
+      {loading && (
+        <div className={styles.preloader}>
+          <CircularProgress />
+        </div>
+      )}
+      <div className={`${styles.defaultBlured}${loading ? styles.blurred : ''}`} />
       <Box component="form">
         <Grid container spacing={2} className={styles.formGrid}>
           <Grid item xs={12}>

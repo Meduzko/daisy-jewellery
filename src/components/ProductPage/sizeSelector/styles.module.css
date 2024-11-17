@@ -15,7 +15,7 @@
 }
 
 .selected {
-  color: #000 !important;
-  background-color: #fff !important;
+  color: #fff !important;
+  background-color: #000 !important;
   border-color: #000 !important;
 }

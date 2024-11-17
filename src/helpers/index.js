@@ -19,7 +19,7 @@ export function getIsMobile() {
 
 export const getPaginationData = (paramsPage) => {
   const currentPage = parseInt(paramsPage || 1, 10) || 1;
-  const limit = 16;
+  const limit = 15;
   const offset = (currentPage - 1) * limit;
 
   return {

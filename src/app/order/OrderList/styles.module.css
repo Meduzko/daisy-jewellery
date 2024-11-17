@@ -37,6 +37,8 @@
 
 .orderListContainer {
     padding: 46px 0;
+
+    flex: 1 auto;
 }
 
 .orderList {

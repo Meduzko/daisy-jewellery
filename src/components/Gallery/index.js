@@ -13,9 +13,11 @@ export default function Gallery({ items, currentPage, hasMore, withPagination, b
     <div className={styles.galleryCnt}>
       <Grid container spacing={spacing} rowSpacing={rowSpacing}>
         {items.map((item) => (
-          <Grid item xs={12} sm={6} md={4} key={item.id || item.product_id}>
-            <GalleryComponent item={item} baseURL={baseURL} />
-          </Grid>
+          item.image_path && (
+            <Grid item xs={12} sm={6} md={4} key={item.id || item.product_id}>
+              <GalleryComponent item={item} baseURL={baseURL} />
+            </Grid>
+          )
         ))}
       </Grid>
       {withPagination && <PaginationComponent currentPage={currentPage} hasMore={hasMore} baseURL={baseURL} />}

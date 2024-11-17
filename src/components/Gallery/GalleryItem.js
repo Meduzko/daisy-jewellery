@@ -10,9 +10,7 @@ export default async function GalleryItem({ item, baseURL = '/category/ring' }) 
     title,
     short_description,
     price,
-    imageUrl,
     image_path,
-    hoverImageUrl,
     images
   } = item;
   const priceSymbol = 'грн';
@@ -23,22 +21,24 @@ export default async function GalleryItem({ item, baseURL = '/category/ring' }) 
           <div className={styles.galleryItem}>
             <div className={styles.itemBackground} />
             <div className={styles.imgContainer}>
-              <Image
-                src={imageUrl || image_path}
+              {image_path && <Image
+                src={image_path}
                 alt={`Зображення ${title}`}
                 fill={true}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 loading="lazy"
                 className={`${styles.defaultImg} ${styles.itemImg}`}
-              />
-              <Image
-                src={hoverImageUrl || images[1]}
-                alt={`Зображення ${title} при наведенні`}
-                fill={true}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                loading="lazy"
-                className={`${styles.hoverImg} ${styles.itemImg}`}
-              />
+              />}
+              {
+                images[1] && <Image
+                  src={images[1]}
+                  alt={`Зображення ${title} при наведенні`}
+                  fill={true}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  loading="lazy"
+                  className={`${styles.hoverImg} ${styles.itemImg}`}
+                />
+              }
             </div>
           </div>
         </Link>

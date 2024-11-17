@@ -1,15 +1,19 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useMemo, useContext } from 'react';
 import { ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { CartContext } from '../../../context/CartContext';
 import styles from './styles.module.css';
 
-const SizeSelector = ({ sizes }) => {
-  const [selectedSize, setSelectedSize] = useState(null);
+const SizeSelector = ({ item, sizes }) => {
+  const { addToItemSize } = useContext(CartContext);
+  const sortedSizes = useMemo(() => sizes.slice().sort((a, b) => a - b), [sizes]);
+  const [selectedSize, setSelectedSize] = useState(sortedSizes[0]);
+
 
   const handleSizeChange = (event, newSize) => {
     if (newSize !== null) {
       setSelectedSize(newSize);
-      console.log('Selected size:', newSize);
+      addToItemSize(item, newSize);
     }
   };
 
@@ -21,7 +25,7 @@ const SizeSelector = ({ sizes }) => {
       aria-label="Size Selector"
       className={styles.toggleButtonGroup}
     >
-      {sizes.map((size) => (
+      {sortedSizes.map((size) => (
         <ToggleButton
           key={size}
           value={size}

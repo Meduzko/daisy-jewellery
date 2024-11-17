@@ -24,7 +24,15 @@ const StyledBadge = styled(Badge)(() => ({
 
 const CartDrawler = () => {
   const router = useRouter();
-  const { cartItems, removeFromCart, clearCart, cartOpen, setCartOpen, getTotalPrice } = useContext(CartContext);
+  const {
+    cartItems,
+    removeFromCart,
+    clearCart,
+    cartOpen,
+    setCartOpen,
+    getTotalPrice,
+    getItemSize
+  } = useContext(CartContext);
   const totalPrice = getTotalPrice();
   const buyButtonText = `Замовити ${totalPrice.toFixed(2)} грн`;
   const itemsLength = cartItems.length;
@@ -70,34 +78,44 @@ const CartDrawler = () => {
             </div>
             {cartItems?.length > 0 ? <>
               <List className={styles.cartList}>
-                {cartItems.map((item, index) => (
-                  <ListItem key={index} className={styles.cartListItem} divider>
-                    <div className={styles.basketItemContainer}>
-                      <div className={styles.basketImageContainer}>
-                        <picture>
-                          <img
-                            src={item.images[0]}
-                            alt={item.title}
-                            className={styles.basketImage} />
-                        </picture>
-                      </div>
-                      <div className={styles.itemDetails}>
-                        <Link href={`/category/ring/${item.id}`}>
-                          <h4 className={styles.itemTitle}>{item.title}</h4>
-                        </Link>
-                        <div className={styles.counterWrapper}>
-                          <ProductCounter initialCount={item.quantity} maxCount={10} cartItem={item} />
+                {cartItems.map((item, index) => {
+                  const itemSize = getItemSize(item);
+                  const itemPrice = getItemPrice(item);
+
+                  return (
+                    <ListItem key={index} className={styles.cartListItem} divider>
+                      <div className={styles.basketItemContainer}>
+                        <div className={styles.basketImageContainer}>
+                          <picture>
+                            <img
+                              src={item.images[0]}
+                              alt={item.title}
+                              className={styles.basketImage} />
+                          </picture>
                         </div>
-                        <div className={styles.price}>{`${getItemPrice(item)} грн`}</div>
+                        <div className={styles.itemDetails}>
+                          <Link href={`/category/ring/${item.id}`}>
+                            <h4 className={styles.itemTitle}>{item.title}</h4>
+                          </Link>
+                          {itemSize && (
+                            <div>
+                              <span>Розмір: {itemSize}</span>
+                            </div>
+                          )}
+                          <div className={styles.counterWrapper}>
+                            <ProductCounter initialCount={item.quantity} maxCount={10} cartItem={item} />
+                          </div>
+                          <div className={styles.price}>{`${itemPrice} грн`}</div>
+                        </div>
+                        <div className={styles.deleteContainer}>
+                          <IconButton className={styles.deleteItem} onClick={() => removeFromCart(item.id)}>
+                            <DeleteOutlineOutlinedIcon />
+                          </IconButton>
+                        </div>
                       </div>
-                      <div className={styles.deleteContainer}>
-                        <IconButton className={styles.deleteItem} onClick={() => removeFromCart(item.id)}>
-                          <DeleteOutlineOutlinedIcon />
-                        </IconButton>
-                      </div>
-                    </div>
-                  </ListItem>
-                ))}
+                    </ListItem>
+                  )
+                })}
             </List>
             <div className={styles.buttonContainer}>
               <ProductBuyButton text={buyButtonText} onClick={handleBuyClick} width="85%" />

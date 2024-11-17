@@ -18,9 +18,6 @@ const CounterWithSubmit = ({ product }) => {
     if (!cartItem) {
       addToCart(product, count);
     }
-    // console.log('handleButtonClick', product);
-    // addToCart(product, count);
-    // setCartOpen(true);
   };
 
   return (
@@ -36,7 +33,6 @@ const CounterWithSubmit = ({ product }) => {
         />
       </div>
       <ProductBuyButton
-        // disabled={cartItem}
         onClick={handleButtonClick}
       />
     </>

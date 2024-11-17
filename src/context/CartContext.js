@@ -6,7 +6,25 @@ export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const [itemSize, setItemSize] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
+
+  const addToItemSize = (product, size) => {
+    setItemSize((prevItems) => {
+      const itemExists = prevItems.find((item) => item.product_id === product.product_id);
+      if (itemExists) {
+        // Increase quantity by the specified amount
+        return prevItems.map((item) =>
+          item.product_id === product.product_id
+            ? { ...item, size }
+            : item
+        );
+      } else {
+        // Add new item with the specified quantity
+        return [...prevItems, { ...product, size }];
+      }
+    });
+  };
 
   const addToCart = (product, quantity = 1) => {
     setCartItems((prevItems) => {
@@ -62,11 +80,24 @@ export const CartProvider = ({ children }) => {
     return total;
   };
 
+  const getItemSize = item => {
+    console.log(item);
+    const res = itemSize?.find((contextItem) => contextItem?.product_id === item?.product_id)?.size;
+
+    return res;
+  };
+
   return (
     <CartContext.Provider
       value={{
+        // Cart items
         cartItems,
         addToCart,
+        // Size
+        itemSize,
+        addToItemSize,
+        getItemSize,
+        // Quantity
         changeItemQuantity,
         removeFromCart,
         clearCart,

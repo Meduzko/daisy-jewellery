@@ -45,10 +45,14 @@ export default async function handler(req, res) {
 
     const itemsDetails = cartItems
     .map(
-      (item) => `
-        <tr>
+      (item, index) => `
+        <tr style="border-bottom: 1px solid #ddd;">
+          <td style="padding: 8px;"><img src="cid:product_image_${index}" alt="${item.title}" style="width: 50px; height: auto;" /></td>
+          <td style="padding: 8px;">${item.code}</td>
+          <td style="padding: 8px;">${item.sku}</td>
           <td style="padding: 8px;">${item.title}</td>
           <td style="padding: 8px;">${item.short_description}</td>
+          <td style="padding: 8px;">${item.size || ''}</td>
           <td style="padding: 8px;">${item.price} грн</td>
         </tr>
       `
@@ -61,33 +65,43 @@ export default async function handler(req, res) {
       cc: 'daisyjewellery.info@gmail.com',
       subject: 'Замовлення прийнято', // Subject line
       html: `
-      <p>Дякуємо за замовлення!</p>
+      <h2>Шановний(-а) ${firstName} ${lastName}</h2>
+      <p>Дякуємо за ваше замовлення в інтернет-магазині Daisy Jewellery!</p>
+      <p>Деталі вашого замовлення:</p>
       <table style="border-collapse: collapse; width: 100%;">
         <thead>
           <tr>
-            <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left;">Назва</th>
-            <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left;">Опис</th>
-            <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left;">Ціна</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left; background-color: #0000001a;"></th>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left; background-color: #0000001a;">Код</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left; background-color: #0000001a;">Артикул</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left; background-color: #0000001a;">Назва</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left; background-color: #0000001a;">Опис</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left; background-color: #0000001a;">Розмір</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left; background-color: #0000001a;">Ціна</th>
           </tr>
         </thead>
         <tbody>
           ${itemsDetails}
         </tbody>
       </table>
-      <p>Загальна вартість: <strong>${totalPrice}</strong> грн</p>
-      <p>Ваше замовлення прийнято і буде взято в обробку найближчим часом!</p>
-      <p>Наш менеджер звяжеться з вами</p>
+      <p>Загальна сума: <strong>${totalPrice}</strong> грн</p>
+      <p>Наш менеджер зв'яжеться з вами найближчим часом, щоб підтвердити деталі замовлення</p>
       <ul>
         <li>Населений пункт: ${cityName}</li>
         <li>Відділення Нової Пошти: ${department}</li>
         <li>Спосіб зв'язку: ${contact}</li>
         <li>Email: ${email}</li>
         <li>Телефон: ${phone}</li>
-        <li>Коментар: ${comments}</li>
+        ${comments ? `<li>Коментар: ${comments}</li>` : ''}
       </ul>
-      <p>З повагою,</p>
-      <p>Daisy Jewellery</p>
+      <p>З найкращими побажаннями,</p>
+      <p>Команда Daisy Jewellery</p>
     `,
+    attachments: cartItems.map((item, index) => ({
+      filename: `${item.sku}${item.image_path}`, // Adjust the extension as necessary
+      path: item.image_path, // Use the actual path to your image
+      cid: `product_image_${index}`, // Must match the `cid` in the HTML
+    })),
     };
 
     try {

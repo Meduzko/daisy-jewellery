@@ -1,4 +1,4 @@
-export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, paginated }) {
+export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, paginated, sku }) {
   try {
     const ROOT_URI = process.env.API_ROOT_URI;
     const API_KEY = process.env.API_KEY;
@@ -11,12 +11,12 @@ export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, p
       offset
     });
 
-    // if (offset) {
-    //   params.set('offset', offset);
-    // }
-
     if (code) {
       params.set('code', Number(code));
+    }
+
+    if (sku) {
+      params.set('sku', sku);
     }
 
     const url = `${baseURL}${params.toString()}`;
@@ -36,7 +36,10 @@ export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, p
     const data = await response.json();
   
     if (paginated) {
+      console.log('paginated');
       const hasMore = data?.products?.length === limit;
+      console.log('data?.products?.length', data?.products?.length);
+      console.log('limit', limit);
       return { products: data?.products || [], hasMore };
     }
 

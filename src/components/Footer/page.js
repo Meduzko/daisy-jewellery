@@ -8,7 +8,7 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import styles from './styles.module.css';
 
-const pagesWithoutFooter = ['/order'];
+const pagesWithoutFooter = ['/order', '/returns'];
 
 export default function Footer() {
   const pathname = usePathname();
@@ -67,10 +67,10 @@ export default function Footer() {
           <h3 className={styles.footerCategoryTitle}>Інформація</h3>
           <ul className={styles.footerList}>
             <li className={styles.footerListItem}>
-              <Link href="/">Повернення та обмін</Link>
+              <Link href="/returns">Повернення та обмін</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/">Доставка та оплата</Link>
+              <Link href="/delivery">Доставка та оплата</Link>
             </li>
             <li className={styles.footerListItem}>
               <Link href="/">PRIVACY POLICY</Link>

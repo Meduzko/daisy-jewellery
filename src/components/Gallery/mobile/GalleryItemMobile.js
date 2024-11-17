@@ -6,17 +6,11 @@ import styles from './styles.module.css';
 
 export default async function GalleryItemMobile({ item, baseURL = '/category/ring' }) {
   const {
-    product_id,
     code,
-
     title,
     short_description,
-
     imageUrl,
     image_path,
-
-    hoverImageUrl,
-    images,
     price
   } = item;
   const priceSymbol = 'грн';
@@ -31,7 +25,6 @@ export default async function GalleryItemMobile({ item, baseURL = '/category/rin
                 src={imageUrl || image_path}
                 alt={title}
                 fill={true}
-                // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 loading="lazy"
                 className={`${styles.defaultImg} ${styles.itemImg}`}
               />
@@ -42,7 +35,6 @@ export default async function GalleryItemMobile({ item, baseURL = '/category/rin
             <div className={styles.titleContainer}>
               <Link href={`${baseURL}/${code}`} className={styles.title}>{title}</Link>
               <Link href={`${baseURL}/${code}`} className={styles.subTitle} dangerouslySetInnerHTML={{ __html: short_description }} />
-              {/* <div className={styles.price}>{`${price} ${priceSymbol}`}</div> */}
             </div>
             <div className={styles.itemBottomCnt}>
               <div className={styles.price}>{`${price} ${priceSymbol}`}</div>

@@ -1,7 +1,38 @@
 .deliveryWrapper {
     padding: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .deliveryBlock {
     display: flex;
+    gap: 32px;
+    padding: 24px 0;
+}
+
+.title {
+    text-align: center;
+}
+
+.content {
+    padding-top: 24px;
+}
+
+.li {
+    padding: 12px 0;
+}
+
+@media (max-width: 768px) {
+    .deliveryBlock {
+        flex-direction: column;
+    }
+    .deliveryTextBlock {
+        order: 2;
+    }
+}
+
+@media (min-width: 1024px) {
+    .deliveryTextBlock {
+        max-width: 50%;
+    }
 }
