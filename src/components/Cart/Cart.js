@@ -108,7 +108,7 @@ const CartDrawler = () => {
                           <div className={styles.price}>{`${itemPrice} грн`}</div>
                         </div>
                         <div className={styles.deleteContainer}>
-                          <IconButton className={styles.deleteItem} onClick={() => removeFromCart(item.id)}>
+                          <IconButton className={styles.deleteItem} onClick={() => removeFromCart(item.product_id)}>
                             <DeleteOutlineOutlinedIcon />
                           </IconButton>
                         </div>
