@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 // import Header from './components/Header/page';
@@ -7,71 +8,6 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { CartProvider } from '../context/CartContext';
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
-
-// export const metadata = {
-//   title: 'Магазин срібних прикрас - Daisy Jewellery',
-//   description: "Срібні прикраси на будь який смак",
-//   keywords: ['jewellery', 'daisy jewellery', 'срібло', 'срібні каблучки', 'срібні сережки', 'срібні кольє', 'срібні браслети'],
-//   authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua' }],
-//   openGraph: {
-//     title: 'Daisy Jewellery',
-//     description: "Срібні прикраси на будь який смак",
-//     url: 'https://daisy-jewellery.com.ua',
-//     siteName: 'Daisy Jewellery',
-//     images: [
-//       {
-//         url: '/logo_black.png',
-//         width: 800,
-//         height: 600,
-//         alt: 'Магазин срібних прикрас - Daisy Jewellery',
-//       },
-//     ],
-//     locale: 'en_US',
-//     type: 'website',
-//   },
-//   twitter: {
-//     card: 'summary_large_image',
-//     site: '@daisy-jewellery.com.ua',
-//     creator: '@O.P',
-//     title: 'Daisy Jewellery - Магазин срібних прикрас',
-//     description: 'Срібні прикраси на будь який смак',
-//     image: '/logo_black.png',
-//     images: ['/logo_black.png'],
-//   },
-//   icons: {
-//     icon: '/favicon.ico',
-//     shortcut: '/favicon.ico',
-//     apple: '/apple-touch-icon.png',
-//     other: [
-//       {
-//         rel: 'icon',
-//         url: '/favicon-16x16.png',
-//         sizes: '16x16',
-//       },
-//       {
-//         rel: 'icon',
-//         url: '/favicon-32x32.png',
-//         sizes: '32x32',
-//       },
-//       {
-//         rel: 'manifest',
-//         url: '/site.webmanifest',
-//       },
-//     ],
-//   },
-//   manifest: '/site.webmanifest',
-//   robots: {
-//     index: true,
-//     follow: true,
-//     nocache: true,
-//   },
-//   alternates: {
-//     canonical: 'https://daisy-jewellery.com.ua',
-//     languages: {
-//       'uk-UA': 'https://daisy-jewellery.com.ua/uk-UA',
-//     },
-//   },
-// };
 
 export const metadata = {
   metadataBase: new URL('https://daisy-jewellery.com.ua'),
@@ -167,6 +103,23 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        {/* Other head elements can be included here */}
+        {/* Google Analytics Script */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=G-CGM54TDF2N`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-CGM54TDF2N');
+          `}
+        </Script>
+      </head>
       <body className={montserrat.className}>
         <AppRouterCacheProvider>
           <CartProvider>
