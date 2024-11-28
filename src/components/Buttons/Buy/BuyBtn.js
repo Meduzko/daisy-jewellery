@@ -8,7 +8,6 @@ export default function BuyButton({ product }) {
   const handleBtnClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    console.log('BuyButton clicked');
     // onClick?.();
     addItemToBasket(product);
   };

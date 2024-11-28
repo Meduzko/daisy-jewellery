@@ -11,7 +11,6 @@ export default function ProductBuyButton({
 }) {
 
   const handleBtnClick = (event) => {
-    console.log('ProductBuyButton onClick', onClick);
     event.preventDefault();
     event.stopPropagation();
     onClick?.(event);

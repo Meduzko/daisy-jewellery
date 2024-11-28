@@ -36,10 +36,7 @@ export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, p
     const data = await response.json();
   
     if (paginated) {
-      console.log('paginated');
       const hasMore = data?.products?.length === limit;
-      console.log('data?.products?.length', data?.products?.length);
-      console.log('limit', limit);
       return { products: data?.products || [], hasMore };
     }
 
