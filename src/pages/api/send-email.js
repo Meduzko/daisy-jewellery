@@ -29,8 +29,6 @@ export default async function handler(req, res) {
       department,
     } = formData;
 
-    console.log('send-email cartItems', cartItems);
-
     // Set up the Nodemailer transporter using Gmail SMTP
     const transporter = nodemailer.createTransport({
       // service: 'gmail',
