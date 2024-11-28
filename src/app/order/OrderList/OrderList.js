@@ -6,9 +6,11 @@ import { List, ListItem, Divider } from '@mui/material';
 import { CartContext } from '../../../context/CartContext';
 import ProductBuyButton from '../../../components/Buttons/ProductBuy/ProductBuy';
 
+import PaymentForm from '../../../components/Form/Payment/PaymentForm';
+
 import styles from './styles.module.css';
 
-const OrderList = ({ handleSubmit }) => {
+const OrderList = ({ handleSubmit, email }) => {
   const { cartItems, getTotalPrice, getItemSize } = useContext(CartContext);
   const totalPrice = getTotalPrice();
   const fixedPrice = totalPrice.toFixed(2);
@@ -69,6 +71,7 @@ const OrderList = ({ handleSubmit }) => {
 
       <div className={styles.submitButton}>
         <ProductBuyButton type="submit" width='100%' onClick={handleSubmit} />
+        <PaymentForm amount={fixedPrice} description="test" email={email} />
       </div>
     </div>
   );

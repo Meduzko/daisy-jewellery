@@ -81,7 +81,6 @@ export const CartProvider = ({ children }) => {
   };
 
   const getItemSize = item => {
-    console.log(item);
     const res = itemSize?.find((contextItem) => contextItem?.product_id === item?.product_id)?.size;
 
     return res;

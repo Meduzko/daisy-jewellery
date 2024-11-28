@@ -24,6 +24,8 @@ import CitySelect from './CitySelect/CitySelect';
 import OrderList from '../../../app/order/OrderList/OrderList';
 import ProductBuyButton from '../../Buttons/ProductBuy/ProductBuy';
 
+
+
 import styles from './styles.module.css';
 
 const OrderForm = () => {
@@ -302,7 +304,7 @@ const OrderForm = () => {
         )}
       </Box>
 
-      <OrderList handleSubmit={handleSubmit} />
+      <OrderList handleSubmit={handleSubmit} email={formData.email} />
 
       <Dialog
         open={showModal}
