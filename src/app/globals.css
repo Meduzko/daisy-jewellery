@@ -159,3 +159,7 @@ a {
   /* font-size: 36px; */
   letter-spacing: 6px;
 }
+
+.MuiDialog-root {
+  z-index: 3001 !important;
+}

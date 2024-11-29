@@ -4,6 +4,7 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
       const { amount, description, email } = req.body;
+      // const paymentDescription = `Daisy Jewellery, ${firstName} ${lastName} ${department} ${cityName} ${email}`;
 
       // Validate the amount
       if (!amount || isNaN(amount) || Number(amount) <= 0) {
@@ -27,13 +28,13 @@ export default async function handler(req, res) {
         sandbox: '1',
       };
 
-      // Generate data and signature
+      // Generate data and signature - old worked way
       const jsonString = JSON.stringify(params);
       const data = Buffer.from(jsonString).toString('base64');
       const concatString = process.env.LIQPAY_PRIVATE_KEY + data + process.env.LIQPAY_PRIVATE_KEY;
       const sha1Hash = crypto.createHash('sha1').update(concatString).digest();
       const signature = Buffer.from(sha1Hash).toString('base64');
-  
+ 
       // Return data and signature
       res.status(200).json({ data, signature });
     }

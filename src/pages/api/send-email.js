@@ -17,7 +17,7 @@ import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { formData = {}, cartItems, totalPrice } = req.body;
+    const { formData = {}, cartItems, totalPrice, successfulPayment } = req.body;
     const {
       firstName,
       lastName,
@@ -57,6 +57,8 @@ export default async function handler(req, res) {
     )
     .join('');
 
+    const paidText = successfulPayment ? '<strong>Ми отримали оплату, очікуйте доставку</strong>' : `Наш менеджер зв'яжеться з вами найближчим часом, щоб підтвердити деталі замовлення`;
+
     const mailOptions = {
       from: process.env.GMAIL_USER, // sender address
       to: email, // recipient address (send to yourself)
@@ -83,7 +85,7 @@ export default async function handler(req, res) {
         </tbody>
       </table>
       <p>Загальна сума: <strong>${totalPrice}</strong> грн</p>
-      <p>Наш менеджер зв'яжеться з вами найближчим часом, щоб підтвердити деталі замовлення</p>
+      <p>${paidText}</p>
       <ul>
         <li>Населений пункт: ${cityName}</li>
         <li>Відділення Нової Пошти: ${department}</li>
