@@ -73,7 +73,7 @@ export default function Footer() {
               <Link href="/delivery">Доставка та оплата</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/">PRIVACY POLICY</Link>
+              <Link href="/oferta">Публічна оферта</Link>
             </li>
           </ul>
         </div>
