@@ -13,7 +13,7 @@ export default async function Categories() {
     {
       title: 'Сережки',
       src: '/categories/earring.jpg',
-      link: '/category/bracer/page/1'
+      link: '/category/earring/page/1'
     },
     {
       title: 'Кольє',
