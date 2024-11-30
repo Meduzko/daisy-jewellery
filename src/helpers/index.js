@@ -67,6 +67,54 @@ export const getProductMetadata = ({ product, categoryName }) => {
   }
 };
 
+export const generateCategoryMetadata = ({
+  title,
+  description,
+  currentPage,
+  canonicalUrl,
+  categorySlug,
+  keywords
+}) => {
+  const siteName = 'Daisy Jewellery';
+
+  const baseMetaData = {
+    title: `${title} | ${siteName}`,
+    description,
+    alternates: {
+      canonical: canonicalUrl
+    },
+    icons: {
+      other: [
+        { rel: 'next', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage + 1}` },
+      ]
+    },
+    keywords,
+    url: `${process.env.SITE_DOMAIN}/${categorySlug}/1`,
+    openGraph: {
+      title: `${title} | ${siteName}`,
+      description,
+      url: `${process.env.SITE_DOMAIN}/${categorySlug}/1`,
+      siteName,
+      locale: 'uk_UA',
+      type: 'website',
+    }
+  }
+
+  if (currentPage > 1) {
+    return {
+      ...baseMetaData,
+      icons: {
+        other: [
+          { rel: 'prev', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage - 1}` },
+          { rel: 'next', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage + 1}` },
+        ]
+      }
+    }
+  }
+
+  return baseMetaData;
+}
+
 export const categoryMap = {
   ring: process.env.RING_CATEGORY_ID,
   necklace: process.env.NECKLACE_CATEGORY_ID,

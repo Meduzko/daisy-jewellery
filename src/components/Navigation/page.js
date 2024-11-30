@@ -2,36 +2,31 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { getMenuItems } from '../../helpers/menuItems';
 
 import styles from './styles.module.css';
 
-const navList = [
-  { title: 'Каблучки', href: '/category/ring/page/1' },
-  { title: 'Сережки', href: '/category/earring/page/1' },
-  { title: 'Кольє', href: '/category/necklace/page/1' },
-  { title: 'Браслети', href: '/category/bracer/page/1' }
-];
-
 export default function Navigation({ isMobile }) {
   const [active, setActive] = useState('');
+  const navList = getMenuItems();
 
   useEffect(() => {
     const currentPath = window.location.pathname;
-    const navPaths = navList.map(i => i.href);
+    const navPaths = navList.map(i => i.link);
 
     if (active) {
       return;
     }
 
     if (navPaths.includes(currentPath)) {
-      const activeItem = navList.find(i => i.href === currentPath);
+      const activeItem = navList.find(i => i.link === currentPath);
       if (activeItem) {
         setActive(activeItem.title);
       }
     } else {
       setActive('');
     }
-  }, [active]);
+  }, [active, navList]);
 
   if (isMobile) {
     return null;
@@ -50,7 +45,7 @@ export default function Navigation({ isMobile }) {
             key={item.title}
           >
             <Link
-              href={item.href}
+              href={item.link}
               className={styles.navLink}
               onClick={() => onClick(item)}
             >

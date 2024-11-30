@@ -11,7 +11,8 @@ export default function PaginationComponent({ currentPage, hasMore, baseURL }) {
   return (
     <div className={styles.pagination}>
       <Link
-        href={`${baseURL}/page/${prevPage}`}
+        // href={`${baseURL}/page/${prevPage}`}
+        href={`${baseURL}/${prevPage}`}
         {...(currentPage === 1 ? { className: styles.disabled } : {})}
       >
         <NavigateBeforeIcon />
@@ -19,7 +20,8 @@ export default function PaginationComponent({ currentPage, hasMore, baseURL }) {
       </Link>
       <span className={styles.currentPage}>{currentPage}</span>
       <Link
-        href={`${baseURL}/page/${nextPage}`}
+        // href={`${baseURL}/page/${nextPage}`}
+        href={`${baseURL}/${nextPage}`}
         {...(!hasMore ? { className: styles.disabled } : {})}
       >
         <span>Наступна</span>
