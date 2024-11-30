@@ -8,26 +8,22 @@ export default async function Categories() {
     {
       title: 'Каблучки',
       src: '/categories/ring.jpg',
-      link: '/sribni-kabluchky/1'
-      // link: '/category/ring/page/1'
+      link: '/kabluchki/1'
     },
     {
       title: 'Сережки',
       src: '/categories/earring.jpg',
-      link: '/sribni-serezhky/1'
-      // link: '/category/earring/page/1'
+      link: '/serezhky/1'
     },
     {
       title: 'Кольє',
       src: '/categories/neclackle.jpg',
-      link: '/sribni-kolye/1'
-      // link: '/category/necklace/page/1'
+      link: '/kolye/1'
     },
     {
       title: 'Браслети',
       src: '/categories/bracer.jpg',
       link: '/braslety/1'
-      // link: '/category/bracer/page/1'
     }
   ];
 
