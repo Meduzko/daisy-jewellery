@@ -44,7 +44,7 @@ const OrderForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const { cartItems, getTotalPrice, getItemSize } = useContext(CartContext);
-  const orderDescription = `${formData.firstName} ${formData.lastName} ${formData.email} ${formData.department} ${formData.cityName}`;
+  const orderDescription = `Оплата товару через веб-сайт: ${formData.firstName} ${formData.lastName} ${formData.email} ${formData.department} ${formData.cityName}`;
 
   const handleChange = (e, newName, newVal) => {
     const { name, value } = e.target;
