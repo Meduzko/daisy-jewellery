@@ -4,7 +4,7 @@ import BuyButton from '../BuyButton';
 
 import styles from './styles.module.css';
 
-export default async function GalleryItemMobile({ item, baseURL = '/category/ring' }) {
+export default async function GalleryItemMobile({ item, baseURL = '/' }) {
   const {
     code,
     title,

@@ -18,7 +18,7 @@ export async function generateMetadata({ params }) {
   const description = 'Вишукані срібні каблучки від Daisy Jewellery. Швидка доставка по всій Україні! Срібні кольца за найкращою ціною від виробника';
   const currentPage = +params.page_number;
   const categorySlug = 'kabluchki';
-  const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/1`;
+  const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage}`;
   const keywords = 'Срібні каблучки, купити';
 
   const categoryMetadata = generateCategoryMetadata({ title, description, currentPage, canonicalUrl, categorySlug, keywords });

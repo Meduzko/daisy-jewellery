@@ -7,7 +7,7 @@ export async function generateMetadata({ params }) {
   const description = 'Купити срібні кольє Daisy Jewellery. Доставка в найкоротші терміни по Україні! Найкраща ціна на ринку від виробника';
   const currentPage = +params.page_number;
   const categorySlug = 'kolye';
-  const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/1`;
+  const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage}`;
   const keywords = 'Срібні кольє, купити';
 
   const categoryMetadata = generateCategoryMetadata({ title, description, currentPage, canonicalUrl, categorySlug, keywords });

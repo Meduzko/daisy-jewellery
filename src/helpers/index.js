@@ -29,7 +29,14 @@ export const getPaginationData = (paramsPage) => {
   }
 };
 
-const getKeywords = (categoryName, productTitle) => {
+/**
+ * 
+ * @param {string} categoryName 
+ * @param {string} productTitle 
+ * @param {number} code 
+ * @returns product canonical and keywords metadata
+ */
+const getItemMetaData = (categoryName, productTitle, code) => {
   const keywords = {
     ring: `Срібло, Каблучки`,
     earring: `Срібло, Сережки`,
@@ -37,16 +44,34 @@ const getKeywords = (categoryName, productTitle) => {
     bracer: `Срібло, Браслети`,
   }
 
-  return `${keywords[categoryName]}, ${productTitle}`;
+  const canonical = {
+    ring: 'kabluchki/kupyty-sribnu-kabluchku',
+    earring: 'serezhky/kupyty-serezhky-sribni',
+    necklace: 'kolye/kupyty-sribne-kolye',
+    bracer: 'braslety/kupyty-sribnyy-braslet',
+  }
+
+  const keywordsRes = `${keywords[categoryName]}, ${productTitle}`;
+  const canonicalRes = `${process.env.SITE_DOMAIN}/${canonical[categoryName]}/${code}`
+
+  return {
+    canonicalUrl: canonicalRes,
+    keywords: keywordsRes
+  }
 };
+
+/**
+ * Generate product metadata
+ * @param {*} param0 
+ * @returns 
+ */
 
 export const getProductMetadata = ({ product, categoryName }) => {
   const { title, short_description, code } = product;
   const siteName = 'Daisy Jewellery';
-  const keywords = getKeywords(categoryName, title);
+  const { keywords, canonicalUrl } = getItemMetaData(categoryName, title, code);
   const shortDescription = short_description.replace(/<[^>]*>/g, '');
   const description = shortDescription.replace(/&[^;\s]+;/g, '');
-  const canonicalUrl = `${process.env.SITE_DOMAIN}/category/${categoryName}/${code}`;
 
   return {
     title: `${title} | ${siteName}`,
@@ -55,11 +80,11 @@ export const getProductMetadata = ({ product, categoryName }) => {
       canonical: canonicalUrl,
     },
     keywords,
-    url: `${process.env.SITE_DOMAIN}/category/${categoryName}/${code}`,
+    url: canonicalUrl,
     openGraph: {
       title: `${title} | ${siteName}`,
       description,
-      url: `${process.env.SITE_DOMAIN}/category/${categoryName}/${code}`,
+      url: canonicalUrl,
       siteName,
       locale: 'uk_UA',
       type: 'website',
@@ -67,6 +92,11 @@ export const getProductMetadata = ({ product, categoryName }) => {
   }
 };
 
+/**
+ * Generate category page metadata
+ * @param {*} param0 
+ * @returns 
+ */
 export const generateCategoryMetadata = ({
   title,
   description,

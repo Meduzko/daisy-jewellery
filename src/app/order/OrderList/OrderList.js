@@ -132,9 +132,8 @@ const OrderList = ({
                 </picture>
                 </div>
                 <div className={styles.itemDetails}>
-                  <Link href={`/category/ring/${item.id}`}>
-                    <h4 className={styles.itemTitle}>{item.title}</h4>
-                  </Link>
+                  {/* <Link href={`/category/ring/${item.id}`}></Link> */}
+                  <h4 className={styles.itemTitle}>{item.title}</h4>
                   <div className={styles.price}>{`${price} грн`}</div>
                   {size && (
                     <div>{`Розмір: ${size}`}</div>

@@ -25,16 +25,16 @@ export default function Footer() {
           <h3 className={styles.footerCategoryTitle}>Категорії</h3>
           <ul className={styles.footerList}>
             <li className={styles.footerListItem}>
-              <Link href="/category/ring/page/1">Каблучки</Link>
+              <Link href="/kabluchki">Каблучки</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/category/earring/page/1">Сережки</Link>
+              <Link href="/serezhky">Сережки</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/category/necklace/page/1">Кольє</Link>
+              <Link href="/kolye">Кольє</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/category/bracer/page/1">Браслет</Link>
+              <Link href="/braslety">Браслет</Link>
             </li>
           </ul>
         </div>

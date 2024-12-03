@@ -7,7 +7,7 @@ export async function generateMetadata({ params }) {
   const description = 'Срібні сережки Daisy Jewellery. Отримуйте замовлення без затримок по Україні! Ціни, що вас приємно здивують';
   const currentPage = +params.page_number;
   const categorySlug = 'serezhky';
-  const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/1`;
+  const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage}`;
   const keywords = 'Срібні сережки, купити';
 
   const categoryMetadata = generateCategoryMetadata({ title, description, currentPage, canonicalUrl, categorySlug, keywords });

@@ -94,9 +94,7 @@ const CartDrawler = () => {
                           </picture>
                         </div>
                         <div className={styles.itemDetails}>
-                          <Link href={`/category/ring/${item.id}`}>
                             <h4 className={styles.itemTitle}>{item.title}</h4>
-                          </Link>
                           {itemSize && (
                             <div>
                               <span>Розмір: {itemSize}</span>

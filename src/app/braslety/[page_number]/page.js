@@ -7,7 +7,7 @@ export async function generateMetadata({ params }) {
   const description = 'Срібні браслети';
   const currentPage = +params.page_number;
   const categorySlug = 'braslety';
-  const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/1`;
+  const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage}`;
   const keywords = 'Срібні браслети, купити';
 
   const categoryMetadata = generateCategoryMetadata({ title, description, currentPage, canonicalUrl, categorySlug, keywords });

@@ -7,26 +7,26 @@ export default async function sitemap() {
   const earringProducts = await fetchProduct({ categoryId: process.env.EARING_CATEGORY_ID, limit: 100 });
   const bracerProducts = await fetchProduct({ categoryId: process.env.BRACER_CATEGORY_ID, limit: 100 });
 
-  const categories = ['category/ring/page/1', 'category/earring/page/1', 'category/necklace/page/1', 'category/bracer/page/1'];
+  const categories = ['kabluchki', 'serezhky', 'kolye', 'braslety'];
   const staticRoutes = ['', 'about', 'contact', ...categories];
 
   const dynamicRingRoutes = ringProducts.map((ring) => ({
-    url: `${baseUrl}/category/ring/${ring.code}`,
+    url: `${baseUrl}/kabluchki/kupyty-sribnu-kabluchku/${ring.code}`,
     lastModified: new Date().toISOString(),
   }));
 
   const dynamicNecklaceRoutes = necklaceProducts.map((necklace) => ({
-    url: `${baseUrl}/category/necklace/${necklace.code}`,
+    url: `${baseUrl}/serezhky/kupyty-serezhky-sribni/${necklace.code}`,
     lastModified: new Date().toISOString(),
   }));
 
   const dynamicEarringRoutes = earringProducts.map((earring) => ({
-    url: `${baseUrl}/category/earring/${earring.code}`,
+    url: `${baseUrl}/kolye/kupyty-sribne-kolye/${earring.code}`,
     lastModified: new Date().toISOString(),
   }));
 
   const dynamicBracerRoutes = bracerProducts.map((bracer) => ({
-    url: `${baseUrl}/category/bracer/${bracer.code}`,
+    url: `${baseUrl}/braslety/kupyty-sribnyy-braslet/${bracer.code}`,
     lastModified: new Date().toISOString(),
   }));
 

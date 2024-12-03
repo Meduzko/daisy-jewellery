@@ -3,7 +3,7 @@ import Link from "next/link"
 import BuyButton from './BuyButton';
 import styles from './styles.module.css';
 
-export default async function GalleryItem({ item, baseURL = '/category/ring' }) {
+export default async function GalleryItem({ item, baseURL = '/' }) {
   const {
     product_id,
     code,
