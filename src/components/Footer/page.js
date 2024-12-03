@@ -7,12 +7,14 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import styles from './styles.module.css';
+import { getMenuItems } from '../../helpers/menuItems';
 
 const pagesWithoutFooter = ['/order', '/returns', '/payment-success'];
 
 export default function Footer() {
   const pathname = usePathname();
   const isFooterHidden = pagesWithoutFooter.includes(pathname);
+  const menuItems = getMenuItems();
 
   if (isFooterHidden) {
     return null;
@@ -24,18 +26,16 @@ export default function Footer() {
         <div className={`${styles.footerCategories} ${styles.footerCol}`}>
           <h3 className={styles.footerCategoryTitle}>Категорії</h3>
           <ul className={styles.footerList}>
-            <li className={styles.footerListItem}>
-              <Link href="/kabluchki">Каблучки</Link>
-            </li>
-            <li className={styles.footerListItem}>
-              <Link href="/serezhky">Сережки</Link>
-            </li>
-            <li className={styles.footerListItem}>
-              <Link href="/kolye">Кольє</Link>
-            </li>
-            <li className={styles.footerListItem}>
-              <Link href="/braslety">Браслет</Link>
-            </li>
+            {menuItems.map(item => (
+              <li
+                className={styles.footerListItem}
+                key={item.title}
+              >
+                <Link href={item.link}>
+                  {item.title}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div className={`${styles.footerContacts}  ${styles.footerCol}`}>
