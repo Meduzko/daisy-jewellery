@@ -14,13 +14,13 @@ import {
   InputLabel,
   MenuItem,
   FormControl,
-  CircularProgress
+  CircularProgress,
+  FormHelperText
 } from '@mui/material';
 import Select from '@mui/material/Select'
 import { CartContext } from '../../../context/CartContext';
 import DepartmentAutocomplete from './DepartmentAutocomplete/DepartmentAutocomplete';
 import CitySelect from './CitySelect/CitySelect';
-// import OrderList from '../../../order/OrderList/OrderList';
 import OrderList from '../../../app/order/OrderList/OrderList';
 import ProductBuyButton from '../../Buttons/ProductBuy/ProductBuy';
 
@@ -34,6 +34,8 @@ const OrderForm = () => {
     phone: '',
     cityName: '',
     department: '',
+    contact: '',
+    payment: ''
   });
 
   const [statusMessage, setStatusMessage] = useState('');
@@ -42,6 +44,7 @@ const OrderForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const { cartItems, getTotalPrice, getItemSize } = useContext(CartContext);
+  const orderDescription = `${formData.firstName} ${formData.lastName} ${formData.email} ${formData.department} ${formData.cityName}`;
 
   const handleChange = (e, newName, newVal) => {
     const { name, value } = e.target;
@@ -97,7 +100,7 @@ const OrderForm = () => {
 
   const validateForm = () => {
     const errors = {};
-    const { firstName, lastName, email, phone, cityName, department } = formData;
+    const { firstName, lastName, email, phone, cityName, department, contact, payment } = formData;
 
     if (!firstName) errors.firstName = 'Ім\'я є обов\'язковим полем';
     if (!lastName) errors.lastName = 'Прізвище є обов\'язковим полем';
@@ -114,6 +117,10 @@ const OrderForm = () => {
     if (!cityName) errors.cityName = 'Населений пункт є обов\'язковим полем';
     if (!department) errors.department = 'Відділення є обов\'язковим полем';
 
+    if (!contact) errors.contact = 'Спосіб зв\'язку є обов\'язковим полем';
+  
+    if (!payment) errors.payment = 'Метод оплати є обов\'язковим полем';
+
     setFormErrors(errors);
 
     if (Object.keys(errors).length > 0) {
@@ -123,31 +130,17 @@ const OrderForm = () => {
     return true;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setTouchedFields({
-      firstName: true,
-      lastName: true,
-      email: true,
-      phone: true,
-      cityName: true,
-      department: true,
-    });
-
-    if (!validateForm()) {
-      return;
-    }
-
-    setLoading(true)
-
+  const sendOrderEmail = async (paidInfo) => {
     try {
+      setLoading(true);
+
       const orderData = getOrderData();
       const res = await fetch('/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify({ ...orderData, paidInfo }),
       });
 
       const result = await res.json();
@@ -162,6 +155,44 @@ const OrderForm = () => {
       setStatusMessage('Failed to submit order.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e, paidInfo) => {
+    e?.preventDefault();
+    setTouchedFields({
+      firstName: true,
+      lastName: true,
+      email: true,
+      phone: true,
+      cityName: true,
+      department: true,
+      contact: true,
+      payment: true
+    });
+
+    if (!validateForm()) {
+      return;
+    }
+
+    sendOrderEmail(paidInfo);
+  };
+
+  const triggerValidation = (e) => {
+    e?.preventDefault();
+    setTouchedFields({
+      firstName: true,
+      lastName: true,
+      email: true,
+      phone: true,
+      cityName: true,
+      department: true,
+      contact: true,
+      payment: true
+    });
+
+    if (!validateForm()) {
+      return;
     }
   };
 
@@ -254,28 +285,63 @@ const OrderForm = () => {
           )}
         </Grid>
 
+        <Grid container spacing={2} className={styles.formGrid}>
+            <Grid item xs={12}>
+              <Typography className={styles.formTitle} variant="h4">Оплата</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel error={!!formErrors.payment} id="paymentLabel">Оплата</InputLabel>
+                <Select
+                  labelId="paymentLabel"
+                  id="payment"
+                  value={formData.payment}
+                  label="Оплата"
+                  name="payment"
+                  onChange={handleChange}
+                  required
+                  fullWidth
+                  className={styles.contactSelect}
+                >
+                  <MenuItem value='liqPay'>Банківська картка (LiqPay)</MenuItem>
+                  <MenuItem value='deliveryPay'>Оплата при доставці</MenuItem>
+                </Select>
+                {formErrors.payment && (
+                  <FormHelperText id="component-helper-text" error={true}>
+                    {formErrors.payment}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+          </Grid>
+
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography className={styles.formTitle} variant="h4">{`Як з вами зв'язатися?`}</Typography>
           </Grid>
           <Grid item xs={12}>
             <FormControl fullWidth>
-              <InputLabel id="contactLabel">Комунікація</InputLabel>
-                <Select
-                  labelId="contactLabel"
-                  id="contact"
-                  value={formData.contact}
-                  label="Комунікація"
-                  name="contact"
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  className={styles.contactSelect}
-                >
-                  <MenuItem value={'Telegram'}>Telegram</MenuItem>
-                  <MenuItem value={'Viber'}>Viber</MenuItem>
-                  <MenuItem value={'WatsUp'}>WatsUp</MenuItem>
-                </Select>
+              <InputLabel error={!!formErrors.contact} id="contactLabel">{`Спосіб зв'язку`}</InputLabel>
+              <Select
+                labelId="contactLabel"
+                id="contact"
+                value={formData.contact}
+                label="Спосіб зв'язку"
+                name="contact"
+                onChange={handleChange}
+                required
+                fullWidth
+                className={styles.contactSelect}
+              >
+                <MenuItem value={'Telegram'}>Telegram</MenuItem>
+                <MenuItem value={'Viber'}>Viber</MenuItem>
+                <MenuItem value={'WatsUp'}>WatsUp</MenuItem>
+              </Select>
+              {formErrors.contact && (
+                <FormHelperText id="component-helper-text" error={true}>
+                  {formErrors.contact}
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
 
@@ -302,7 +368,14 @@ const OrderForm = () => {
         )}
       </Box>
 
-      <OrderList handleSubmit={handleSubmit} />
+      <OrderList
+        handleSubmit={handleSubmit}
+        email={formData.email}
+        payment={formData.payment}
+        orderDescription={orderDescription}
+        triggerValidation={triggerValidation}
+        validateForm={validateForm}
+      />
 
       <Dialog
         open={showModal}

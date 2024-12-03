@@ -17,7 +17,7 @@ import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { formData = {}, cartItems, totalPrice } = req.body;
+    const { formData = {}, cartItems, totalPrice, paidInfo } = req.body;
     const {
       firstName,
       lastName,
@@ -57,11 +57,14 @@ export default async function handler(req, res) {
     )
     .join('');
 
+    const paidText = paidInfo?.order_id ? `<strong>Ми отримали оплату, очікуйте доставку, номер замовлення - ${paidInfo.order_id} </strong>` : `Наш менеджер зв'яжеться з вами найближчим часом, щоб підтвердити деталі замовлення`;
+    const mailTitle = paidInfo?.order_id ? 'Замовлення успішно оплачено' : 'Замовлення прийнято';
+
     const mailOptions = {
       from: process.env.GMAIL_USER, // sender address
       to: email, // recipient address (send to yourself)
       cc: 'daisyjewellery.info@gmail.com',
-      subject: 'Замовлення прийнято', // Subject line
+      subject: mailTitle, // Subject line
       html: `
       <h2>Шановний(-а) ${firstName} ${lastName}</h2>
       <p>Дякуємо за ваше замовлення в інтернет-магазині Daisy Jewellery!</p>
@@ -83,7 +86,7 @@ export default async function handler(req, res) {
         </tbody>
       </table>
       <p>Загальна сума: <strong>${totalPrice}</strong> грн</p>
-      <p>Наш менеджер зв'яжеться з вами найближчим часом, щоб підтвердити деталі замовлення</p>
+      <p>${paidText}</p>
       <ul>
         <li>Населений пункт: ${cityName}</li>
         <li>Відділення Нової Пошти: ${department}</li>

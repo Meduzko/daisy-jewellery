@@ -8,7 +8,7 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import styles from './styles.module.css';
 
-const pagesWithoutFooter = ['/order', '/returns'];
+const pagesWithoutFooter = ['/order', '/returns', '/payment-success'];
 
 export default function Footer() {
   const pathname = usePathname();
