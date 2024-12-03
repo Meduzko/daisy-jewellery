@@ -1,0 +1,48 @@
+import { fetchProduct } from '../../../actions/fetchProduct';
+import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../helpers';
+import Gallery from '../../../components/Gallery';
+
+// TODO
+// export async function generateStaticParams() {
+//   // const posts = await fetch('https://.../posts').then((res) => res.json());
+//   const categoryId = process.env.RING_CATEGORY_ID;
+//   const products = await fetchAllProducts({ categoryId });
+
+//   return products.map((product) => ({
+//     code: product.code,
+//   }))
+// }
+
+export async function generateMetadata({ params }) {
+  const title = 'Каблучки срібні | Купити срібні кільця Daisy Jewellery';
+  const description = 'Вишукані срібні каблучки від Daisy Jewellery. Швидка доставка по всій Україні! Срібні кольца за найкращою ціною від виробника';
+  const currentPage = +params.page_number;
+  const categorySlug = 'kabluchki';
+  const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/1`;
+  const keywords = 'Срібні каблучки, купити';
+
+  const categoryMetadata = generateCategoryMetadata({ title, description, currentPage, canonicalUrl, categorySlug, keywords });
+
+  return categoryMetadata;
+}
+
+export default async function Page({ params }) {
+  const baseURL = '/kabluchki';
+  const itemBaseURL = `${baseURL}/kupyty-sribnu-kabluchku`;
+  const categoryId = process.env.RING_CATEGORY_ID;
+  const { currentPage, limit, offset } = getPaginationData(params.page_number);
+  const paginated = true;
+  const { products, hasMore } = await fetchProduct({ offset, limit, categoryId, paginated });
+  const device = getDeviceType();
+  const isMobile = device !== 'desktop';
+
+  return <Gallery
+    items={products}
+    hasMore={hasMore}
+    currentPage={currentPage}
+    baseURL={baseURL}
+    itemBaseURL={itemBaseURL}
+    withPagination={paginated}
+    isMobile={isMobile}
+  />;
+}
