@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req, res) {
   try {
@@ -12,7 +11,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Invalid amount' });
       }
 
-      const orderId = uuidv4();
+      const orderId = Math.floor(100000 + Math.random() * 900000);
   
       // Payment parameters
       const params = {
