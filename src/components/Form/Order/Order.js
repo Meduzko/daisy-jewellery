@@ -44,6 +44,7 @@ const OrderForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const { cartItems, getTotalPrice, getItemSize } = useContext(CartContext);
+  const orderDescription = `${formData.firstName} ${formData.lastName} ${formData.email} ${formData.department} ${formData.cityName}`;
 
   const handleChange = (e, newName, newVal) => {
     const { name, value } = e.target;
@@ -129,7 +130,7 @@ const OrderForm = () => {
     return true;
   };
 
-  const sendOrderEmail = async (paid) => {
+  const sendOrderEmail = async (paidInfo) => {
     try {
       setLoading(true);
 
@@ -139,7 +140,7 @@ const OrderForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...orderData, successfulPayment: paid }),
+        body: JSON.stringify({ ...orderData, paidInfo }),
       });
 
       const result = await res.json();
@@ -157,7 +158,7 @@ const OrderForm = () => {
     }
   };
 
-  const handleSubmit = async (e, paid) => {
+  const handleSubmit = async (e, paidInfo) => {
     e?.preventDefault();
     setTouchedFields({
       firstName: true,
@@ -174,7 +175,7 @@ const OrderForm = () => {
       return;
     }
 
-    sendOrderEmail(paid);
+    sendOrderEmail(paidInfo);
   };
 
   const triggerValidation = (e) => {
@@ -194,50 +195,6 @@ const OrderForm = () => {
       return;
     }
   };
-
-  // const handleSubmit = async (e) => {
-  //   e?.preventDefault();
-  //   setTouchedFields({
-  //     firstName: true,
-  //     lastName: true,
-  //     email: true,
-  //     phone: true,
-  //     cityName: true,
-  //     department: true,
-  //   });
-
-  //   if (!validateForm()) {
-  //     return;
-  //   }
-
-  //   setLoading(true);
-
-  //   try {
-  //     const orderData = getOrderData();
-  //     const res = await fetch('/api/send-email', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(orderData),
-  //     });
-
-  //     // await sendOrder();
-
-  //     const result = await res.json();
-  //     if (res.status === 200) {
-  //       // setStatusMessage('Order submitted and email sent!');
-  //       setShowModal(true);
-  //     } else {
-  //       setStatusMessage('Error' );
-  //     }
-  //   } catch (error) {
-  //     console.error('Error sending email:', error);
-  //     setStatusMessage('Failed to submit order.');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -364,7 +321,7 @@ const OrderForm = () => {
           </Grid>
           <Grid item xs={12}>
             <FormControl fullWidth>
-              <InputLabel error={!!formErrors.contact} id="contactLabel">Спосіб зв'язку</InputLabel>
+              <InputLabel error={!!formErrors.contact} id="contactLabel">{`Спосіб зв'язку`}</InputLabel>
               <Select
                 labelId="contactLabel"
                 id="contact"
@@ -415,6 +372,7 @@ const OrderForm = () => {
         handleSubmit={handleSubmit}
         email={formData.email}
         payment={formData.payment}
+        orderDescription={orderDescription}
         triggerValidation={triggerValidation}
         validateForm={validateForm}
       />

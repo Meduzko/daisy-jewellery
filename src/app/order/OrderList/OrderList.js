@@ -8,7 +8,14 @@ import ProductBuyButton from '../../../components/Buttons/ProductBuy/ProductBuy'
 
 import styles from './styles.module.css';
 
-const OrderList = ({ handleSubmit, email, payment, triggerValidation, validateForm }) => {
+const OrderList = ({
+  handleSubmit,
+  email,
+  payment,
+  orderDescription,
+  triggerValidation,
+  validateForm
+}) => {
   const { cartItems, getTotalPrice, getItemSize } = useContext(CartContext);
   const totalPrice = getTotalPrice();
   const fixedPrice = totalPrice.toFixed(2);
@@ -45,7 +52,7 @@ const OrderList = ({ handleSubmit, email, payment, triggerValidation, validateFo
       const response = await fetch('/api/create-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: fixedPrice, description: 'Test', email }),
+        body: JSON.stringify({ amount: fixedPrice, description: orderDescription, email }),
       });
 
       const result = await response.json();
@@ -68,8 +75,8 @@ const OrderList = ({ handleSubmit, email, payment, triggerValidation, validateFo
           })
             .on('liqpay.callback', function (data) {
               console.log(data);
-              const success = data.result === 'ok';
-              handleSubmit(null, success);
+              // const success = data.result === 'ok';
+              handleSubmit(null, data);
               // Handle payment status
             })
             .on('liqpay.ready', function (data) {

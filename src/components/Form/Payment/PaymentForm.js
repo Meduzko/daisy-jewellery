@@ -9,12 +9,11 @@ export default function PaymentForm({ amount, description, email, handleSubmit }
     const init = async () => {
       try {
         widgetRef.current = true;
-        console.log('PAYMENT FORM amount', amount);
         // Request data and signature from the API
         const response = await fetch('/api/create-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount, description, email }), // TODO: add description.
+          body: JSON.stringify({ amount, description, email })
         });
   
         const result = await response.json();
@@ -34,10 +33,8 @@ export default function PaymentForm({ amount, description, email, handleSubmit }
               mode: 'embed', // Use 'popup' for popup mode
               language: 'ua',
             })
-              .on('liqpay.callback', function (data, ...rest) {
-                console.log(rest);
-                console.log('Payment Status:', data.status);
-                handleSubmit();
+              .on('liqpay.callback', function (data) {
+                handleSubmit(null, data);
                 // Handle payment status
               })
               .on('liqpay.ready', function (data) {
@@ -50,11 +47,11 @@ export default function PaymentForm({ amount, description, email, handleSubmit }
           document.body.appendChild(script);
         } else {
           console.error('Error fetching payment data:', result.error);
-          alert('Error initiating payment: ' + result.error);
+          alert('Сталась помилка ініціалізації платежу: ' + result.error);
         }
       } catch (error) {
         console.error('Error initiating payment:', error);
-        alert('Error initiating payment. Please try again.');
+        alert('Сталась помилка ініціалізації платежу. Спробуйте ще раз.');
       }
     };
 

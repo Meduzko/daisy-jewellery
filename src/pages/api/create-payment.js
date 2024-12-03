@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req, res) {
   try {
@@ -10,6 +11,8 @@ export default async function handler(req, res) {
       if (!amount || isNaN(amount) || Number(amount) <= 0) {
         return res.status(400).json({ message: 'Invalid amount' });
       }
+
+      const orderId = uuidv4();
   
       // Payment parameters
       const params = {
@@ -19,13 +22,13 @@ export default async function handler(req, res) {
         amount: amount.toString(), // Ensure amount is a string
         currency: 'UAH',
         description: description || 'Payment Description',
-        order_id: `order_id_${Date.now()}`,
-        result_url: 'https://yourdomain.com/payment-success',
-        server_url: 'https://yourdomain.com/api/payment-callback',
+        order_id: orderId,
+        result_url: `${process.env.SITE_DOMAIN}/order`,
+        // server_url: 'https://yourdomain.com/api/payment-callback',
         // Additional custom parameters
         info: JSON.stringify({ email }),
         // Uncomment the following line for sandbox mode
-        sandbox: '1',
+        // sandbox: '1',
       };
 
       // Generate data and signature - old worked way
