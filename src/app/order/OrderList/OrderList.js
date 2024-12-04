@@ -107,6 +107,7 @@ const OrderList = ({
 
   const handleSubmitClick = (e) => {
     const isFormValid = validateForm();
+    console.log('handleSubmitClick HERE');
 
     if (paymentByCard) {
       if (isFormValid) {
