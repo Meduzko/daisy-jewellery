@@ -3,7 +3,7 @@ import crypto from 'crypto';
 export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
-      const { amount, description, email } = req.body;
+      const { amount, description, email, info } = req.body;
       // const paymentDescription = `Daisy Jewellery, ${firstName} ${lastName} ${department} ${cityName} ${email}`;
 
       // Validate the amount
@@ -25,7 +25,9 @@ export default async function handler(req, res) {
         result_url: `${process.env.SITE_DOMAIN}/order`,
         // server_url: 'https://yourdomain.com/api/payment-callback',
         // Additional custom parameters
-        info: JSON.stringify({ email }),
+        // info: JSON.stringify({ email }),
+        info: info,
+        paytypes: 'apay,gpay,card,privat24,invoice,qr'
         // Uncomment the following line for sandbox mode
         // sandbox: '1',
       };

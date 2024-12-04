@@ -57,10 +57,10 @@ const OrderList = ({
         body: JSON.stringify({
           amount: fixedPrice,
           description: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`,
-          email
+          email,
           // sender_first_name: firstName,
           // sender_last_name: lastName,
-          // info: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`
+          info: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`
         }),
       });
 
@@ -80,13 +80,12 @@ const OrderList = ({
             embedTo: '#liqpay_checkout',
             // mode: 'embed', // Use 'popup' for popup mode
             mode: 'popup', // Use 'popup' for popup mode
-            language: 'ua',
-            paytypes: 'apay,gpay,card,privat24,invoice,qr'
+            language: 'ua'
           })
             .on('liqpay.callback', function (data) {
               console.log('liqpay.callback', data);
               handleSubmit(null, data);
-            })
+            });
             // .on('liqpay.ready', function (data) {
             //   // Widget is ready
             // })
@@ -107,7 +106,7 @@ const OrderList = ({
 
   const handleSubmitClick = (e) => {
     const isFormValid = validateForm();
-    console.log('handleSubmitClick HERE');
+    console.log('handleSubmitClick HERE UPDATED!');
 
     if (paymentByCard) {
       if (isFormValid) {
