@@ -9,9 +9,10 @@ import styles from './styles.module.css';
 
 const OrderList = ({
   handleSubmit,
-  email,
-  payment,
-  phone,
+  // email,
+  // payment,
+  // phone,
+  formData,
   orderDescription,
   triggerValidation,
   validateForm
@@ -19,6 +20,7 @@ const OrderList = ({
   const { cartItems, getTotalPrice, getItemSize } = useContext(CartContext);
   const totalPrice = getTotalPrice();
   const fixedPrice = totalPrice.toFixed(2);
+  const { email, payment, phone } = formData;
   const paymentByCard = payment === 'liqPay';
 
   const widgetRef = useRef();
@@ -58,6 +60,7 @@ const OrderList = ({
           amount: fixedPrice,
           description: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`,
           email,
+          formData: formData,
           // sender_first_name: firstName,
           // sender_last_name: lastName,
           info: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`
@@ -78,8 +81,8 @@ const OrderList = ({
             data,
             signature,
             embedTo: '#liqpay_checkout',
-            // mode: 'embed', // Use 'popup' for popup mode
-            mode: 'popup', // Use 'popup' for popup mode
+            mode: 'embed', // Use 'popup' for popup mode
+            // mode: 'popup', // Use 'popup' for popup mode
             language: 'ua'
           })
             .on('liqpay.callback', function (data) {

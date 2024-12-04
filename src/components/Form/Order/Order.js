@@ -304,6 +304,7 @@ const OrderForm = () => {
                   className={styles.contactSelect}
                 >
                   {/* <MenuItem value='liqPay'>Банківська картка (LiqPay)</MenuItem> */}
+                  <MenuItem value='liqPay'>LiqPay - тестовий режим, оплата лише по доставці</MenuItem>
                   <MenuItem value='deliveryPay'>Оплата при доставці</MenuItem>
                 </Select>
                 {formErrors.payment && (
@@ -375,7 +376,8 @@ const OrderForm = () => {
         orderDescription={orderDescription}
         triggerValidation={triggerValidation}
         validateForm={validateForm}
-        {...formData}
+        formData={formData}
+        // {...formData}
       />
 
       <Dialog

@@ -3,7 +3,7 @@ import crypto from 'crypto';
 export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
-      const { amount, description, email, info } = req.body;
+      const { amount, description, email, info, formData } = req.body;
       // const paymentDescription = `Daisy Jewellery, ${firstName} ${lastName} ${department} ${cityName} ${email}`;
 
       // Validate the amount
@@ -11,8 +11,10 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Invalid amount' });
       }
 
+      console.log('/create-payment/ formData', formData);
+
       const orderId = Math.floor(100000 + Math.random() * 900000);
-  
+      // NEXT_PUBLIC_BASE_URL
       // Payment parameters
       const params = {
         public_key: process.env.LIQPAY_PUBLIC_KEY,
@@ -24,6 +26,9 @@ export default async function handler(req, res) {
         order_id: orderId,
         result_url: `${process.env.SITE_DOMAIN}/`,
         server_url: `${process.env.SITE_DOMAIN}/api/payment-callback`,
+        // localhost
+        // result_url: `${process.env.NEXT_PUBLIC_BASE_URL}/`,
+        // server_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment-callback`,
         // Additional custom parameters
         // info: JSON.stringify({ email }),
         info: info,
