@@ -54,16 +54,7 @@ const OrderList = ({
     });
 
     return {
-      formData: {
-        firstName,
-        lastName,
-        email,
-        phone,
-        contact,
-        comments,
-        cityName,
-        department
-      },
+      formData,
       cartItems: cartItemsWithSize,
       totalPrice
     };
