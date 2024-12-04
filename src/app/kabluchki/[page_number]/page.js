@@ -1,17 +1,32 @@
 import { fetchProduct } from '../../../actions/fetchProduct';
+// import { fetchAllProducts } from '../../../actions/fetchAllProducts';
 import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../helpers';
 import Gallery from '../../../components/Gallery';
 
 // TODO
-// export async function generateStaticParams() {
-//   // const posts = await fetch('https://.../posts').then((res) => res.json());
-//   const categoryId = process.env.RING_CATEGORY_ID;
-//   const products = await fetchAllProducts({ categoryId });
+export async function generateStaticParams() {
+  // const posts = await fetch('https://.../posts').then((res) => res.json());
+  // const categoryId = process.env.RING_CATEGORY_ID;
+  // const products = await fetchAllProducts({ categoryId });
 
-//   return products.map((product) => ({
-//     code: product.code,
-//   }))
-// }
+  // return products.map((product) => ({
+  //   page_number: product.code,
+  // }))
+
+  const staticPages = [
+    {
+      page_number: '1',
+    },
+    {
+      page_number: '2',
+    },
+    {
+      page_number: '3',
+    }
+  ]
+
+  return staticPages;
+}
 
 export async function generateMetadata({ params }) {
   const title = 'Каблучки срібні | Купити срібні кільця Daisy Jewellery';

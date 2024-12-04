@@ -2,6 +2,22 @@ import { fetchProduct } from '../../../actions/fetchProduct';
 import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../helpers';
 import Gallery from '../../../components/Gallery';
 
+export async function generateStaticParams() {
+  const staticPages = [
+    {
+      page_number: '1',
+    },
+    {
+      page_number: '2',
+    },
+    {
+      page_number: '3',
+    }
+  ]
+
+  return staticPages;
+}
+
 export async function generateMetadata({ params }) {
   const title = 'Срібні сережки | Купити срібні кульчики Daisy Jewellery';
   const description = 'Срібні сережки Daisy Jewellery. Отримуйте замовлення без затримок по Україні! Ціни, що вас приємно здивують';
