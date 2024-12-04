@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   try {
     const { data, signature } = req.body;
     // const private_key = process.env.LIQPAY_PRIVATE_KEY;
-    console.log('req.body payment-callback', req.body);
+    // console.log('req.body payment-callback', req.body);
     console.log('req.body.data payment-callback', data);
   
       // Verify the signature
@@ -29,6 +29,28 @@ export default async function handler(req, res) {
   
       // Update payment status in your database
       // For demonstration, we'll assume you have a function updatePaymentStatus(order_id, status)
+
+
+    const privateKey = process.env.LIQPAY_PRIVATE_KEY;
+    // const data = req.body.data;
+    // const receivedSignature = req.body.signature;
+
+    // Generate signature
+    const hash = crypto.createHash('sha1');
+    hash.update(privateKey + data + privateKey);
+    const generatedSignature = hash.digest('base64');
+
+    // Compare signatures
+    if (generatedSignature === signature) {
+      // Signature is valid
+      const decodedData = JSON.parse(Buffer.from(data, 'base64').toString('utf-8'));
+      // Process payment
+      console.log(decodedData);
+    } else {
+      // Invalid signature
+      // Handle error
+      console.log('something wrong during generatedSignature === signature');
+    }
   
     try {
       // await updatePaymentStatus(order_id, status);
