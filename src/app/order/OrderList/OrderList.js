@@ -30,20 +30,40 @@ const OrderList = ({
   const getOrderData = () => {
     const totalPrice = getTotalPrice();
     const cartItemsWithSize = cartItems.map(item => {
+      const { code, sku, title, short_description, price } = item;
       const size = getItemSize(item);
 
       if (size) {
         return {
-          ...item,
+          code,
+          sku,
+          title,
+          short_description,
+          price,
           size
         }
       }
 
-      return item;
+      return {
+        code,
+        sku,
+        title,
+        short_description,
+        price
+      };
     });
 
     return {
-      formData,
+      formData: {
+        firstName,
+        lastName,
+        email,
+        phone,
+        contact,
+        comments,
+        cityName,
+        department
+      },
       cartItems: cartItemsWithSize,
       totalPrice
     };
