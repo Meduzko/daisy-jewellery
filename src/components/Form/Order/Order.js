@@ -303,8 +303,7 @@ const OrderForm = () => {
                   fullWidth
                   className={styles.contactSelect}
                 >
-                  {/* <MenuItem value='liqPay'>Банківська картка (LiqPay)</MenuItem> */}
-                  <MenuItem value='liqPay'>LiqPay - тестовий режим, оплата лише по доставці</MenuItem>
+                  <MenuItem value='liqPay'>Банківська картка (LiqPay)</MenuItem>
                   <MenuItem value='deliveryPay'>Оплата при доставці</MenuItem>
                 </Select>
                 {formErrors.payment && (
@@ -372,13 +371,10 @@ const OrderForm = () => {
       <OrderList
         handleSubmit={handleSubmit}
         setShowModal={setShowModal}
-        // email={formData.email}
-        // payment={formData.payment}
         orderDescription={orderDescription}
         triggerValidation={triggerValidation}
         validateForm={validateForm}
         formData={formData}
-        // {...formData}
       />
 
       <Dialog

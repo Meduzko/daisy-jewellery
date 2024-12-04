@@ -3,15 +3,13 @@ import crypto from 'crypto';
 export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
-      const { amount, description, email, info, orderData } = req.body;
+      const { amount, description, orderData } = req.body;
       // const paymentDescription = `Daisy Jewellery, ${firstName} ${lastName} ${department} ${cityName} ${email}`;
 
       // Validate the amount
       if (!amount || isNaN(amount) || Number(amount) <= 0) {
         return res.status(400).json({ message: 'Invalid amount' });
       }
-
-      console.log('/create-payment/ orderData', orderData);
 
       const orderId = Math.floor(100000 + Math.random() * 900000);
       // NEXT_PUBLIC_BASE_URL
@@ -34,7 +32,7 @@ export default async function handler(req, res) {
         info: JSON.stringify(orderData),
         paytypes: 'apay,gpay,card,privat24,invoice,qr',
         // Uncomment the following line for sandbox mode
-        sandbox: '1'
+        // sandbox: '1'
       };
 
       // Generate data and signature - old worked way

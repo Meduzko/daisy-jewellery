@@ -29,10 +29,6 @@ export default async function handler(req, res) {
       department,
     } = formData;
 
-    console.log('send-email begin formData', formData);
-    console.log('send-email begin cartItems', cartItems);
-    console.log('send-email begin paidInfo', paidInfo);
-
     // Set up the Nodemailer transporter using Gmail SMTP
     const transporter = nodemailer.createTransport({
       // service: 'gmail',
@@ -60,9 +56,6 @@ export default async function handler(req, res) {
       `
     )
     .join('');
-
-    console.log('itemsDetails', itemsDetails);
-    console.log('paidInfo', paidInfo);
 
     const paidText = paidInfo?.order_id ? `<strong>Ми отримали оплату, очікуйте доставку, номер замовлення - ${paidInfo.order_id} </strong>` : `Наш менеджер зв'яжеться з вами найближчим часом, щоб підтвердити деталі замовлення`;
     const mailTitle = paidInfo?.order_id ? 'Замовлення успішно оплачено' : 'Замовлення прийнято';

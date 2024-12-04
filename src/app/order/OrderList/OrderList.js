@@ -10,9 +10,6 @@ import styles from './styles.module.css';
 const OrderList = ({
   handleSubmit,
   setShowModal,
-  // email,
-  // payment,
-  // phone,
   formData,
   orderDescription,
   triggerValidation,
@@ -114,14 +111,12 @@ const OrderList = ({
             data,
             signature,
             embedTo: '#liqpay_checkout',
-            mode: 'embed', // Use 'popup' for popup mode
-            // mode: 'popup', // Use 'popup' for popup mode
+            // mode: 'embed', // Use 'popup' for popup mode
+            mode: 'popup', // Use 'popup' for popup mode
             language: 'ua'
           })
             .on('liqpay.callback', function (data) {
-              console.log('liqpay.callback', data);
               setShowModal(true);
-              // handleSubmit(null, data);
             });
             // .on('liqpay.ready', function (data) {
             //   // Widget is ready
@@ -143,7 +138,6 @@ const OrderList = ({
 
   const handleSubmitClick = (e) => {
     const isFormValid = validateForm();
-    console.log('handleSubmitClick HERE UPDATED!');
 
     if (paymentByCard) {
       if (isFormValid) {

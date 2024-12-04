@@ -1,39 +1,9 @@
-// pages/api/liqpay-callback.js
-
 import crypto from 'crypto';
 
 export default async function handler(req, res) {
   try {
     const { data, signature } = req.body;
-    // const private_key = process.env.LIQPAY_PRIVATE_KEY;
-    // console.log('req.body payment-callback', req.body);
-    console.log('req.body.data payment-callback', data);
-  
-      // Verify the signature
-    // const expectedSignature = crypto
-    //   .createHash('sha1')
-    //   .update(private_key + data + private_key)
-    //   .digest('base64');
-  
-    // if (signature !== expectedSignature) {
-    //   res.status(400).json({ message: 'Invalid signature' });
-    //   return;
-    // }
-  
-    // // Decode and parse the data
-    // const decodedData = Buffer.from(data, 'base64').toString('utf-8');
-    // const paymentInfo = JSON.parse(decodedData);
-  
-    // // Extract necessary information
-    // const { status, order_id, amount } = paymentInfo;
-  
-      // Update payment status in your database
-      // For demonstration, we'll assume you have a function updatePaymentStatus(order_id, status)
-
-
     const privateKey = process.env.LIQPAY_PRIVATE_KEY;
-    // const data = req.body.data;
-    // const receivedSignature = req.body.signature;
 
     // Generate signature
     const hash = crypto.createHash('sha1');
@@ -45,7 +15,7 @@ export default async function handler(req, res) {
       // Signature is valid
       const decodedData = JSON.parse(Buffer.from(data, 'base64').toString('utf-8'));
       // Process payment
-      console.log(decodedData);
+      console.log('decodedData', decodedData);
 
       if (decodedData) {
         const decodedDataInfo = JSON.parse(decodedData.info);
@@ -60,26 +30,10 @@ export default async function handler(req, res) {
           body: JSON.stringify({ ...decodedDataInfo, paidInfo: { order_id: decodedData.order_id } }),
         });
       }
-
-      // const response = await fetch(`${process.env.NEXTAUTH_URL}/api/send-email`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(bodyParams),
-      // });
-      // TODO
-      // const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-email`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ ...orderData, paidInfo }),
-      // });
     } else {
       // Invalid signature
       // Handle error
-      console.log('something wrong during generatedSignature === signature');
+      console.error('something wrong during generatedSignature === signature');
     }
   
     try {

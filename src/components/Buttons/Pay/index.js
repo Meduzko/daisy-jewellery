@@ -4,7 +4,6 @@ import ProductBuyButton from '../ProductBuy/ProductBuy';
 const PayButton = ({ amount, userData, orderID }) => {
   const handleClick = async () => {
     try {
-      console.log('PayButton userData', userData);
       const response = await fetch('/api/liqpayUrl', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
