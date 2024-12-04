@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import { List, ListItem, Divider } from '@mui/material';
 import { CartContext } from '../../../context/CartContext';
 import ProductBuyButton from '../../../components/Buttons/ProductBuy/ProductBuy';
@@ -12,6 +11,9 @@ const OrderList = ({
   handleSubmit,
   email,
   payment,
+  firstName,
+  lastName,
+  phone,
   orderDescription,
   triggerValidation,
   validateForm
@@ -47,12 +49,21 @@ const OrderList = ({
       if (widgetRef.current) return;
 
       widgetRef.current = true;
+
+      const orderedItemsInfo = cartItems.map(item => `Назва: ${item.title}, код: ${item.code}, розмір: ${item.size || ''}, ціна: ${item.price}`);
   
       // Request data and signature from the API
       const response = await fetch('/api/create-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: fixedPrice, description: orderDescription, email }),
+        body: JSON.stringify({
+          amount: fixedPrice,
+          description: orderDescription,
+          email,
+          sender_first_name: firstName,
+          sender_last_name: lastName,
+          info: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`
+        }),
       });
 
       const result = await response.json();
@@ -74,17 +85,14 @@ const OrderList = ({
             language: 'ua',
           })
             .on('liqpay.callback', function (data) {
-              console.log(data);
-              // const success = data.result === 'ok';
               handleSubmit(null, data);
-              // Handle payment status
             })
-            .on('liqpay.ready', function (data) {
-              // Widget is ready
-            })
-            .on('liqpay.close', function (data) {
-              // Widget is closed
-            });
+            // .on('liqpay.ready', function (data) {
+            //   // Widget is ready
+            // })
+            // .on('liqpay.close', function (data) {
+            //   // Widget is closed
+            // });
         };
         document.body.appendChild(script);
       } else {

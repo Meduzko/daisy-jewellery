@@ -370,11 +370,12 @@ const OrderForm = () => {
 
       <OrderList
         handleSubmit={handleSubmit}
-        email={formData.email}
-        payment={formData.payment}
+        // email={formData.email}
+        // payment={formData.payment}
         orderDescription={orderDescription}
         triggerValidation={triggerValidation}
         validateForm={validateForm}
+        {...formData}
       />
 
       <Dialog
