@@ -17,9 +17,6 @@ import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    console.log('send-email begin formData', formData);
-    console.log('send-email begin cartItems', cartItems);
-    console.log('send-email begin paidInfo', paidInfo);
     const { formData = {}, cartItems, totalPrice, paidInfo } = req.body;
     const {
       firstName,
@@ -31,6 +28,10 @@ export default async function handler(req, res) {
       cityName,
       department,
     } = formData;
+
+    console.log('send-email begin formData', formData);
+    console.log('send-email begin cartItems', cartItems);
+    console.log('send-email begin paidInfo', paidInfo);
 
     // Set up the Nodemailer transporter using Gmail SMTP
     const transporter = nodemailer.createTransport({

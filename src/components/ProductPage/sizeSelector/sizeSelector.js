@@ -11,8 +11,6 @@ const SizeSelector = ({ item, sizes }) => {
   }, [sizes]);
   const [selectedSize, setSelectedSize] = useState(sortedSizes[0]);
 
-  console.log('itemSize store', itemSize);
-
   useEffect(() => {
     addToItemSize(item, sortedSizes[0]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
