@@ -5,7 +5,9 @@
 export default async function handler(req, res) {
   try {
     const { data, signature } = req.body;
-    const private_key = process.env.LIQPAY_PRIVATE_KEY;
+    // const private_key = process.env.LIQPAY_PRIVATE_KEY;
+    console.log('req.body payment-callback', req.body);
+    console.log('req.body.data payment-callback', data);
   
       // Verify the signature
     // const expectedSignature = crypto
@@ -31,7 +33,7 @@ export default async function handler(req, res) {
     try {
       // await updatePaymentStatus(order_id, status);
       res.status(200).json({ message: 'Payment status updated' });
-      console.log('AFTER PAYMENT REDIRECT SUCCESSFULL status', status);
+      console.log('AFTER PAYMENT REDIRECT SUCCESSFULL status');
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Failed to update payment status' });
