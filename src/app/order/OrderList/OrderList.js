@@ -9,6 +9,7 @@ import styles from './styles.module.css';
 
 const OrderList = ({
   handleSubmit,
+  setShowModal,
   // email,
   // payment,
   // phone,
@@ -32,25 +33,23 @@ const OrderList = ({
     const cartItemsWithSize = cartItems.map(item => {
       const { code, sku, title, short_description, price } = item;
       const size = getItemSize(item);
-
-      if (size) {
-        return {
-          code,
-          sku,
-          title,
-          short_description,
-          price,
-          size
-        }
-      }
-
-      return {
+      const baseItem = {
         code,
         sku,
         title,
         short_description,
-        price
-      };
+        price,
+        image_path
+      }
+
+      if (size) {
+        return {
+          ...baseItem,
+          size
+        }
+      }
+
+      return baseItem;
     });
 
     return {
@@ -121,7 +120,8 @@ const OrderList = ({
           })
             .on('liqpay.callback', function (data) {
               console.log('liqpay.callback', data);
-              handleSubmit(null, data);
+              setShowModal(true);
+              // handleSubmit(null, data);
             });
             // .on('liqpay.ready', function (data) {
             //   // Widget is ready

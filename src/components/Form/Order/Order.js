@@ -371,6 +371,7 @@ const OrderForm = () => {
 
       <OrderList
         handleSubmit={handleSubmit}
+        setShowModal={setShowModal}
         // email={formData.email}
         // payment={formData.payment}
         orderDescription={orderDescription}

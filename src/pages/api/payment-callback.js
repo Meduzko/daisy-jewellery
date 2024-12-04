@@ -48,9 +48,17 @@ export default async function handler(req, res) {
       console.log(decodedData);
 
       if (decodedData) {
-        const orderData = JSON.parse(decodedData.info);
+        const decodedDataInfo = JSON.parse(decodedData.info);
 
-        console.log('orderData', orderData);
+        console.log('orderData', decodedDataInfo);
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ...decodedDataInfo.orderData, paidInfo: { order_id: decodedData.order_id } }),
+        });
       }
 
       // const response = await fetch(`${process.env.NEXTAUTH_URL}/api/send-email`, {
