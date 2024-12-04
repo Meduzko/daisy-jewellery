@@ -13,16 +13,14 @@ export const CartProvider = ({ children }) => {
     setItemSize((prevItems) => {
       const itemExists = prevItems.find((item) => item.product_id === product.product_id);
       if (itemExists) {
-        // Increase quantity by the specified amount
         return prevItems.map((item) =>
           item.product_id === product.product_id
             ? { ...item, size }
             : item
         );
-      } else {
-        // Add new item with the specified quantity
-        return [...prevItems, { ...product, size }];
       }
+
+      return [...prevItems, { ...product, size }];
     });
   };
 
