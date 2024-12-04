@@ -1,6 +1,6 @@
 // pages/api/liqpay-callback.js
 
-import crypto from 'crypto';
+// import crypto from 'crypto';
 
 export default async function handler(req, res) {
   try {
@@ -8,22 +8,22 @@ export default async function handler(req, res) {
     const private_key = process.env.LIQPAY_PRIVATE_KEY;
   
       // Verify the signature
-    const expectedSignature = crypto
-      .createHash('sha1')
-      .update(private_key + data + private_key)
-      .digest('base64');
+    // const expectedSignature = crypto
+    //   .createHash('sha1')
+    //   .update(private_key + data + private_key)
+    //   .digest('base64');
   
-    if (signature !== expectedSignature) {
-      res.status(400).json({ message: 'Invalid signature' });
-      return;
-    }
+    // if (signature !== expectedSignature) {
+    //   res.status(400).json({ message: 'Invalid signature' });
+    //   return;
+    // }
   
-    // Decode and parse the data
-    const decodedData = Buffer.from(data, 'base64').toString('utf-8');
-    const paymentInfo = JSON.parse(decodedData);
+    // // Decode and parse the data
+    // const decodedData = Buffer.from(data, 'base64').toString('utf-8');
+    // const paymentInfo = JSON.parse(decodedData);
   
-    // Extract necessary information
-    const { status, order_id, amount } = paymentInfo;
+    // // Extract necessary information
+    // const { status, order_id, amount } = paymentInfo;
   
       // Update payment status in your database
       // For demonstration, we'll assume you have a function updatePaymentStatus(order_id, status)

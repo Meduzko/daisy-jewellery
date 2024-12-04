@@ -158,7 +158,7 @@ const OrderForm = () => {
     }
   };
 
-  const handleSubmit = async (e, paidInfo) => {
+  const handleSubmit = async (e, paidInfo = {}) => {
     e?.preventDefault();
     setTouchedFields({
       firstName: true,
@@ -303,7 +303,7 @@ const OrderForm = () => {
                   fullWidth
                   className={styles.contactSelect}
                 >
-                  <MenuItem value='liqPay'>Банківська картка (LiqPay)</MenuItem>
+                  {/* <MenuItem value='liqPay'>Банківська картка (LiqPay)</MenuItem> */}
                   <MenuItem value='deliveryPay'>Оплата при доставці</MenuItem>
                 </Select>
                 {formErrors.payment && (

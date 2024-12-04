@@ -22,14 +22,14 @@ export default async function handler(req, res) {
         currency: 'UAH',
         description: description || 'Payment Description',
         order_id: orderId,
-        result_url: `${process.env.SITE_DOMAIN}/order`,
-        // server_url: 'https://yourdomain.com/api/payment-callback',
+        result_url: `${process.env.SITE_DOMAIN}/`,
+        server_url: `${process.env.SITE_DOMAIN}/api/payment-callback`,
         // Additional custom parameters
         // info: JSON.stringify({ email }),
         info: info,
-        paytypes: 'apay,gpay,card,privat24,invoice,qr'
+        paytypes: 'apay,gpay,card,privat24,invoice,qr',
         // Uncomment the following line for sandbox mode
-        // sandbox: '1',
+        sandbox: '1'
       };
 
       // Generate data and signature - old worked way
