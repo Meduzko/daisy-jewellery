@@ -31,7 +31,7 @@ const OrderList = ({
   const getOrderData = () => {
     const totalPrice = getTotalPrice();
     const cartItemsWithSize = cartItems.map(item => {
-      const { code, sku, title, short_description, price } = item;
+      const { code, sku, title, short_description, price, image_path } = item;
       const size = getItemSize(item);
       const baseItem = {
         code,
