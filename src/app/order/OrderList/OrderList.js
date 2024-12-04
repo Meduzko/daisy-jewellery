@@ -11,8 +11,6 @@ const OrderList = ({
   handleSubmit,
   email,
   payment,
-  firstName,
-  lastName,
   phone,
   orderDescription,
   triggerValidation,
@@ -58,11 +56,11 @@ const OrderList = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           amount: fixedPrice,
-          description: orderDescription,
-          email,
-          sender_first_name: firstName,
-          sender_last_name: lastName,
-          info: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`
+          description: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`,
+          email
+          // sender_first_name: firstName,
+          // sender_last_name: lastName,
+          // info: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`
         }),
       });
 
@@ -83,8 +81,10 @@ const OrderList = ({
             // mode: 'embed', // Use 'popup' for popup mode
             mode: 'popup', // Use 'popup' for popup mode
             language: 'ua',
+            paytypes: 'apay,gpay,card,privat24,invoice,qr'
           })
             .on('liqpay.callback', function (data) {
+              console.log('liqpay.callback', data);
               handleSubmit(null, data);
             })
             // .on('liqpay.ready', function (data) {

@@ -17,6 +17,9 @@ import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
+    console.log('send-email begin formData', formData);
+    console.log('send-email begin cartItems', cartItems);
+    console.log('send-email begin paidInfo', paidInfo);
     const { formData = {}, cartItems, totalPrice, paidInfo } = req.body;
     const {
       firstName,
@@ -106,6 +109,7 @@ export default async function handler(req, res) {
     };
 
     try {
+      console.log('try to send email');
       // Consume a point from the rate limiter
       // await rateLimiter.consume(req.headers['x-real-ip'] || req.connection.remoteAddress);
       const result = await transporter.sendMail(mailOptions);
@@ -113,6 +117,7 @@ export default async function handler(req, res) {
       if (result.response?.includes('OK')) {
         return res.status(200).json({ message: 'Email sent successfully!' });
       } else {
+        console.error('Failed to send email.')
         return res.status(500).json({ message: 'Failed to send email.' });
       }
     } catch (rateLimiterRes) {
@@ -120,6 +125,7 @@ export default async function handler(req, res) {
       return res.status(429).json({ message: 'Too many requests, please try again later.' });
     }
   } else {
+    console.error('Method Not Allowed');
     res.status(405).json({ message: 'Method Not Allowed' });
   }
 }
