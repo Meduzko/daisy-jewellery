@@ -30,7 +30,8 @@ export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, p
       headers: {
         'ApiKey': API_KEY,
         'Content-Type': 'application/json'
-      }
+      },
+      next: { revalidate: 1800 }
     });
 
     if (!response.ok) {

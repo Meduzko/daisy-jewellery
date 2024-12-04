@@ -9,7 +9,8 @@ export async function fetchProducts({ offset, limit, categoryId }) {
         categoryId,
         limit,
         offset
-      })
+      }),
+      next: { revalidate: 1800 }
     });
   
     if (!res.ok) {
@@ -45,7 +46,8 @@ export async function fetchAllProducts({ categoryId }) {
       headers: {
         'ApiKey': API_KEY,
         'Content-Type': 'application/json'
-      }
+      },
+      next: { revalidate: 1800 }
     });
   
     if (!res.ok) {
