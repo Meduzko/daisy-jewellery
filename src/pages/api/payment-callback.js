@@ -46,6 +46,23 @@ export default async function handler(req, res) {
       const decodedData = JSON.parse(Buffer.from(data, 'base64').toString('utf-8'));
       // Process payment
       console.log(decodedData);
+
+
+      // const response = await fetch(`${process.env.NEXTAUTH_URL}/api/send-email`, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(bodyParams),
+      // });
+      // TODO
+      // const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-email`, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ ...orderData, paidInfo }),
+      // });
     } else {
       // Invalid signature
       // Handle error
@@ -61,6 +78,7 @@ export default async function handler(req, res) {
       res.status(500).json({ message: 'Failed to update payment status' });
     }
   } catch (error) {
+    console.error(error);
     res.status(405).json({ message: 'Method not allowed' });
   }
 };

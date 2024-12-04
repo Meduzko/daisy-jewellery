@@ -3,7 +3,7 @@ import crypto from 'crypto';
 export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
-      const { amount, description, email, info, formData } = req.body;
+      const { amount, description, email, info, orderData } = req.body;
       // const paymentDescription = `Daisy Jewellery, ${firstName} ${lastName} ${department} ${cityName} ${email}`;
 
       // Validate the amount
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Invalid amount' });
       }
 
-      console.log('/create-payment/ formData', formData);
+      console.log('/create-payment/ orderData', orderData);
 
       const orderId = Math.floor(100000 + Math.random() * 900000);
       // NEXT_PUBLIC_BASE_URL
@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         // server_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment-callback`,
         // Additional custom parameters
         // info: JSON.stringify({ email }),
-        info: info,
+        info: orderData,
         paytypes: 'apay,gpay,card,privat24,invoice,qr',
         // Uncomment the following line for sandbox mode
         sandbox: '1'

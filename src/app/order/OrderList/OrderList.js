@@ -27,6 +27,28 @@ const OrderList = ({
 
   const [showBuyButton, setShowBuyButton] = useState(true);
 
+  const getOrderData = () => {
+    const totalPrice = getTotalPrice();
+    const cartItemsWithSize = cartItems.map(item => {
+      const size = getItemSize(item);
+
+      if (size) {
+        return {
+          ...item,
+          size
+        }
+      }
+
+      return item;
+    });
+
+    return {
+      formData,
+      cartItems: cartItemsWithSize,
+      totalPrice
+    };
+  };
+
   useEffect(() => {
     if (!paymentByCard) {
       widgetRef.current = false;
@@ -51,6 +73,7 @@ const OrderList = ({
       widgetRef.current = true;
 
       const orderedItemsInfo = cartItems.map(item => `Назва: ${item.title}, код: ${item.code}, розмір: ${item.size || ''}, ціна: ${item.price}`);
+      const orderData = getOrderData();
   
       // Request data and signature from the API
       const response = await fetch('/api/create-payment', {
@@ -60,7 +83,7 @@ const OrderList = ({
           amount: fixedPrice,
           description: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`,
           email,
-          formData: formData,
+          orderData: orderData,
           // sender_first_name: firstName,
           // sender_last_name: lastName,
           info: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`
