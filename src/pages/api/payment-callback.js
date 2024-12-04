@@ -57,7 +57,7 @@ export default async function handler(req, res) {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ ...decodedDataInfo.orderData, paidInfo: { order_id: decodedData.order_id } }),
+          body: JSON.stringify({ ...decodedDataInfo, paidInfo: { order_id: decodedData.order_id } }),
         });
       }
 
