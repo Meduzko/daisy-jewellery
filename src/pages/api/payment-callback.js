@@ -47,6 +47,11 @@ export default async function handler(req, res) {
       // Process payment
       console.log(decodedData);
 
+      if (decodedData) {
+        const orderData = JSON.parse(decodedData.info);
+
+        console.log('orderData', orderData);
+      }
 
       // const response = await fetch(`${process.env.NEXTAUTH_URL}/api/send-email`, {
       //   method: 'POST',

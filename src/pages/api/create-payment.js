@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         // server_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment-callback`,
         // Additional custom parameters
         // info: JSON.stringify({ email }),
-        info: orderData,
+        info: JSON.stringify(orderData),
         paytypes: 'apay,gpay,card,privat24,invoice,qr',
         // Uncomment the following line for sandbox mode
         sandbox: '1'
