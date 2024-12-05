@@ -42,8 +42,12 @@ export default function Footer() {
           <h3 className={styles.footerCategoryTitle}>Контакти</h3>
           <ul className={styles.footerList}>
             <li className={styles.footerListItem}>м. Корець, площа Київська 3/3</li>
-            <li className={styles.footerListItem}>+380935492985</li>
-            <li className={styles.footerListItem}>daisyjewellery.info@gmail.com</li>
+            <li className={styles.footerListItem}>
+              <a href="tel:+380935492986">+380935492986</a>
+            </li>
+            <li className={styles.footerListItem}>
+              <a href="mailto:daisyjewellery.info@gmail.com">daisyjewellery.info@gmail.com</a>
+            </li>
             <li className={styles.footerListItem}>
               <div className={styles.footerSocials}>
                 <Link href="https://www.instagram.com/daisy.jewellery">
