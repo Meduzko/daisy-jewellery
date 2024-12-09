@@ -44,13 +44,18 @@ export default async function CategoryPageNumber({ params }) {
     notFound();
   }
 
-  return <Gallery
-    items={products}
-    hasMore={hasMore}
-    currentPage={currentPage}
-    baseURL={baseURL}
-    itemBaseURL={itemBaseURL}
-    withPagination={paginated}
-    isMobile={isMobile}
-  />;
+  return (
+    <>
+      <h1 className="category-title">Срібні кольє</h1>
+      <Gallery
+        items={products}
+        hasMore={hasMore}
+        currentPage={currentPage}
+        baseURL={baseURL}
+        itemBaseURL={itemBaseURL}
+        withPagination={paginated}
+        isMobile={isMobile}
+      />
+    </>
+  );
 }

@@ -58,13 +58,18 @@ export default async function Page({ params }) {
     notFound();
   }
 
-  return <Gallery
-    items={products}
-    hasMore={hasMore}
-    currentPage={currentPage}
-    baseURL={baseURL}
-    itemBaseURL={itemBaseURL}
-    withPagination={paginated}
-    isMobile={isMobile}
-  />;
+  return (
+    <>
+      <h1 className="category-title">Каблучки срібні</h1>
+      <Gallery
+        items={products}
+        hasMore={hasMore}
+        currentPage={currentPage}
+        baseURL={baseURL}
+        itemBaseURL={itemBaseURL}
+        withPagination={paginated}
+        isMobile={isMobile}
+      />
+    </>
+  );
 }

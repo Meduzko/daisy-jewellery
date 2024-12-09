@@ -163,3 +163,13 @@ a {
 .MuiDialog-root {
   z-index: 3001 !important;
 }
+
+.category-title {
+  padding-left: 48px;
+}
+
+@media (max-width: 768px) {
+  .category-title {
+    padding-left: 14px;
+  }
+}

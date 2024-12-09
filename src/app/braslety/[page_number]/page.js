@@ -17,7 +17,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
-  const title = 'Срібні браслети';
+  const title = 'Срібні браслети | Купити срібний браслет Daisy Jewellery';
   const description = 'Срібні браслети';
   const currentPage = +params.page_number;
   const lastPage = 2;
@@ -43,13 +43,18 @@ export default async function CategoryPageNumber({ params }) {
     notFound();
   }
 
-  return <Gallery
-    items={products}
-    hasMore={hasMore}
-    currentPage={currentPage}
-    baseURL={baseURL}
-    itemBaseURL={itemBaseURL}
-    withPagination={paginated}
-    isMobile={isMobile}
-  />;
+  return (
+    <>
+      <h1 className="category-title">Срібні браслети</h1>
+      <Gallery
+        items={products}
+        hasMore={hasMore}
+        currentPage={currentPage}
+        baseURL={baseURL}
+        itemBaseURL={itemBaseURL}
+        withPagination={paginated}
+        isMobile={isMobile}
+      />
+    </>
+  );
 }

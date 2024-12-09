@@ -109,7 +109,7 @@ export const generateCategoryMetadata = ({
   const siteName = 'Daisy Jewellery';
 
   const baseMetaData = {
-    title: `${title} | ${siteName}`,
+    title,
     description,
     alternates: {
       canonical: canonicalUrl
@@ -122,7 +122,7 @@ export const generateCategoryMetadata = ({
     keywords,
     url: `${process.env.SITE_DOMAIN}/${categorySlug}/1`,
     openGraph: {
-      title: `${title} | ${siteName}`,
+      title,
       description,
       url: `${process.env.SITE_DOMAIN}/${categorySlug}/1`,
       siteName,
