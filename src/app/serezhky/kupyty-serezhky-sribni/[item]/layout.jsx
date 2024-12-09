@@ -1,11 +1,18 @@
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { fetchProduct } from '../../../../actions/fetchProduct';
+import { notFound } from 'next/navigation';
 
 export default async function Layout({ children, params }) {
-  const [product] = await fetchProduct({
+  const data = await fetchProduct({
     code: params.item,
     categoryId: process.env.EARING_CATEGORY_ID,
   });
+
+  if (!data || !data.length) {
+    return notFound();
+  }
+
+  const [product] = data;
 
   const segments = [
     { name: 'Головна', href: '/' },

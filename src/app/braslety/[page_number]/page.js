@@ -1,6 +1,7 @@
 import { fetchProduct } from '../../../actions/fetchProduct';
 import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../helpers';
 import Gallery from '../../../components/Gallery';
+import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
   const staticPages = [
@@ -19,11 +20,12 @@ export async function generateMetadata({ params }) {
   const title = 'Срібні браслети';
   const description = 'Срібні браслети';
   const currentPage = +params.page_number;
+  const lastPage = 2;
   const categorySlug = 'braslety';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage}`;
   const keywords = 'Срібні браслети, купити';
 
-  const categoryMetadata = generateCategoryMetadata({ title, description, currentPage, canonicalUrl, categorySlug, keywords });
+  const categoryMetadata = generateCategoryMetadata({ title, description, currentPage, lastPage, canonicalUrl, categorySlug, keywords });
 
   return categoryMetadata;
 }
@@ -36,6 +38,10 @@ export default async function CategoryPageNumber({ params }) {
   const { products, hasMore } = await fetchProduct({ offset, limit, categoryId: process.env.BRACER_CATEGORY_ID, paginated });
   const device = getDeviceType();
   const isMobile = device !== 'desktop';
+
+  if (!products || !products.length) {
+    notFound();
+  }
 
   return <Gallery
     items={products}

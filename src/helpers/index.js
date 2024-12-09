@@ -101,6 +101,7 @@ export const generateCategoryMetadata = ({
   title,
   description,
   currentPage,
+  lastPage,
   canonicalUrl,
   categorySlug,
   keywords
@@ -130,13 +131,24 @@ export const generateCategoryMetadata = ({
     }
   }
 
-  if (currentPage > 1) {
+  if (currentPage > 1 && currentPage < lastPage) {
     return {
       ...baseMetaData,
       icons: {
         other: [
           { rel: 'prev', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage - 1}` },
           { rel: 'next', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage + 1}` },
+        ]
+      }
+    }
+  }
+
+  if (currentPage === lastPage) {
+    return {
+      ...baseMetaData,
+      icons: {
+        other: [
+          { rel: 'prev', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage - 1}` }
         ]
       }
     }

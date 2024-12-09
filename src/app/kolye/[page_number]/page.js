@@ -1,6 +1,7 @@
 import { fetchProduct } from '../../../actions/fetchProduct';
 import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../helpers';
 import Gallery from '../../../components/Gallery';
+import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
   const staticPages = [
@@ -19,11 +20,12 @@ export async function generateMetadata({ params }) {
   const title = 'Срібні Кольє | Купити срібне кольє Daisy Jewellery';
   const description = 'Купити срібні кольє Daisy Jewellery. Доставка в найкоротші терміни по Україні! Найкраща ціна на ринку від виробника';
   const currentPage = +params.page_number;
+  const lastPage = 2;
   const categorySlug = 'kolye';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage}`;
   const keywords = 'Срібні кольє, купити';
 
-  const categoryMetadata = generateCategoryMetadata({ title, description, currentPage, canonicalUrl, categorySlug, keywords });
+  const categoryMetadata = generateCategoryMetadata({ title, description, currentPage, lastPage, canonicalUrl, categorySlug, keywords });
 
   return categoryMetadata;
 }
@@ -37,6 +39,10 @@ export default async function CategoryPageNumber({ params }) {
   const { products, hasMore } = await fetchProduct({ offset, limit, categoryId, paginated });
   const device = getDeviceType();
   const isMobile = device !== 'desktop';
+
+  if (!products || !products.length) {
+    notFound();
+  }
 
   return <Gallery
     items={products}
