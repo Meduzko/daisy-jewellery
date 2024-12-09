@@ -12,7 +12,7 @@ const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
 export const metadata = {
   metadataBase: new URL('https://daisy-jewellery.com.ua'),
   title: 'Магазин срібних прикрас - Daisy Jewellery',
-  description: 'Срібні прикраси на будь-який смак',
+  description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
   keywords: [
     'jewellery',
     'daisy jewellery',
@@ -31,8 +31,8 @@ export const metadata = {
   ],
   authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua' }],
   openGraph: {
-    title: 'Daisy Jewellery',
-    description: 'Срібні прикраси на будь-який смак',
+    title: 'Магазин срібних прикрас - Daisy Jewellery',
+    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
     url: 'https://daisy-jewellery.com.ua',
     siteName: 'Daisy Jewellery',
     images: [
@@ -50,8 +50,8 @@ export const metadata = {
     card: 'summary_large_image',
     site: '@daisy-jewellery.com.ua',
     creator: '@O.P',
-    title: 'Daisy Jewellery - Магазин срібних прикрас',
-    description: 'Срібні прикраси на будь-який смак',
+    title: 'Магазин срібних прикрас - Daisy Jewellery',
+    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
     image: '/logo_black.png',
     images: ['/logo_black.png'],
   },
