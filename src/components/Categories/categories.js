@@ -7,22 +7,22 @@ export default async function Categories() {
   const categories = [
     {
       title: 'Каблучки',
-      src: '/categories/ring.jpg',
+      src: '/categories/ring.webp',
       link: '/kabluchki/1'
     },
     {
       title: 'Сережки',
-      src: '/categories/earring.jpg',
+      src: '/categories/earring.webp',
       link: '/serezhky/1'
     },
     {
       title: 'Кольє',
-      src: '/categories/neclackle.jpg',
+      src: '/categories/neclackle.webp',
       link: '/kolye/1'
     },
     {
       title: 'Браслети',
-      src: '/categories/bracer.jpg',
+      src: '/categories/bracer.webp',
       link: '/braslety/1'
     }
   ];
@@ -38,8 +38,9 @@ export default async function Categories() {
                 src={category.src}
                 alt={`Зображення ${category.title}`}
                 fill={true}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 loading="lazy"
+                quality={35}
                 className={styles.categoryImg}
               />
             </picture>

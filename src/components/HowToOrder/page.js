@@ -30,7 +30,7 @@ const HowToOreder = ({ isMobile = false }) => {
 
   return (
     <div className={`${styles.howToOrderContainer} ${isMobile ? styles.howToOrderContainerMobile : ''}`}>
-      <h1 className={styles.howToOrderTitle}>Як оформити замовлення?</h1>
+      <h2 className={styles.howToOrderTitle}>Як оформити замовлення?</h2>
       <Stepper {...stepperProps}>
         {steps.map((step, index) => (
           <Step key={step.label} active={true} last={false}>

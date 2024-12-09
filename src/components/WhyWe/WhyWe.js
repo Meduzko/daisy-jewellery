@@ -32,7 +32,7 @@ const list = [
 const WhyWe = () => {
   return (
     <div className={`${styles.whyWeContainer} container`}>
-      <h1 className={`${styles.whyTitle} title`}>Чому варто обрати прикраси від Daisy jewellery?</h1>
+      <h2 className={`${styles.whyTitle} title`}>Чому варто обрати прикраси від Daisy jewellery?</h2>
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {list.map((item, index) => (
           <ListItem key={index} className={styles.listItem}>
