@@ -119,6 +119,17 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-CGM54TDF2N');
           `}
         </Script>
+        {/* Google Analytics Script ad*/}
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=AW-16818177431" />
+        <Script id="google-analytics-ads">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'AW-16818177431');
+          `}
+        </Script>
       </head>
       <body className={montserrat.className}>
         <AppRouterCacheProvider>
