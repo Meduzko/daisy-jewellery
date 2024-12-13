@@ -36,7 +36,7 @@ export const getPaginationData = (paramsPage) => {
  * @param {number} code 
  * @returns product canonical and keywords metadata
  */
-const getItemMetaData = (categoryName, productTitle, code) => {
+const getItemMetaData = ({ categoryName, productTitle, code, short_description }) => {
   const keywords = {
     ring: `Срібло, Каблучки`,
     earring: `Срібло, Сережки`,
@@ -51,12 +51,23 @@ const getItemMetaData = (categoryName, productTitle, code) => {
     bracer: 'braslety/kupyty-sribnyy-braslet',
   }
 
+  const descriptionMap = {
+    ring: 'Купити срібну каблучку від Daisy Jewellery',
+    earring: 'Купити сережки срібні від Daisy Jewellery',
+    necklace: 'Купити срібне кольє від Daisy Jewellery',
+    bracer: 'Купити браслет зі срібла від Daisy Jewellery',
+  }
+
   const keywordsRes = `${keywords[categoryName]}, ${productTitle}`;
-  const canonicalRes = `${process.env.SITE_DOMAIN}/${canonical[categoryName]}/${code}`
+  const canonicalRes = `${process.env.SITE_DOMAIN}/${canonical[categoryName]}/${code}`;
+  const shortDescription = short_description.replace(/<[^>]*>/g, '');
+  const description = shortDescription.replace(/&[^;\s]+;/g, '');
+  const descriptionRes = `${description} ${descriptionMap[categoryName]}`;
 
   return {
     canonicalUrl: canonicalRes,
-    keywords: keywordsRes
+    keywords: keywordsRes,
+    description: descriptionRes
   }
 };
 
@@ -69,9 +80,7 @@ const getItemMetaData = (categoryName, productTitle, code) => {
 export const getProductMetadata = ({ product, categoryName }) => {
   const { title, short_description, code } = product;
   const siteName = 'Daisy Jewellery';
-  const { keywords, canonicalUrl } = getItemMetaData(categoryName, title, code);
-  const shortDescription = short_description.replace(/<[^>]*>/g, '');
-  const description = shortDescription.replace(/&[^;\s]+;/g, '');
+  const { keywords, canonicalUrl, description } = getItemMetaData({ categoryName, title, code, short_description });
 
   return {
     title: `${title} | ${siteName}`,
