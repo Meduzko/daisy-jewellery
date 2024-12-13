@@ -12,6 +12,7 @@ export default function Banner() {
         objectFit="cover"
         priority={true}
         quality={35}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 100vw"
         className={styles.bannerImg}
       />
       <h1 className={styles.bannerText}>Срібні прикраси Daisy Jewellery — ваш улюблений інтернет-магазин</h1>

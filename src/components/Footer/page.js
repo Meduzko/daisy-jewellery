@@ -50,16 +50,16 @@ export default function Footer() {
             </li>
             <li className={styles.footerListItem}>
               <div className={styles.footerSocials}>
-                <Link href="https://www.instagram.com/daisy.jewellery">
-                  <IconButton className={styles.social}>
+                <Link href="https://www.instagram.com/daisy.jewellery" aria-label="Instagram link">
+                  <IconButton className={styles.social} aria-label="Instagram">
                     <InstagramIcon />
                   </IconButton>
                 </Link>
-                <IconButton className={styles.social}>
+                <IconButton className={styles.social} aria-label="Telegram">
                   <TelegramIcon />
                 </IconButton>
-                <Link href="https://www.facebook.com/profile.php?id=100085472847797">
-                  <IconButton className={styles.social}>
+                <Link href="https://www.facebook.com/profile.php?id=100085472847797" aria-label="Facebook link">
+                  <IconButton className={styles.social} aria-label="Facebook">
                     <FacebookIcon />
                   </IconButton>
                 </Link>

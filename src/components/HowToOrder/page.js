@@ -35,7 +35,7 @@ const HowToOreder = ({ isMobile = false }) => {
         {steps.map((step, index) => (
           <Step key={step.label} active={true} last={false}>
             <StepLabel className={styles.stepLabelContainer}>
-              <Typography variant='h5' className={styles.stepLabel}>{step.label}</Typography>
+              <Typography variant='h3' className={styles.stepLabel}>{step.label}</Typography>
             </StepLabel>
             {isMobile ? 
               <StepContent>

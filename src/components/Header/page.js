@@ -31,10 +31,10 @@ export default async function Header() {
           />
         </Link>
         <div className={styles.headerActions}>
-          <IconButton className={styles.searchButton}>
+          <IconButton className={styles.searchButton} aria-label="Search button">
             <SearchOutlinedIcon className={styles.searchIcon} />
           </IconButton>
-          <IconButton className={styles.favoritesButton}>
+          <IconButton className={styles.favoritesButton} aria-label="Favorites button">
             <FavoriteBorderOutlinedIcon className={styles.favoritesIcon} />
           </IconButton>
           <CartDrawler />
