@@ -62,7 +62,7 @@ const getItemMetaData = ({ categoryName, productTitle, code, short_description }
   const canonicalRes = `${process.env.SITE_DOMAIN}/${canonical[categoryName]}/${code}`;
   const shortDescription = short_description.replace(/<[^>]*>/g, '');
   const description = shortDescription.replace(/&[^;\s]+;/g, '');
-  const descriptionRes = `${description} ${descriptionMap[categoryName]}`;
+  const descriptionRes = `${description.trim()} ${descriptionMap[categoryName]}`;
 
   return {
     canonicalUrl: canonicalRes,
