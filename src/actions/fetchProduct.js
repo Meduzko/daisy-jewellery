@@ -1,4 +1,4 @@
-export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, paginated, sku, title }) {
+export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, paginated, sku, title, website_synch = 1 }) {
   try {
     const ROOT_URI = process.env.API_ROOT_URI;
     const API_KEY = process.env.API_KEY;
@@ -6,10 +6,13 @@ export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, p
   
     const params = new URLSearchParams({
       category_id: categoryId,
-      website_synch: 1,
       limit,
       offset
     });
+
+    if (website_synch) {
+      params.set('website_synch', website_synch);
+    }
 
     if (code) {
       params.set('code', Number(code));
