@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       // Process payment
       console.log('decodedData', decodedData);
 
-      if (decodedData) {
+      if (decodedData?.status === 'success') {
         const decodedDataInfo = JSON.parse(decodedData.info);
 
         console.log('orderData', decodedDataInfo);
@@ -29,11 +29,13 @@ export default async function handler(req, res) {
           },
           body: JSON.stringify({ ...decodedDataInfo, paidInfo: { order_id: decodedData.order_id } }),
         });
+      } else {
+        console.error('Something went wrong during payment, decodedData:', decodedData);
       }
     } else {
       // Invalid signature
       // Handle error
-      console.error('something wrong during generatedSignature === signature');
+      console.error('Something wrong during comparing generatedSignature === signature');
     }
   
     try {
