@@ -1,5 +1,11 @@
+import { getDefaultMetaData } from '../../helpers';
 import styles from './styles.module.css';
 
+export async function generateMetadata({ params }) {
+  const metadata = getDefaultMetaData({ pagePath: 'oferta', title: 'Магазин срібних прикрас - Daisy Jewellery | Оферта' });
+
+  return metadata;
+}
 
 export default function OfertaPage() {
   return (

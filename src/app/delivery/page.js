@@ -1,5 +1,12 @@
 import Image from 'next/image';
+import { getDefaultMetaData } from '../../helpers';
 import styles from './styles.module.css';
+
+export async function generateMetadata({ params }) {
+  const metadata = getDefaultMetaData({ pagePath: 'delivery', title: 'Магазин срібних прикрас - Daisy Jewellery | Доставка' });
+
+  return metadata;
+}
 
 export default function DeliveryPage() {
   return (

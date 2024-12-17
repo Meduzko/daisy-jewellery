@@ -172,3 +172,117 @@ export const categoryMap = {
   earring: process.env.EARING_CATEGORY_ID,
   bracer: process.env.BRACER_CATEGORY_ID
 };
+
+export const defaultMetadata =  {
+  metadataBase: new URL('https://daisy-jewellery.com.ua'),
+  title: 'Магазин срібних прикрас - Daisy Jewellery',
+  description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+  keywords: [
+    'jewellery',
+    'daisy jewellery',
+    'срібло',
+    'купити',
+    'купити сріні прикраси',
+    'срібні прикраси',
+    'срібні каблучки',
+    'срібні сережки',
+    'срібні кольє',
+    'срібні браслети',
+    'каблучки',
+    'сережки',
+    'кольє',
+    'браслети'
+  ],
+  authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua' }],
+  openGraph: {
+    title: 'Магазин срібних прикрас - Daisy Jewellery',
+    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+    url: 'https://daisy-jewellery.com.ua',
+    siteName: 'Daisy Jewellery',
+    images: [
+      {
+        url: '/logo_black.png',
+        width: 800,
+        height: 600,
+        alt: 'Магазин срібних прикрас - Daisy Jewellery',
+      },
+    ],
+    locale: 'uk_UA', // Updated locale for Ukrainian language
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@daisy-jewellery.com.ua',
+    creator: '@O.P',
+    title: 'Магазин срібних прикрас - Daisy Jewellery',
+    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+    image: '/logo_black.png',
+    images: ['/logo_black.png'],
+  },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+    other: [
+      {
+        rel: 'icon',
+        url: '/favicon-16x16.png',
+        sizes: '16x16',
+      },
+      {
+        rel: 'icon',
+        url: '/favicon-32x32.png',
+        sizes: '32x32',
+      },
+      {
+        rel: 'manifest',
+        url: '/site.webmanifest',
+      },
+    ],
+  },
+  manifest: '/site.webmanifest',
+  robots: {
+    index: true,
+    follow: true,
+    nocache: true,
+  },
+  alternates: {
+    canonical: 'https://daisy-jewellery.com.ua',
+    languages: {
+      'uk-UA': 'https://daisy-jewellery.com.ua/uk-UA',
+    },
+  },
+  other: {
+    // Added structured data for your logo
+    'application/ld+json': JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      'name': 'Daisy Jewellery',
+      'url': 'https://daisy-jewellery.com.ua',
+      'logo': 'https://daisy-jewellery.com.ua/logo_black.png',
+    }),
+  },
+};
+
+export const getDefaultMetaData = ({ pagePath, title, description }) => {
+  const newTitle = title || 'Магазин срібних прикрас - Daisy Jewellery';
+
+  const result = {
+    ...defaultMetadata,
+    title: newTitle,
+    openGraph: {
+      ...defaultMetadata.openGraph,
+      title: newTitle
+    },
+    twitter: {
+      ...defaultMetadata.twitter,
+      title: newTitle
+    },
+    alternates: {
+      ...defaultMetadata.alternates,
+      canonical: `https://daisy-jewellery.com.ua/${pagePath}`,
+    },
+  };
+
+  return result;
+};

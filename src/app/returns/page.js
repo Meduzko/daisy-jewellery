@@ -1,4 +1,11 @@
+import { getDefaultMetaData } from '../../helpers';
 import styles from './styles.module.css';
+
+export async function generateMetadata({ params }) {
+  const metadata = getDefaultMetaData({ pagePath: 'returns', title: 'Магазин срібних прикрас - Daisy Jewellery | Повернення' });
+
+  return metadata;
+}
 
 export default function ReturnsPage() {
   return (
