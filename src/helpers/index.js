@@ -2,9 +2,13 @@ import { headers } from 'next/headers';
 
 export function getDeviceType() {
   const userAgent = headers().get('user-agent') || '';
-  const isEmulationTablet = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15';
+  const isEmulationTablet =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15';
   const isTablet = /iPad|Tablet|Android(?!.*Mobile)/i.test(userAgent);
-  const isMobile = /Mobile|iP(hone|od)|Android.*Mobile|BlackBerry|IEMobile|Silk-Accelerated/i.test(userAgent);
+  const isMobile =
+    /Mobile|iP(hone|od)|Android.*Mobile|BlackBerry|IEMobile|Silk-Accelerated/i.test(
+      userAgent
+    );
 
   if (isTablet || userAgent.includes(isEmulationTablet)) return 'tablet';
   if (isMobile) return 'mobile';
@@ -25,38 +29,43 @@ export const getPaginationData = (paramsPage) => {
   return {
     limit,
     offset,
-    currentPage
-  }
+    currentPage,
+  };
 };
 
 /**
- * 
- * @param {string} categoryName 
- * @param {string} productTitle 
- * @param {number} code 
+ *
+ * @param {string} categoryName
+ * @param {string} productTitle
+ * @param {number} code
  * @returns product canonical and keywords metadata
  */
-const getItemMetaData = ({ categoryName, productTitle, code, short_description }) => {
+const getItemMetaData = ({
+  categoryName,
+  productTitle,
+  code,
+  short_description,
+}) => {
   const keywords = {
     ring: `Срібло, Каблучки`,
     earring: `Срібло, Сережки`,
     necklace: `Срібло, Кольє`,
     bracer: `Срібло, Браслети`,
-  }
+  };
 
   const canonical = {
     ring: 'kabluchki/kupyty-sribnu-kabluchku',
     earring: 'serezhky/kupyty-serezhky-sribni',
     necklace: 'kolye/kupyty-sribne-kolye',
     bracer: 'braslety/kupyty-sribnyy-braslet',
-  }
+  };
 
   const descriptionMap = {
     ring: 'Купити срібну каблучку від Daisy Jewellery',
     earring: 'Купити сережки срібні від Daisy Jewellery',
     necklace: 'Купити срібне кольє від Daisy Jewellery',
     bracer: 'Купити браслет зі срібла від Daisy Jewellery',
-  }
+  };
 
   const keywordsRes = `${keywords[categoryName]}, ${productTitle}`;
   const canonicalRes = `${process.env.SITE_DOMAIN}/${canonical[categoryName]}/${code}`;
@@ -67,20 +76,25 @@ const getItemMetaData = ({ categoryName, productTitle, code, short_description }
   return {
     canonicalUrl: canonicalRes,
     keywords: keywordsRes,
-    description: descriptionRes
-  }
+    description: descriptionRes,
+  };
 };
 
 /**
  * Generate product metadata
- * @param {*} param0 
- * @returns 
+ * @param {*} param0
+ * @returns
  */
 
 export const getProductMetadata = ({ product, categoryName }) => {
   const { title, short_description, code } = product;
   const siteName = 'Daisy Jewellery';
-  const { keywords, canonicalUrl, description } = getItemMetaData({ categoryName, title, code, short_description });
+  const { keywords, canonicalUrl, description } = getItemMetaData({
+    categoryName,
+    title,
+    code,
+    short_description,
+  });
 
   return {
     title: `${title} | ${siteName}`,
@@ -97,14 +111,14 @@ export const getProductMetadata = ({ product, categoryName }) => {
       siteName,
       locale: 'uk_UA',
       type: 'website',
-    }
-  }
+    },
+  };
 };
 
 /**
  * Generate category page metadata
- * @param {*} param0 
- * @returns 
+ * @param {*} param0
+ * @returns
  */
 export const generateCategoryMetadata = ({
   title,
@@ -113,7 +127,7 @@ export const generateCategoryMetadata = ({
   lastPage,
   canonicalUrl,
   categorySlug,
-  keywords
+  keywords,
 }) => {
   const siteName = 'Daisy Jewellery';
 
@@ -121,12 +135,15 @@ export const generateCategoryMetadata = ({
     title,
     description,
     alternates: {
-      canonical: canonicalUrl
+      canonical: canonicalUrl,
     },
     icons: {
       other: [
-        { rel: 'next', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage + 1}` },
-      ]
+        {
+          rel: 'next',
+          url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage + 1}`,
+        },
+      ],
     },
     keywords,
     url: `${process.env.SITE_DOMAIN}/${categorySlug}/1`,
@@ -137,19 +154,25 @@ export const generateCategoryMetadata = ({
       siteName,
       locale: 'uk_UA',
       type: 'website',
-    }
-  }
+    },
+  };
 
   if (currentPage > 1 && currentPage < lastPage) {
     return {
       ...baseMetaData,
       icons: {
         other: [
-          { rel: 'prev', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage - 1}` },
-          { rel: 'next', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage + 1}` },
-        ]
-      }
-    }
+          {
+            rel: 'prev',
+            url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage - 1}`,
+          },
+          {
+            rel: 'next',
+            url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage + 1}`,
+          },
+        ],
+      },
+    };
   }
 
   if (currentPage === lastPage) {
@@ -157,26 +180,30 @@ export const generateCategoryMetadata = ({
       ...baseMetaData,
       icons: {
         other: [
-          { rel: 'prev', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage - 1}` }
-        ]
-      }
-    }
+          {
+            rel: 'prev',
+            url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage - 1}`,
+          },
+        ],
+      },
+    };
   }
 
   return baseMetaData;
-}
+};
 
 export const categoryMap = {
   ring: process.env.RING_CATEGORY_ID,
   necklace: process.env.NECKLACE_CATEGORY_ID,
   earring: process.env.EARING_CATEGORY_ID,
-  bracer: process.env.BRACER_CATEGORY_ID
+  bracer: process.env.BRACER_CATEGORY_ID,
 };
 
-export const defaultMetadata =  {
+export const defaultMetadata = {
   metadataBase: new URL('https://daisy-jewellery.com.ua'),
   title: 'Магазин срібних прикрас - Daisy Jewellery',
-  description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+  description:
+    'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
   keywords: [
     'jewellery',
     'daisy jewellery',
@@ -191,12 +218,13 @@ export const defaultMetadata =  {
     'каблучки',
     'сережки',
     'кольє',
-    'браслети'
+    'браслети',
   ],
   authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua' }],
   openGraph: {
     title: 'Магазин срібних прикрас - Daisy Jewellery',
-    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+    description:
+      'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
     url: 'https://daisy-jewellery.com.ua',
     siteName: 'Daisy Jewellery',
     images: [
@@ -215,7 +243,8 @@ export const defaultMetadata =  {
     site: '@daisy-jewellery.com.ua',
     creator: '@O.P',
     title: 'Магазин срібних прикрас - Daisy Jewellery',
-    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+    description:
+      'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
     image: '/logo_black.png',
     images: ['/logo_black.png'],
   },
@@ -257,9 +286,9 @@ export const defaultMetadata =  {
     'application/ld+json': JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'Organization',
-      'name': 'Daisy Jewellery',
-      'url': 'https://daisy-jewellery.com.ua',
-      'logo': 'https://daisy-jewellery.com.ua/logo_black.png',
+      name: 'Daisy Jewellery',
+      url: 'https://daisy-jewellery.com.ua',
+      logo: 'https://daisy-jewellery.com.ua/logo_black.png',
     }),
   },
 };
@@ -272,11 +301,11 @@ export const getDefaultMetaData = ({ pagePath, title, description }) => {
     title: newTitle,
     openGraph: {
       ...defaultMetadata.openGraph,
-      title: newTitle
+      title: newTitle,
     },
     twitter: {
       ...defaultMetadata.twitter,
-      title: newTitle
+      title: newTitle,
     },
     alternates: {
       ...defaultMetadata.alternates,

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useState, useEffect, useContext } from 'react';
 import { CartContext } from '../../../context/CartContext';
 import styles from './ProductCounter.module.css';
@@ -8,7 +8,7 @@ const ProductCounter = ({
   minCount = 1,
   maxCount = 99,
   onCountChange,
-  cartItem
+  cartItem,
 }) => {
   const { changeItemQuantity } = useContext(CartContext);
   const [count, setCount] = useState(initialCount);
@@ -32,7 +32,7 @@ const ProductCounter = ({
         onCountChange(newCount);
       }
       if (cartItem) {
-        changeItemQuantity(cartItem, newCount)
+        changeItemQuantity(cartItem, newCount);
       }
     }
   };
@@ -45,7 +45,7 @@ const ProductCounter = ({
         onCountChange(newCount);
       }
       if (cartItem) {
-        changeItemQuantity(cartItem, newCount)
+        changeItemQuantity(cartItem, newCount);
       }
     }
   };

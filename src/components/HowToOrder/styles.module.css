@@ -1,34 +1,34 @@
 .howToOrderContainer {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    gap: 32px;
-    margin: 64px 0;
-    background-color: #f8e5eb;
-    padding: 174px 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 32px;
+  margin: 64px 0;
+  background-color: #f8e5eb;
+  padding: 174px 0;
 }
 
 .howToOrderContainerMobile {
-    padding: 174px 24px;
+  padding: 174px 24px;
 }
 
 .stepLabel {
-    font-size: 24px !important;
+  font-size: 24px !important;
 }
 
 .stepDescription {
-    text-align: center;
+  text-align: center;
 }
 
 .stepDescriptionMobile {
-    text-align: left;
+  text-align: left;
 }
 
 .howToOrderTitle {
-    font-size: 36px;
-    letter-spacing: 6px;
+  font-size: 36px;
+  letter-spacing: 6px;
 }
 
 .stepLabelContainer svg {
-    color: #000 !important;
+  color: #000 !important;
 }

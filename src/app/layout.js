@@ -1,18 +1,19 @@
 import Script from 'next/script';
-import { Montserrat } from "next/font/google";
-import "./globals.css";
+import { Montserrat } from 'next/font/google';
+import './globals.css';
 // import Header from './components/Header/page';
 import Header from '../components/Header/page';
 import Footer from '../components/Footer/page';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { CartProvider } from '../context/CartContext';
 
-const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
+const montserrat = Montserrat({ subsets: ['latin'], weight: ['400'] });
 
 export const metadata = {
   metadataBase: new URL('https://daisy-jewellery.com.ua'),
   title: 'Магазин срібних прикрас - Daisy Jewellery',
-  description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+  description:
+    'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
   keywords: [
     'jewellery',
     'daisy jewellery',
@@ -27,12 +28,13 @@ export const metadata = {
     'каблучки',
     'сережки',
     'кольє',
-    'браслети'
+    'браслети',
   ],
   authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua' }],
   openGraph: {
     title: 'Магазин срібних прикрас - Daisy Jewellery',
-    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+    description:
+      'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
     url: 'https://daisy-jewellery.com.ua',
     siteName: 'Daisy Jewellery',
     images: [
@@ -51,7 +53,8 @@ export const metadata = {
     site: '@daisy-jewellery.com.ua',
     creator: '@O.P',
     title: 'Магазин срібних прикрас - Daisy Jewellery',
-    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+    description:
+      'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
     image: '/logo_black.png',
     images: ['/logo_black.png'],
   },
@@ -93,9 +96,9 @@ export const metadata = {
     'application/ld+json': JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'Organization',
-      'name': 'Daisy Jewellery',
-      'url': 'https://daisy-jewellery.com.ua',
-      'logo': 'https://daisy-jewellery.com.ua/logo_black.png',
+      name: 'Daisy Jewellery',
+      url: 'https://daisy-jewellery.com.ua',
+      logo: 'https://daisy-jewellery.com.ua/logo_black.png',
     }),
   },
 };
@@ -120,7 +123,10 @@ export default function RootLayout({ children }) {
           `}
         </Script>
         {/* Google Analytics Script ad*/}
-        <Script async src="https://www.googletagmanager.com/gtag/js?id=AW-16818177431" />
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=AW-16818177431"
+        />
         <Script id="google-analytics-ads">
           {`
             window.dataLayer = window.dataLayer || [];

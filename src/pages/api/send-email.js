@@ -37,13 +37,13 @@ export default async function handler(req, res) {
       port: 465,
       auth: {
         user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASSWORD
+        pass: process.env.GMAIL_PASSWORD,
       },
     });
 
     const itemsDetails = cartItems
-    .map(
-      (item, index) => `
+      .map(
+        (item, index) => `
         <tr style="border-bottom: 1px solid #ddd;">
           <td style="padding: 8px;"><img src="cid:product_image_${index}" alt="${item.title}" style="width: 50px; height: auto;" /></td>
           <td style="padding: 8px;">${item.code}</td>
@@ -53,12 +53,16 @@ export default async function handler(req, res) {
           <td style="padding: 8px;">${item.size || ''}</td>
           <td style="padding: 8px;">${item.price} грн</td>
         </tr>
-      `
-    )
-    .join('');
+      `,
+      )
+      .join('');
 
-    const paidText = paidInfo?.order_id ? `<strong>Ми отримали оплату, очікуйте доставку, номер замовлення - ${paidInfo.order_id} </strong>` : `Наш менеджер зв'яжеться з вами найближчим часом, щоб підтвердити деталі замовлення`;
-    const mailTitle = paidInfo?.order_id ? 'Замовлення успішно оплачено' : 'Замовлення прийнято';
+    const paidText = paidInfo?.order_id
+      ? `<strong>Ми отримали оплату, очікуйте доставку, номер замовлення - ${paidInfo.order_id} </strong>`
+      : "Наш менеджер зв'яжеться з вами найближчим часом, щоб підтвердити деталі замовлення";
+    const mailTitle = paidInfo?.order_id
+      ? 'Замовлення успішно оплачено'
+      : 'Замовлення прийнято';
 
     const mailOptions = {
       from: process.env.GMAIL_USER, // sender address
@@ -98,11 +102,11 @@ export default async function handler(req, res) {
       <p>З найкращими побажаннями,</p>
       <p>Команда Daisy Jewellery</p>
     `,
-    attachments: cartItems.map((item, index) => ({
-      filename: `${item.sku}${item.image_path}`, // Adjust the extension as necessary
-      path: item.image_path, // Use the actual path to your image
-      cid: `product_image_${index}`, // Must match the `cid` in the HTML
-    })),
+      attachments: cartItems.map((item, index) => ({
+        filename: `${item.sku}${item.image_path}`, // Adjust the extension as necessary
+        path: item.image_path, // Use the actual path to your image
+        cid: `product_image_${index}`, // Must match the `cid` in the HTML
+      })),
     };
 
     try {
@@ -113,16 +117,17 @@ export default async function handler(req, res) {
 
       if (result.response?.includes('OK')) {
         return res.status(200).json({ message: 'Email sent successfully!' });
-      } else {
-        console.error('Failed to send email.')
-        return res.status(500).json({ message: 'Failed to send email.' });
       }
+      console.error('Failed to send email.');
+      return res.status(500).json({ message: 'Failed to send email.' });
     } catch (rateLimiterRes) {
       // Rate limiter triggered
-      return res.status(429).json({ message: 'Too many requests, please try again later.' });
+      return res
+        .status(429)
+        .json({ message: 'Too many requests, please try again later.' });
     }
   } else {
     console.error('Method Not Allowed');
-    res.status(405).json({ message: 'Method Not Allowed' });
+    return res.status(405).json({ message: 'Method Not Allowed' });
   }
 }

@@ -1,7 +1,7 @@
-"use client";
-import { useContext  } from 'react';
+'use client';
+import { useContext } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import { Drawer, List, ListItem, IconButton, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Badge from '@mui/material/Badge';
@@ -18,7 +18,7 @@ const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
     right: 2,
     top: 4,
-    backgroundColor: '#000'
+    backgroundColor: '#000',
   },
 }));
 
@@ -31,7 +31,7 @@ const CartDrawler = () => {
     cartOpen,
     setCartOpen,
     getTotalPrice,
-    getItemSize
+    getItemSize,
   } = useContext(CartContext);
   const totalPrice = getTotalPrice();
   const buyButtonText = `Замовити ${totalPrice.toFixed(2)} грн`;
@@ -68,57 +68,87 @@ const CartDrawler = () => {
           <LocalMallOutlinedIcon className={styles.cartIcon} />
         </StyledBadge>
       </IconButton>
-      <Drawer anchor="right" open={cartOpen} onClose={closeCart} className={styles.drawerEl}>
-          <>
-            <div className={styles.cartTitleContainer}>
-              <Typography variant="h4">Кошик</Typography>
-              <IconButton className={styles.closeCart} onClick={closeCart}>
-                <CloseRoundedIcon />
-              </IconButton>
-            </div>
-            {cartItems?.length > 0 ? <>
+      <Drawer
+        anchor="right"
+        open={cartOpen}
+        onClose={closeCart}
+        className={styles.drawerEl}
+      >
+        <>
+          <div className={styles.cartTitleContainer}>
+            <Typography variant="h4">Кошик</Typography>
+            <IconButton className={styles.closeCart} onClick={closeCart}>
+              <CloseRoundedIcon />
+            </IconButton>
+          </div>
+          {cartItems?.length > 0 ? (
+            <>
               <List className={styles.cartList}>
                 {cartItems.map((item, index) => {
                   const itemSize = getItemSize(item);
                   const itemPrice = getItemPrice(item);
 
                   return (
-                    <ListItem key={index} className={styles.cartListItem} divider>
+                    <ListItem
+                      key={index}
+                      className={styles.cartListItem}
+                      divider
+                    >
                       <div className={styles.basketItemContainer}>
                         <div className={styles.basketImageContainer}>
                           <picture>
                             <img
                               src={item.images[0]}
                               alt={item.title}
-                              className={styles.basketImage} />
+                              className={styles.basketImage}
+                            />
                           </picture>
                         </div>
                         <div className={styles.itemDetails}>
-                            <h4 className={styles.itemTitle}>{item.title}</h4>
+                          <h4 className={styles.itemTitle}>{item.title}</h4>
                           {itemSize && (
                             <div>
                               <span>Розмір: {itemSize}</span>
                             </div>
                           )}
                           <div className={styles.counterWrapper}>
-                            <ProductCounter initialCount={item.quantity} maxCount={10} cartItem={item} />
+                            <ProductCounter
+                              initialCount={item.quantity}
+                              maxCount={10}
+                              cartItem={item}
+                            />
                           </div>
-                          <div className={styles.price}>{`${itemPrice} грн`}</div>
+                          <div
+                            className={styles.price}
+                          >{`${itemPrice} грн`}</div>
                         </div>
                         <div className={styles.deleteContainer}>
-                          <IconButton className={styles.deleteItem} onClick={() => removeFromCart(item.product_id)}>
+                          <IconButton
+                            className={styles.deleteItem}
+                            onClick={() => removeFromCart(item.product_id)}
+                          >
                             <DeleteOutlineOutlinedIcon />
                           </IconButton>
                         </div>
                       </div>
                     </ListItem>
-                  )
+                  );
                 })}
-            </List>
-            <div className={styles.buttonContainer}>
-              <ProductBuyButton text={buyButtonText} onClick={handleBuyClick} width="85%" />
-            </div></> : <Typography variant="h3" className={styles.emptyCartMessage}>Кошик порожній</Typography>}
-          </>
+              </List>
+              <div className={styles.buttonContainer}>
+                <ProductBuyButton
+                  text={buyButtonText}
+                  onClick={handleBuyClick}
+                  width="85%"
+                />
+              </div>
+            </>
+          ) : (
+            <Typography variant="h3" className={styles.emptyCartMessage}>
+              Кошик порожній
+            </Typography>
+          )}
+        </>
       </Drawer>
     </>
   );

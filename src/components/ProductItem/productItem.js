@@ -5,7 +5,6 @@ import { getProductLink } from '../../helpers/getProductLink';
 
 import styles from './styles.module.css';
 
-
 // const getProductLink = product => {
 //   const { category, code } = product;
 //   const categoryMap = {
@@ -20,10 +19,16 @@ import styles from './styles.module.css';
 //   return productLink;
 // }
 
-
-
 export default function ProductItem({ product }) {
-  const { product_id, title, short_description, price, code, image_path, category } = product;
+  const {
+    product_id,
+    title,
+    short_description,
+    price,
+    code,
+    image_path,
+    category,
+  } = product;
   // const cat = categoryMap[category];
   // const productLink = `/${cat}/${code}`;
   const productLink = getProductLink(product);
@@ -34,21 +39,21 @@ export default function ProductItem({ product }) {
         <div className={styles.itemContentCnt}>
           <div className={styles.itemImageCnt}>
             <Image
-                src={image_path}
-                alt={`Зображення ${title} при наведенні`}
-                fill={true}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                loading="lazy"
-                className={styles.itemImage}
-              />
+              src={image_path}
+              alt={`Зображення ${title} при наведенні`}
+              fill={true}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              loading="lazy"
+              className={styles.itemImage}
+            />
           </div>
         </div>
       </Link>
       <div className={styles.itemBottomInfo}>
         <div className={styles.infoCtn}>
-        <Link href={productLink}>
-          <p className={styles.itemTitle}>{title}</p>
-        </Link>
+          <Link href={productLink}>
+            <p className={styles.itemTitle}>{title}</p>
+          </Link>
           {/* <p className={styles.itemDescription} dangerouslySetInnerHTML={{ __html: short_description }} /> */}
         </div>
         <div className={styles.priceCnt}>
@@ -57,4 +62,4 @@ export default function ProductItem({ product }) {
       </div>
     </div>
   );
-};
+}

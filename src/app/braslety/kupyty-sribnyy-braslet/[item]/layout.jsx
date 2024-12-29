@@ -17,7 +17,10 @@ export default async function Layout({ children, params }) {
   const segments = [
     { name: 'Головна', href: '/' },
     { name: 'Браслети', href: '/braslety/1' },
-    { name: product.title, href: `/braslety/kupyty-sribnyy-braslet/${params.item}` },
+    {
+      name: product.title,
+      href: `/braslety/kupyty-sribnyy-braslet/${params.item}`,
+    },
   ];
 
   return (

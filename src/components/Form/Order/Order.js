@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useContext } from 'react';
 import {
@@ -15,9 +15,9 @@ import {
   MenuItem,
   FormControl,
   CircularProgress,
-  FormHelperText
+  FormHelperText,
 } from '@mui/material';
-import Select from '@mui/material/Select'
+import Select from '@mui/material/Select';
 import { CartContext } from '../../../context/CartContext';
 import DepartmentAutocomplete from './DepartmentAutocomplete/DepartmentAutocomplete';
 import CitySelect from './CitySelect/CitySelect';
@@ -35,7 +35,7 @@ const OrderForm = () => {
     cityName: '',
     department: '',
     contact: '',
-    payment: ''
+    payment: '',
   });
 
   const [statusMessage, setStatusMessage] = useState('');
@@ -48,7 +48,7 @@ const OrderForm = () => {
 
   const handleChange = (e, newName, newVal) => {
     const { name, value } = e.target;
-    const validName = typeof newName === "string" ? newName : name;
+    const validName = typeof newName === 'string' ? newName : name;
     const n = validName || name;
     const v = newVal || value;
 
@@ -78,14 +78,14 @@ const OrderForm = () => {
 
   const getOrderData = () => {
     const totalPrice = getTotalPrice();
-    const cartItemsWithSize = cartItems.map(item => {
+    const cartItemsWithSize = cartItems.map((item) => {
       const size = getItemSize(item);
 
       if (size) {
         return {
           ...item,
-          size
-        }
+          size,
+        };
       }
 
       return item;
@@ -94,32 +94,42 @@ const OrderForm = () => {
     return {
       formData,
       cartItems: cartItemsWithSize,
-      totalPrice
+      totalPrice,
     };
   };
 
   const validateForm = () => {
     const errors = {};
-    const { firstName, lastName, email, phone, cityName, department, contact, payment } = formData;
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      cityName,
+      department,
+      contact,
+      payment,
+    } = formData;
 
-    if (!firstName) errors.firstName = 'Ім\'я є обов\'язковим полем';
-    if (!lastName) errors.lastName = 'Прізвище є обов\'язковим полем';
+    if (!firstName) errors.firstName = "Ім'я є обов'язковим полем";
+    if (!lastName) errors.lastName = "Прізвище є обов'язковим полем";
     if (!email) {
-      errors.email = 'Email є обов\'язковим полем';
+      errors.email = "Email є обов'язковим полем";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = 'Введіть валідну Email адресу';
     }
     if (!phone) {
-      errors.phone = 'Телефон є обов\'язковим полем';
+      errors.phone = "Телефон є обов'язковим полем";
     } else if (!/^[0-9]{12}$/.test(phone)) {
-      errors.phone = 'Введіть валідний номер телефону у форматі: 380######### (12 цифр)';
+      errors.phone =
+        'Введіть валідний номер телефону у форматі: 380######### (12 цифр)';
     }
-    if (!cityName) errors.cityName = 'Населений пункт є обов\'язковим полем';
-    if (!department) errors.department = 'Відділення є обов\'язковим полем';
+    if (!cityName) errors.cityName = "Населений пункт є обов'язковим полем";
+    if (!department) errors.department = "Відділення є обов'язковим полем";
 
-    if (!contact) errors.contact = 'Спосіб зв\'язку є обов\'язковим полем';
-  
-    if (!payment) errors.payment = 'Метод оплати є обов\'язковим полем';
+    if (!contact) errors.contact = "Спосіб зв'язку є обов'язковим полем";
+
+    if (!payment) errors.payment = "Метод оплати є обов'язковим полем";
 
     setFormErrors(errors);
 
@@ -148,7 +158,7 @@ const OrderForm = () => {
         // setStatusMessage('Order submitted and email sent!');
         setShowModal(true);
       } else {
-        setStatusMessage('Error' );
+        setStatusMessage('Error');
       }
     } catch (error) {
       console.error('Error sending email:', error);
@@ -168,7 +178,7 @@ const OrderForm = () => {
       cityName: true,
       department: true,
       contact: true,
-      payment: true
+      payment: true,
     });
 
     if (!validateForm()) {
@@ -188,7 +198,7 @@ const OrderForm = () => {
       cityName: true,
       department: true,
       contact: true,
-      payment: true
+      payment: true,
     });
 
     if (!validateForm()) {
@@ -208,11 +218,15 @@ const OrderForm = () => {
           <CircularProgress />
         </div>
       )}
-      <div className={`${styles.defaultBlured}${loading ? styles.blurred : ''}`} />
+      <div
+        className={`${styles.defaultBlured}${loading ? styles.blurred : ''}`}
+      />
       <Box component="form">
         <Grid container spacing={2} className={styles.formGrid}>
           <Grid item xs={12}>
-            <Typography className={styles.formTitle} variant="h4">Персональні данні</Typography>
+            <Typography className={styles.formTitle} variant="h4">
+              Персональні данні
+            </Typography>
           </Grid>
 
           <Grid item xs={6}>
@@ -271,57 +285,78 @@ const OrderForm = () => {
 
         <Grid container spacing={2} className={styles.formGrid}>
           <Grid item xs={12}>
-            <Typography className={styles.formTitle} variant="h4">Відділення Нової Пошти</Typography>
+            <Typography className={styles.formTitle} variant="h4">
+              Відділення Нової Пошти
+            </Typography>
           </Grid>
 
           <Grid item xs={12}>
-            <CitySelect handleChange={handleChange} error={!!formErrors.cityName} helperText={formErrors.cityName} />
+            <CitySelect
+              handleChange={handleChange}
+              error={!!formErrors.cityName}
+              helperText={formErrors.cityName}
+            />
           </Grid>
 
           {formData.cityName && (
             <Grid item xs={12}>
-              <DepartmentAutocomplete handleChange={handleChange} cityName={formData.cityName} error={!!formErrors.department} helperText={formErrors.department} />
+              <DepartmentAutocomplete
+                handleChange={handleChange}
+                cityName={formData.cityName}
+                error={!!formErrors.department}
+                helperText={formErrors.department}
+              />
             </Grid>
           )}
         </Grid>
 
         <Grid container spacing={2} className={styles.formGrid}>
-            <Grid item xs={12}>
-              <Typography className={styles.formTitle} variant="h4">Оплата</Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel error={!!formErrors.payment} id="paymentLabel">Оплата</InputLabel>
-                <Select
-                  labelId="paymentLabel"
-                  id="payment"
-                  value={formData.payment}
-                  label="Оплата"
-                  name="payment"
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  className={styles.contactSelect}
-                >
-                  <MenuItem value='liqPay'>Банківська картка (LiqPay)</MenuItem>
-                  <MenuItem value='deliveryPay'>Оплата при доставці</MenuItem>
-                </Select>
-                {formErrors.payment && (
-                  <FormHelperText id="component-helper-text" error={true}>
-                    {formErrors.payment}
-                  </FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
-          </Grid>
-
-        <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Typography className={styles.formTitle} variant="h4">{`Як з вами зв'язатися?`}</Typography>
+            <Typography className={styles.formTitle} variant="h4">
+              Оплата
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <FormControl fullWidth>
-              <InputLabel error={!!formErrors.contact} id="contactLabel">{`Спосіб зв'язку`}</InputLabel>
+              <InputLabel error={!!formErrors.payment} id="paymentLabel">
+                Оплата
+              </InputLabel>
+              <Select
+                labelId="paymentLabel"
+                id="payment"
+                value={formData.payment}
+                label="Оплата"
+                name="payment"
+                onChange={handleChange}
+                required
+                fullWidth
+                className={styles.contactSelect}
+              >
+                <MenuItem value="liqPay">Банківська картка (LiqPay)</MenuItem>
+                <MenuItem value="deliveryPay">Оплата при доставці</MenuItem>
+              </Select>
+              {formErrors.payment && (
+                <FormHelperText id="component-helper-text" error={true}>
+                  {formErrors.payment}
+                </FormHelperText>
+              )}
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Typography
+              className={styles.formTitle}
+              variant="h4"
+            >{`Як з вами зв'язатися?`}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <InputLabel
+                error={!!formErrors.contact}
+                id="contactLabel"
+              >{`Спосіб зв'язку`}</InputLabel>
               <Select
                 labelId="contactLabel"
                 id="contact"
@@ -356,7 +391,7 @@ const OrderForm = () => {
               onChange={handleChange}
               fullWidth
               className={styles.commentsTextArea}
-          />
+            />
           </Grid>
         </Grid>
 
@@ -389,9 +424,16 @@ const OrderForm = () => {
           },
         }}
       >
-        <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }} variant="h4">🎉 Вітаємо!</DialogTitle>
+        <DialogTitle
+          sx={{ textAlign: 'center', fontWeight: 'bold' }}
+          variant="h4"
+        >
+          🎉 Вітаємо!
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText sx={{ textAlign: 'center', fontSize: '1.3rem', color: '#333' }}>
+          <DialogContentText
+            sx={{ textAlign: 'center', fontSize: '1.3rem', color: '#333' }}
+          >
             Ваше замовлення успішно сформоване.
           </DialogContentText>
         </DialogContent>

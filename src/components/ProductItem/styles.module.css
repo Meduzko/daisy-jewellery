@@ -1,55 +1,58 @@
 .item {
-    width: 100%;
-    height: 100%;
-    /* background-color: #F2F2F3; */
-    /* aspect-ratio: auto; */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: relative;
+  width: 100%;
+  height: 100%;
+  /* background-color: #F2F2F3; */
+  /* aspect-ratio: auto; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
 
-    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+    0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 10px 0px rgba(0, 0, 0, 0.12);
 }
 
 .itemContentCnt {
-    height: 100%;
+  height: 100%;
 }
 
 .itemImageCnt {
-    height: 100%;
-    aspect-ratio: 2 / 3;
-    background-color: #eee;
+  height: 100%;
+  aspect-ratio: 2 / 3;
+  background-color: #eee;
 }
 
 .itemImage {
-    position: relative !important;
+  position: relative !important;
 }
 
 .itemLink {
-    height: 100%;
+  height: 100%;
 }
 
 .priceCnt {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .itemBottomInfo {
-    text-align: left;
-    text-transform: uppercase;
-    color: #000;
-    font-weight: 500;
-    font-size: 14px;
-    letter-spacing: var(--letter-spacing);
-    padding: 12px;
+  text-align: left;
+  text-transform: uppercase;
+  color: #000;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: var(--letter-spacing);
+  padding: 12px;
 
-    z-index: 1;
-    background: #fff;
-    min-height: 140px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  z-index: 1;
+  background: #fff;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
-    /* position: absolute;
+  /* position: absolute;
     bottom: 0;
     width: 100%;
     color: #fff;
@@ -58,21 +61,25 @@
 }
 
 .itemTitle {
-    text-transform: uppercase;
+  text-transform: uppercase;
 }
 
 .bottomGradient {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 60%);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0) 60%
+  );
 }
 
 @media (max-width: 1024px) {
-    .itemBottomInfo {
-        font-size: 12px;
-        min-height: 124px;
-    }
+  .itemBottomInfo {
+    font-size: 12px;
+    min-height: 124px;
+  }
 }

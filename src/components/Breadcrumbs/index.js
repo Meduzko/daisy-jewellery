@@ -8,9 +8,11 @@ export default function Breadcrumbs({ segments }) {
         {segments.map((segment, index) => {
           const isLast = index === segments.length - 1;
           return (
-            <li key={index}>
+            <li key={segment.name}>
               {!isLast ? (
-                <Link href={segment.href} className={styles.linkItem}>{segment.name}</Link>
+                <Link href={segment.href} className={styles.linkItem}>
+                  {segment.name}
+                </Link>
               ) : (
                 <span>{segment.name}</span>
               )}

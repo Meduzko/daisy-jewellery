@@ -1,6 +1,5 @@
-
 const formatDate = (date) => {
-  const pad = (number) => (number < 10 ? '0' + number : number);
+  const pad = (number) => (number < 10 ? `0${number}` : number);
 
   const year = date.getFullYear();
   const month = pad(date.getMonth() + 1); // Months are zero-based
@@ -12,7 +11,6 @@ const formatDate = (date) => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
-
 const getOrderData = (orderData, orderID) => {
   const { formData, cartItems, totalPrice } = orderData;
   const { email, firstName, lastName, cityName, department } = formData;
@@ -22,24 +20,24 @@ const getOrderData = (orderData, orderID) => {
     product_id,
     store_id: pices[0].store_id,
     price,
-    quantity: 1
-  }))
+    quantity: 1,
+  }));
 
   return {
     id: orderID,
     number: 0,
     date: orderDate,
     status: 0,
-    channel: "string",
+    channel: 'string',
     cart: items,
     personal_info: {
-      client_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      client_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
       name: firstName,
-      street: "string",
-      building: "string",
+      street: 'string',
+      building: 'string',
       city: cityName,
-      phone: "string",
-      comment: "string",
+      phone: 'string',
+      comment: 'string',
       card_or_cash: 0,
     },
   };
@@ -57,7 +55,7 @@ export default async function handler(req, res) {
     }
 
     const ROOT_URI = process.env.API_ROOT_URI;
-    const API_KEY = process.env.API_KEY;
+    const { API_KEY } = process.env;
     const url = `${ROOT_URI}/orders/upload`;
 
     const data = getOrderData(orderData, orderID);
@@ -65,7 +63,7 @@ export default async function handler(req, res) {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'ApiKey': API_KEY,
+        ApiKey: API_KEY,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),

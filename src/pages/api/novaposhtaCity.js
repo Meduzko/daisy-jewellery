@@ -13,10 +13,10 @@ export default async function handler(req, res) {
         modelName: 'AddressGeneral',
         calledMethod: 'getSettlements',
         methodProperties: {
-          FindByString : search,
-          Page : 1,
-          Limit : 50,
-        }
+          FindByString: search,
+          Page: 1,
+          Limit: 50,
+        },
       }),
     });
 

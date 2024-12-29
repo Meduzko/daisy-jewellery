@@ -1,137 +1,137 @@
 .galleryCnt {
-    padding: 48px;
+  padding: 48px;
 }
 
 /*
 ** Gallery item
 */
 .itemLink:hover {
-    cursor: default;
+  cursor: default;
 }
 
 .galleryItem {
-    text-align: center;
-    position: relative;
-    /* min-height: 720px; */
-    aspect-ratio: 2 / 3;
-    height: 100%;
+  text-align: center;
+  position: relative;
+  /* min-height: 720px; */
+  aspect-ratio: 2 / 3;
+  height: 100%;
 }
 
 .itemBackground {
-    background-color: #eee;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
+  background-color: #eee;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .imgContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    width: 100%;
-    height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .imgContainer:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .imgContainer:hover .hoverImg {
-    opacity: 1;
+  opacity: 1;
 }
-  
+
 .imgContainer:hover .defaultImg {
-    opacity: 0;
+  opacity: 0;
 }
 
 .itemImg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
 
-    aspect-ratio: 16 / 9;
-    width: 100%;
-    object-fit: cover;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  object-fit: cover;
 }
 
 .placeholderImg {
-    object-fit: contain;
+  object-fit: contain;
 }
 
 .defaultImg {
-    transition: opacity 0.3s ease-in-out;
-    z-index: 1;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1;
 }
 
 .hoverImg {
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-    z-index: 2;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 2;
 }
 
 .itemInfo {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 16px 0;
-    min-height: 186px;
-    flex-direction: column;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 0;
+  min-height: 186px;
+  flex-direction: column;
 }
 
 .titleContainer {
-    display: flex;
-    flex-direction: column;
-    padding-right: 24px;
+  display: flex;
+  flex-direction: column;
+  padding-right: 24px;
 }
 
 .title {
-    font-weight: 800;
-    font-size: 1.35rem;
-    letter-spacing: 0.18rem;
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: 0.18rem;
 }
 
 .subTitle {
-    font-size: 1rem;
-    font-weight: 200;
-    padding: 8px 0;
+  font-size: 1rem;
+  font-weight: 200;
+  padding: 8px 0;
 }
 
 .price {
-    font-weight: 800;
-    font-size: 1.35rem;
-    padding-top: 8px;
+  font-weight: 800;
+  font-size: 1.35rem;
+  padding-top: 8px;
 }
 
 .buyButton {
-    padding: 16px;
-    background-color: #000;
-    color: #fff;
-    border: 0;
-    text-transform: uppercase;
-    font-weight: 200;
-    font-size: 1rem;
-    letter-spacing: 0.18rem;
+  padding: 16px;
+  background-color: #000;
+  color: #fff;
+  border: 0;
+  text-transform: uppercase;
+  font-weight: 200;
+  font-size: 1rem;
+  letter-spacing: 0.18rem;
 }
 
 .buyButton:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .itemBottomCnt {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 @media (max-width: 1024px) {
-    .galleryCnt {
-        padding: 12px;
-    }
+  .galleryCnt {
+    padding: 12px;
+  }
 }

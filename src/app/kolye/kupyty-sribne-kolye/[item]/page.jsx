@@ -9,7 +9,10 @@ export async function generateMetadata({ params }) {
     categoryId: process.env.NECKLACE_CATEGORY_ID,
   });
 
-  const productMetaData = getProductMetadata({ product, categoryName: 'necklace' });
+  const productMetaData = getProductMetadata({
+    product,
+    categoryName: 'necklace',
+  });
 
   return productMetaData;
 }
@@ -32,9 +35,10 @@ export async function generateStaticParams() {
 }
 
 export default async function EarringItem({ params }) {
-  const [product] = await fetchProduct({ code: params.item, categoryId: process.env.NECKLACE_CATEGORY_ID });
+  const [product] = await fetchProduct({
+    code: params.item,
+    categoryId: process.env.NECKLACE_CATEGORY_ID,
+  });
 
-  return (
-    <ProductPageNew item={product} />
-  )
+  return <ProductPageNew item={product} />;
 }

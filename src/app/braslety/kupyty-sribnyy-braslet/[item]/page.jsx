@@ -6,10 +6,13 @@ import { getProductMetadata } from '../../../../helpers';
 export async function generateMetadata({ params }) {
   const [product] = await fetchProduct({
     code: params.item,
-    categoryId: process.env.EARING_CATEGORY_ID,
+    categoryId: process.env.BRACER_CATEGORY_ID,
   });
 
-  const productMetaData = getProductMetadata({ product, categoryName: 'earring' });
+  const productMetaData = getProductMetadata({
+    product,
+    categoryName: 'bracer',
+  });
 
   return productMetaData;
 }
@@ -17,7 +20,7 @@ export async function generateMetadata({ params }) {
 export async function generateStaticParams() {
   try {
     const products = await fetchAllProducts({
-      categoryId: process.env.EARING_CATEGORY_ID,
+      categoryId: process.env.BRACER_CATEGORY_ID,
     });
 
     const productCodes = products.map((product) => ({
@@ -32,9 +35,10 @@ export async function generateStaticParams() {
 }
 
 export default async function EarringItem({ params }) {
-  const [product] = await fetchProduct({ code: params.item, categoryId: process.env.EARING_CATEGORY_ID });
+  const [product] = await fetchProduct({
+    code: params.item,
+    categoryId: process.env.BRACER_CATEGORY_ID,
+  });
 
-  return (
-    <ProductPageNew item={product} />
-  )
+  return <ProductPageNew item={product} />;
 }

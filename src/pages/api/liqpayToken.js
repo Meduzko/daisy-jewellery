@@ -39,6 +39,8 @@ export default async function handler(req, res) {
     const paymentUrl = `https://www.liqpay.ua/en/checkout/card/${checkoutToken}`;
     res.status(200).json({ paymentUrl });
   } else {
-    res.status(400).json({ error: result.err_description || 'Failed to get checkout token' });
+    res.status(400).json({
+      error: result.err_description || 'Failed to get checkout token',
+    });
   }
-};
+}

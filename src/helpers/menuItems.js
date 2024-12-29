@@ -1,18 +1,18 @@
 export const getMenuItems = () => [
   {
     title: 'Каблучки',
-    link: '/kabluchki/1'
+    link: '/kabluchki/1',
   },
   {
     title: 'Сережки',
-    link: '/serezhky/1'
+    link: '/serezhky/1',
   },
   {
     title: 'Кольє',
-    link: '/kolye/1'
+    link: '/kolye/1',
   },
   {
     title: 'Браслети',
-    link: '/braslety/1'
-  }
+    link: '/braslety/1',
+  },
 ];

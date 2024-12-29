@@ -13,7 +13,9 @@ export default async function handler(req, res) {
     // Compare signatures
     if (generatedSignature === signature) {
       // Signature is valid
-      const decodedData = JSON.parse(Buffer.from(data, 'base64').toString('utf-8'));
+      const decodedData = JSON.parse(
+        Buffer.from(data, 'base64').toString('utf-8'),
+      );
       // Process payment
       console.log('decodedData', decodedData);
 
@@ -22,22 +24,30 @@ export default async function handler(req, res) {
 
         console.log('orderData', decodedDataInfo);
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-email`, {
+        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-email`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ ...decodedDataInfo, paidInfo: { order_id: decodedData.order_id } }),
+          body: JSON.stringify({
+            ...decodedDataInfo,
+            paidInfo: { order_id: decodedData.order_id },
+          }),
         });
       } else {
-        console.error('Something went wrong during payment, decodedData:', decodedData);
+        console.error(
+          'Something went wrong during payment, decodedData:',
+          decodedData,
+        );
       }
     } else {
       // Invalid signature
       // Handle error
-      console.error('Something wrong during comparing generatedSignature === signature');
+      console.error(
+        'Something wrong during comparing generatedSignature === signature',
+      );
     }
-  
+
     try {
       // await updatePaymentStatus(order_id, status);
       res.status(200).json({ message: 'Payment status updated' });
@@ -50,4 +60,4 @@ export default async function handler(req, res) {
     console.error(error);
     res.status(405).json({ message: 'Method not allowed' });
   }
-};
+}

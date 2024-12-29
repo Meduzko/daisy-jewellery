@@ -64,14 +64,20 @@
   border-radius: var(--button-border-radius);
   background-color: #0000;
   background-image: var(--initial-gradient), var(--hover-gradient);
-  background-size: 100% 100%, 0 100%;
+  background-size:
+    100% 100%,
+    0 100%;
   background-position: var(--initial-background-position);
   background-repeat: no-repeat;
   justify-content: center;
   align-items: center;
   column-gap: 1.125rem;
   padding: 1rem 1.75rem;
-  transition: background-size .45s cubic-bezier(.785,.135,.15,.86), background-position .45s step-end, color .45s cubic-bezier(.785,.135,.15,.86), border .45s cubic-bezier(.785,.135,.15,.86);
+  transition:
+    background-size 0.45s cubic-bezier(0.785, 0.135, 0.15, 0.86),
+    background-position 0.45s step-end,
+    color 0.45s cubic-bezier(0.785, 0.135, 0.15, 0.86),
+    border 0.45s cubic-bezier(0.785, 0.135, 0.15, 0.86);
   display: inline-flex;
   position: relative;
 }
@@ -80,7 +86,9 @@
   color: rgb(var(--button-background));
   background-position: var(--hover-background-position);
   border-color: rgb(var(--button-background));
-  background-size: 0 100%, 100% 100%;
+  background-size:
+    0 100%,
+    100% 100%;
 }
 
 .buyButton:active {

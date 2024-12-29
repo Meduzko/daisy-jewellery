@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { createContext, useState } from 'react';
 
@@ -11,12 +11,12 @@ export const CartProvider = ({ children }) => {
 
   const addToItemSize = (product, size) => {
     setItemSize((prevItems) => {
-      const itemExists = prevItems.find((item) => item.product_id === product.product_id);
+      const itemExists = prevItems.find(
+        (item) => item.product_id === product.product_id
+      );
       if (itemExists) {
         return prevItems.map((item) =>
-          item.product_id === product.product_id
-            ? { ...item, size }
-            : item
+          item.product_id === product.product_id ? { ...item, size } : item
         );
       }
 
@@ -26,7 +26,9 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product, quantity = 1) => {
     setCartItems((prevItems) => {
-      const itemExists = prevItems.find((item) => item.product_id === product.product_id);
+      const itemExists = prevItems.find(
+        (item) => item.product_id === product.product_id
+      );
       if (itemExists) {
         // Increase quantity by the specified amount
         return prevItems.map((item) =>
@@ -43,7 +45,9 @@ export const CartProvider = ({ children }) => {
 
   const changeItemQuantity = (product, quantity) => {
     setCartItems((prevItems) => {
-      const itemExists = prevItems.find((item) => item.product_id === product.product_id);
+      const itemExists = prevItems.find(
+        (item) => item.product_id === product.product_id
+      );
       if (itemExists) {
         return prevItems.map((item) =>
           item.product_id === product.product_id
@@ -71,15 +75,18 @@ export const CartProvider = ({ children }) => {
 
   const getTotalPrice = () => {
     const total = cartItems.reduce(
-      (accumulator, item) => Number(accumulator) + Number(item.price) * item.quantity,
+      (accumulator, item) =>
+        Number(accumulator) + Number(item.price) * item.quantity,
       0
     );
 
     return total;
   };
 
-  const getItemSize = item => {
-    const res = itemSize?.find((contextItem) => contextItem?.product_id === item?.product_id)?.size;
+  const getItemSize = (item) => {
+    const res = itemSize?.find(
+      (contextItem) => contextItem?.product_id === item?.product_id
+    )?.size;
 
     return res;
   };
@@ -100,7 +107,7 @@ export const CartProvider = ({ children }) => {
         clearCart,
         cartOpen,
         setCartOpen,
-        getTotalPrice
+        getTotalPrice,
       }}
     >
       {children}

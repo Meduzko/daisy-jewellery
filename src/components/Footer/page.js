@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import Link from "next/link"
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { IconButton } from '@mui/material';
 import InstagramIcon from '@mui/icons-material/Instagram';
@@ -26,14 +26,9 @@ export default function Footer() {
         <div className={`${styles.footerCategories} ${styles.footerCol}`}>
           <h3 className={styles.footerCategoryTitle}>Категорії</h3>
           <ul className={styles.footerList}>
-            {menuItems.map(item => (
-              <li
-                className={styles.footerListItem}
-                key={item.title}
-              >
-                <Link href={item.link}>
-                  {item.title}
-                </Link>
+            {menuItems.map((item) => (
+              <li className={styles.footerListItem} key={item.title}>
+                <Link href={item.link}>{item.title}</Link>
               </li>
             ))}
           </ul>
@@ -41,16 +36,23 @@ export default function Footer() {
         <div className={`${styles.footerContacts}  ${styles.footerCol}`}>
           <h3 className={styles.footerCategoryTitle}>Контакти</h3>
           <ul className={styles.footerList}>
-            <li className={styles.footerListItem}>м. Корець, площа Київська 3/3</li>
+            <li className={styles.footerListItem}>
+              м. Корець, площа Київська 3/3
+            </li>
             <li className={styles.footerListItem}>
               <a href="tel:+380935492986">+380935492986</a>
             </li>
             <li className={styles.footerListItem}>
-              <a href="mailto:daisyjewellery.info@gmail.com">daisyjewellery.info@gmail.com</a>
+              <a href="mailto:daisyjewellery.info@gmail.com">
+                daisyjewellery.info@gmail.com
+              </a>
             </li>
             <li className={styles.footerListItem}>
               <div className={styles.footerSocials}>
-                <Link href="https://www.instagram.com/daisy.jewellery" aria-label="Instagram link">
+                <Link
+                  href="https://www.instagram.com/daisy.jewellery"
+                  aria-label="Instagram link"
+                >
                   <IconButton className={styles.social} aria-label="Instagram">
                     <InstagramIcon />
                   </IconButton>
@@ -58,7 +60,10 @@ export default function Footer() {
                 <IconButton className={styles.social} aria-label="Telegram">
                   <TelegramIcon />
                 </IconButton>
-                <Link href="https://www.facebook.com/profile.php?id=100085472847797" aria-label="Facebook link">
+                <Link
+                  href="https://www.facebook.com/profile.php?id=100085472847797"
+                  aria-label="Facebook link"
+                >
                   <IconButton className={styles.social} aria-label="Facebook">
                     <FacebookIcon />
                   </IconButton>
@@ -83,6 +88,6 @@ export default function Footer() {
         </div>
       </div>
       <div className={styles.footerBottomText}>© 2024 DAISY.JEWELLERY</div>
-  </footer>
+    </footer>
   );
 }

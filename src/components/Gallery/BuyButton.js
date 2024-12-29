@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useContext } from 'react';
 import { CartContext } from '../../context/CartContext';
@@ -13,11 +13,8 @@ export default function BuyButton({ item }) {
   };
 
   return (
-      <button
-        onClick={handleBtnClick}
-        className={styles.buyButton}
-      >
-        Купити
-      </button>
-  )
-};
+    <button onClick={handleBtnClick} className={styles.buyButton}>
+      Купити
+    </button>
+  );
+}

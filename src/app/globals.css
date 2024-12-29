@@ -2,9 +2,9 @@
   --font-size: 14px;
   --letter-spacing: 0.18rem;
   --border-radius: 12px;
-  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
-    "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
-    "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
+    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
+    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -45,7 +45,10 @@
   --transform-origin-start: left;
   --transform-origin-end: right;
 
-  --initial-gradient: linear-gradient(rgb(var(--button-background)), rgb(var(--button-background)));
+  --initial-gradient: linear-gradient(
+    rgb(var(--button-background)),
+    rgb(var(--button-background))
+  );
   --hover-gradient: linear-gradient(transparent, transparent);
   --initial-background-position: var(--transform-origin-end);
   --hover-background-position: var(--transform-origin-start);
@@ -84,8 +87,6 @@
   }
 }
 
-
-
 *,
 *::before,
 *::after {
@@ -100,7 +101,9 @@
   margin: 0;
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: border-box;
 }
 

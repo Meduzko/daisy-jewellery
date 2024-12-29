@@ -1,5 +1,5 @@
-"use client";
-import { useBasket  } from '../../context/BasketContext';
+'use client';
+import { useBasket } from '../../context/BasketContext';
 import styles from './styles.module.css';
 
 export default function BuyButton({ product }) {
@@ -13,11 +13,8 @@ export default function BuyButton({ product }) {
   };
 
   return (
-    <button
-      onClick={handleBtnClick}
-      className={styles.buyButton}
-    >
+    <button type='button' onClick={handleBtnClick} className={styles.buyButton}>
       Купити
     </button>
-  )
-};
+  );
+}

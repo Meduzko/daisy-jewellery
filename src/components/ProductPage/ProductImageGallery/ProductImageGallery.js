@@ -8,31 +8,32 @@ const ProductImageGallery = ({ images, title }) => {
 
   return (
     <div className={styles.imageGallery}>
-      <div className={`${styles.imgContainer} ${styles.transparentImgContainer}`}>
-        {firstImage && <Image
-          src={firstImage}
-          alt={title}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className={styles.image}
-        />}
-      </div>
-      {thumbnails && thumbnails.map((image, index) => (
-        <div
-          key={index}
-          className={styles.imgContainer}
-          tabIndex={0}
-        >
+      <div
+        className={`${styles.imgContainer} ${styles.transparentImgContainer}`}
+      >
+        {firstImage && (
           <Image
-            src={image}
+            src={firstImage}
             alt={title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className={styles.image}
-            loading="eager"
           />
-        </div>
-      ))}
+        )}
+      </div>
+      {thumbnails &&
+        thumbnails.map((image, index) => (
+          <div key={index} className={styles.imgContainer} tabIndex={0}>
+            <Image
+              src={image}
+              alt={title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className={styles.image}
+              loading="eager"
+            />
+          </div>
+        ))}
     </div>
   );
 };

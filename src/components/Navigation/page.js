@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -12,14 +12,14 @@ export default function Navigation({ isMobile }) {
 
   useEffect(() => {
     const currentPath = window.location.pathname;
-    const navPaths = navList.map(i => i.link);
+    const navPaths = navList.map((i) => i.link);
 
     if (active) {
       return;
     }
 
     if (navPaths.includes(currentPath)) {
-      const activeItem = navList.find(i => i.link === currentPath);
+      const activeItem = navList.find((i) => i.link === currentPath);
       if (activeItem) {
         setActive(activeItem.title);
       }
@@ -39,9 +39,9 @@ export default function Navigation({ isMobile }) {
   return (
     <nav className={styles.nav}>
       <ul className={styles.navList}>
-        {navList.map(item => (
+        {navList.map((item) => (
           <li
-            className={`${styles.navItem} ${active === item.title ? styles.active : '' }`}
+            className={`${styles.navItem} ${active === item.title ? styles.active : ''}`}
             key={item.title}
           >
             <Link

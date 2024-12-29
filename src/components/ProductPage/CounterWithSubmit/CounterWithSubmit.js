@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useContext } from 'react';
 import { CartContext } from '../../../context/CartContext';
@@ -10,7 +10,9 @@ import styles from './styes.module.css';
 const CounterWithSubmit = ({ product }) => {
   const { cartItems, addToCart, setCartOpen } = useContext(CartContext);
   const [count, setCount] = useState(1);
-  const cartItem = cartItems.find((item) => item.product_id === product.product_id);
+  const cartItem = cartItems.find(
+    (item) => item.product_id === product.product_id
+  );
 
   const handleButtonClick = () => {
     setCartOpen(true);
@@ -32,9 +34,7 @@ const CounterWithSubmit = ({ product }) => {
           cartItem={cartItem}
         />
       </div>
-      <ProductBuyButton
-        onClick={handleButtonClick}
-      />
+      <ProductBuyButton onClick={handleButtonClick} />
     </>
   );
 };

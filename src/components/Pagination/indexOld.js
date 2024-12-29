@@ -1,7 +1,7 @@
 'use client'; // Mark this component as a Client Component
 
 import { Pagination } from '@mui/material';
-import { useRouter } from 'next/navigation';  // Client-side routing
+import { useRouter } from 'next/navigation'; // Client-side routing
 import { useState } from 'react';
 
 export default function PaginationComponent({ totalPages, currentPage }) {

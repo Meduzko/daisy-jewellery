@@ -7,7 +7,7 @@ export default async function handler(req, res) {
       // const paymentDescription = `Daisy Jewellery, ${firstName} ${lastName} ${department} ${cityName} ${email}`;
 
       // Validate the amount
-      if (!amount || isNaN(amount) || Number(amount) <= 0) {
+      if (!amount || Number.isNaN(amount) || Number(amount) <= 0) {
         return res.status(400).json({ message: 'Invalid amount' });
       }
 
@@ -38,13 +38,16 @@ export default async function handler(req, res) {
       // Generate data and signature - old worked way
       const jsonString = JSON.stringify(params);
       const data = Buffer.from(jsonString).toString('base64');
-      const concatString = process.env.LIQPAY_PRIVATE_KEY + data + process.env.LIQPAY_PRIVATE_KEY;
+      const concatString =
+        process.env.LIQPAY_PRIVATE_KEY + data + process.env.LIQPAY_PRIVATE_KEY;
       const sha1Hash = crypto.createHash('sha1').update(concatString).digest();
       const signature = Buffer.from(sha1Hash).toString('base64');
- 
+
       // Return data and signature
-      res.status(200).json({ data, signature });
+      return res.status(200).json({ data, signature });
     }
+
+    return {};
   } catch (error) {
     console.error('Error in create-payment route:', error);
     return res.status(500).json({ message: 'Internal Server Error' });

@@ -1,14 +1,13 @@
 .sliderCtn {
-    padding: 16px;
+  padding: 16px;
 }
 
 .sliderContainer {
-    padding-top: 0 !important;
+  padding-top: 0 !important;
 }
 
-
 @media (max-width: 1024px) {
-    .sliderCtn {
-        padding: 0;
-    }
+  .sliderCtn {
+    padding: 0;
+  }
 }

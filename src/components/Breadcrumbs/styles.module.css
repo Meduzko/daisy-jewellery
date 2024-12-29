@@ -6,12 +6,12 @@
   padding: 24px 46px;
 }
 
-.nav[aria-label="Breadcrumb"] ol {
+.nav[aria-label='Breadcrumb'] ol {
   list-style: none;
   display: flex;
 }
-  
-.nav[aria-label="Breadcrumb"] li + li:before {
+
+.nav[aria-label='Breadcrumb'] li + li:before {
   content: '>';
   padding: 0 8px;
 }
@@ -19,7 +19,6 @@
 .linkItem:hover {
   text-decoration: underline;
 }
-
 
 @media (max-width: 768px) {
   .nav {
