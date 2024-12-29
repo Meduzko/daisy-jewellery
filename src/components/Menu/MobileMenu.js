@@ -1,6 +1,13 @@
-"use client";
+'use client';
 import React, { useState, Fragment } from 'react';
-import { Drawer, List, ListItem, IconButton, Divider, useMediaQuery } from '@mui/material';
+import {
+  Drawer,
+  List,
+  ListItem,
+  IconButton,
+  Divider,
+  useMediaQuery,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -16,7 +23,10 @@ const MobileMenu = () => {
   const menuItems = getMenuItems();
 
   const toggleDrawer = (open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+    if (
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
       return;
     }
     setIsDrawerOpen(open);
@@ -38,14 +48,13 @@ const MobileMenu = () => {
         aria-label="menu"
         onClick={toggleDrawer(true)}
       >
-        <MenuOutlinedIcon fontSize="large"/>
+        <MenuOutlinedIcon fontSize="large" />
       </IconButton>
-      <Drawer
-        anchor="left"
-        open={isDrawerOpen}
-        onClose={toggleDrawer(false)}
-      >
-        <IconButton className={styles.mobileMenuClose} onClick={toggleDrawer(false)}>
+      <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
+        <IconButton
+          className={styles.mobileMenuClose}
+          onClick={toggleDrawer(false)}
+        >
           <CloseRoundedIcon className={styles.closeIcon} />
         </IconButton>
         <List className={styles.mobileMenuList}>
@@ -55,10 +64,10 @@ const MobileMenu = () => {
               href="/"
               onClick={handleMenuItemClick}
             >
-                Головна
+              Головна
             </Link>
           </ListItem>
-          {menuItems.map(item => (
+          {menuItems.map((item) => (
             <Fragment key={item.title}>
               <Divider />
               <ListItem className={styles.mobileMenuListItem}>

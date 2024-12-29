@@ -1,15 +1,14 @@
-"use client";
+'use client';
 
 import styles from './styles.module.css';
 
 export default function ProductBuyButton({
   disabled,
   onClick,
-  text='КУПИТИ',
-  width='auto',
+  text = 'КУПИТИ',
+  width = 'auto',
   ...rest
 }) {
-
   const handleBtnClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -27,5 +26,5 @@ export default function ProductBuyButton({
     >
       {text}
     </button>
-  )
-};
+  );
+}

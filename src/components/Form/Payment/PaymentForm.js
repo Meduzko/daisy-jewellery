@@ -2,7 +2,12 @@
 
 import React, { useEffect, useRef } from 'react';
 
-export default function PaymentForm({ amount, description, email, handleSubmit }) {
+export default function PaymentForm({
+  amount,
+  description,
+  email,
+  handleSubmit,
+}) {
   const widgetRef = useRef();
 
   useEffect(() => {
@@ -13,14 +18,14 @@ export default function PaymentForm({ amount, description, email, handleSubmit }
         const response = await fetch('/api/create-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount, description, email })
+          body: JSON.stringify({ amount, description, email }),
         });
-  
+
         const result = await response.json();
-  
+
         if (response.ok) {
           const { data, signature } = result;
-  
+
           // Load the LiqPay checkout script
           const script = document.createElement('script');
           script.src = 'https://static.liqpay.ua/libjs/checkout.js';
@@ -55,7 +60,7 @@ export default function PaymentForm({ amount, description, email, handleSubmit }
       }
     };
 
-    if (!widgetRef?.current && (amount && description && email)) {
+    if (!widgetRef?.current && amount && description && email) {
       init();
     }
   }, [amount, description, email]);

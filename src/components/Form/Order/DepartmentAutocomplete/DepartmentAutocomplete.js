@@ -1,22 +1,29 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
 import { TextField, Autocomplete, CircularProgress } from '@mui/material';
 
-const DepartmentAutocomplete = ({ cityName, handleChange, error, helperText }) => {
+const DepartmentAutocomplete = ({
+  cityName,
+  handleChange,
+  error,
+  helperText,
+}) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
   const onChange = (e, value) => {
-    handleChange(e, 'department', value?.Description)
+    handleChange(e, 'department', value?.Description);
   };
 
   const fetchDepartments = async (query = '') => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/novaposhta?cityName=${cityName}&search=${query}`);
+      const response = await fetch(
+        `/api/novaposhta?cityName=${cityName}&search=${query}`
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch cities');
       }
@@ -71,7 +78,9 @@ const DepartmentAutocomplete = ({ cityName, handleChange, error, helperText }) =
             ...params.InputProps,
             endAdornment: (
               <>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                {loading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : null}
                 {params.InputProps.endAdornment}
               </>
             ),

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import styles from './styles.module.css';
 import { getDeviceType } from '../../helpers';
@@ -19,11 +18,13 @@ export default function Banner() {
         style={{ objectFit: 'cover' }}
         className={styles.bannerImg}
       />
-      <h1 className={styles.bannerText}>Срібні прикраси Daisy Jewellery — ваш улюблений інтернет-магазин</h1>
+      <h1 className={styles.bannerText}>
+        Срібні прикраси Daisy Jewellery — ваш улюблений інтернет-магазин
+      </h1>
       {/* <h1 className={styles.bannerText}>Срібні прикраси Daisy Jewellery</h1> */}
       {/* <div className={styles.bannerBackground}>
         <h1><Link className={styles.bannerLink} href="/">—Перейти до категорій</Link></h1>
       </div> */}
     </div>
-  )
+  );
 }

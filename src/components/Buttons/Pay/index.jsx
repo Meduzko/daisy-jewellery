@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import ProductBuyButton from '../ProductBuy/ProductBuy';
 
-const PayButton = ({ amount, userData, orderID }) => {
+function PayButton({ amount, userData, orderID }) {
   const handleClick = async () => {
     try {
       const response = await fetch('/api/liqpayUrl', {
@@ -16,7 +16,7 @@ const PayButton = ({ amount, userData, orderID }) => {
         window.location.href = result.paymentUrl;
       } else {
         console.error('Error:', result.error);
-        alert('Payment initiation failed: ' + result.error);
+        alert(`Payment initiation failed: ${result.error}`);
       }
     } catch (error) {
       console.error('Fetch error:', error);
@@ -24,7 +24,9 @@ const PayButton = ({ amount, userData, orderID }) => {
     }
   };
 
-  return <ProductBuyButton id="paymentByCard" width='100%' onClick={handleClick} />;
-};
+  return (
+    <ProductBuyButton id='paymentByCard' width='100%' onClick={handleClick} />
+  );
+}
 
 export default PayButton;

@@ -40,18 +40,20 @@ export default async function Page({ params }) {
   const products = await fetchProduct({
     sku: product.sku,
     categoryId: process.env.RING_CATEGORY_ID,
-    website_synch: false
+    website_synch: false,
   });
 
-  const productSizes = products.flatMap(product => {
-    const sizeTag = product.tags?.find(tag => tag.title === 'розмір');
+  const productSizes = products.flatMap((p) => {
+    const sizeTag = p.tags?.find((tag) => tag.title === 'розмір');
 
     if (!sizeTag) return [];
 
-    const sizes = sizeTag?.items?.map(item => {
-      const size = parseFloat(item?.title?.replace(',', '.'));
-      return !isNaN(size) ? size : null;
-    }).filter(size => Boolean(size));
+    const sizes = sizeTag?.items
+      ?.map((item) => {
+        const size = parseFloat(item?.title?.replace(',', '.'));
+        return !Number.isNaN(size) ? size : null;
+      })
+      .filter((size) => Boolean(size));
 
     return sizes;
   });

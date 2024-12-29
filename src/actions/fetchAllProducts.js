@@ -3,39 +3,39 @@ export async function fetchProducts({ offset, limit, categoryId }) {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/product`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         categoryId,
         limit,
-        offset
+        offset,
       }),
-      next: { revalidate: 1800 }
+      next: { revalidate: 1800 },
     });
-  
+
     if (!res.ok) {
       throw new Error('Failed to fetch products');
     }
-  
+
     const data = await res.json();
-  
+
     const hasMore = data.length === limit;
-  
+
     return { products: data, hasMore };
   } catch (error) {
     console.log(error);
+    return error;
   }
 }
-
 
 export async function fetchAllProducts({ categoryId }) {
   try {
     const ROOT_URI = process.env.API_ROOT_URI;
-    const API_KEY = process.env.API_KEY;
+    const { API_KEY } = process.env;
 
     const params = new URLSearchParams({
       category_id: categoryId,
-      website_synch: 1
+      website_synch: 1,
     });
 
     const baseURL = `${ROOT_URI}/products/list?`;
@@ -44,21 +44,22 @@ export async function fetchAllProducts({ categoryId }) {
     const res = await fetch(url, {
       method: 'POST',
       headers: {
-        'ApiKey': API_KEY,
-        'Content-Type': 'application/json'
+        ApiKey: API_KEY,
+        'Content-Type': 'application/json',
       },
-      next: { revalidate: 1800 }
+      next: { revalidate: 1800 },
     });
-  
+
     if (!res.ok) {
       throw new Error('Failed to fetch products');
     }
-  
+
     const data = await res.json();
 
     return data.products;
     // return data;
   } catch (error) {
     console.log(error);
+    return error;
   }
 }

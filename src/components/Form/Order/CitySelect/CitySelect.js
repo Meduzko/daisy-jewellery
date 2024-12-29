@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
 import { TextField, Autocomplete, CircularProgress } from '@mui/material';
@@ -10,10 +10,10 @@ const CityAutocomplete = ({ handleChange, error, helperText }) => {
   const [inputValue, setInputValue] = useState('');
 
   const onChange = (e, value) => {
-    handleChange(e, 'cityName', value?.Description)
+    handleChange(e, 'cityName', value?.Description);
   };
 
-  const fetchCities = async (query = '') => { 
+  const fetchCities = async (query = '') => {
     setLoading(true);
     try {
       const response = await fetch(`/api/novaposhta/cities?cityName=${query}`);
@@ -55,7 +55,10 @@ const CityAutocomplete = ({ handleChange, error, helperText }) => {
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
       isOptionEqualToValue={(option, value) => option.Ref === value.Ref}
-      getOptionLabel={(option) => `${option.SettlementTypeDescription} ${option.Description}, ${option.AreaDescriptionRu}, ${option.RegionsDescriptionRu}` || ''}
+      getOptionLabel={(option) =>
+        `${option.SettlementTypeDescription} ${option.Description}, ${option.AreaDescriptionRu}, ${option.RegionsDescriptionRu}` ||
+        ''
+      }
       options={options}
       loading={loading}
       onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
@@ -71,7 +74,9 @@ const CityAutocomplete = ({ handleChange, error, helperText }) => {
             ...params.InputProps,
             endAdornment: (
               <>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                {loading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : null}
                 {params.InputProps.endAdornment}
               </>
             ),

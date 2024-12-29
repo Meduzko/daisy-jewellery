@@ -14,11 +14,11 @@ export default async function handler(req, res) {
         modelName: 'AddressGeneral',
         calledMethod: 'getSettlements',
         methodProperties: {
-          FindByString : cityName,
+          FindByString: cityName,
           Warehouse: 1,
-          Page : 1,
-          Limit : 50,
-        }
+          Page: 1,
+          Limit: 50,
+        },
       }),
     });
 

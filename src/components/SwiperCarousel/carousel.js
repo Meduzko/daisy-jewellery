@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
@@ -41,11 +41,11 @@ export default function SwiperCarousel({ data }) {
       modules={[FreeMode]}
       className="manualCarousel"
     >
-      {data?.map(item => (
+      {data?.map((item) => (
         <SwiperSlide key={item.product_id}>
           <ProductItem product={item} />
         </SwiperSlide>
       ))}
     </Swiper>
   );
-};
+}

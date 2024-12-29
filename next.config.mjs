@@ -3,7 +3,7 @@
 const nextConfig = {
   images: {
     domains: ['cdn.dntrade.com.ua'],
-  }
+  },
   // async redirects() {
   //   return [
   //     {

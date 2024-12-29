@@ -1,6 +1,6 @@
+import { notFound } from 'next/navigation';
 import Breadcrumbs from '../../../../components/Breadcrumbs';
 import { fetchProduct } from '../../../../actions/fetchProduct';
-import { notFound } from 'next/navigation';
 
 export default async function Layout({ children, params }) {
   const data = await fetchProduct({
@@ -17,7 +17,10 @@ export default async function Layout({ children, params }) {
   const segments = [
     { name: 'Головна', href: '/' },
     { name: 'Каблучки', href: '/kabluchki/1' },
-    { name: product?.title, href: `/kabluchki/kupyty-sribnu-kabluchku/${params.item}` },
+    {
+      name: product?.title,
+      href: `/kabluchki/kupyty-sribnu-kabluchku/${params.item}`,
+    },
   ];
 
   return (

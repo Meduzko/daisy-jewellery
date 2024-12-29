@@ -27,6 +27,6 @@ export default function PaginationComponent({ currentPage, hasMore, baseURL }) {
         <span>Наступна</span>
         <NavigateNextIcon />
       </Link>
-  </div>
+    </div>
   );
 }

@@ -1,66 +1,71 @@
 .categoriesContainer {
-    display: grid;
-    grid-gap: 8px;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
 }
 
 .categoryImg {
-    height: 100%;
-    width: 100%;
-    min-width: 100%;
-    display: block;
-    -o-object-fit: cover;
-    object-fit: cover;
+  height: 100%;
+  width: 100%;
+  min-width: 100%;
+  display: block;
+  -o-object-fit: cover;
+  object-fit: cover;
 }
 
 .square {
-    aspect-ratio: 1 / 1;
-    display: block;
-    height: 100%;
-    overflow: hidden;
-    -o-object-fit: cover;
-    object-fit: cover;
-    position: relative;
+  aspect-ratio: 1 / 1;
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  -o-object-fit: cover;
+  object-fit: cover;
+  position: relative;
 }
 
 .square img {
-    filter: brightness(1);
-    transition: filter 0.5s ease;
+  filter: brightness(1);
+  transition: filter 0.5s ease;
 }
 
 .square:hover img {
-    filter: brightness(0.65);
+  filter: brightness(0.65);
 }
 
 .categoryContent {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    color: #fff;
-    text-align: center;
-    padding: 24px;
-    z-index: 1;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  color: #fff;
+  text-align: center;
+  padding: 24px;
+  z-index: 1;
 }
 
 .categoryLinkCtn {
-    padding: 24px;
+  padding: 24px;
 }
 
 .categoryTitle {
-    font-size: 32px;
-    font-weight: 500;
-    letter-spacing: 6px;
-    text-transform: uppercase;
-    line-height: 1.6;
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  line-height: 1.6;
 }
 
 .categoryBackground {
-    /* background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2)); */
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 25%, rgba(0, 0, 0, 0) 100%);
+  /* background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2)); */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.5) 25%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }

@@ -22,5 +22,5 @@
 .disabled {
   pointer-events: none;
   cursor: default;
-  opacity: .4;
+  opacity: 0.4;
 }

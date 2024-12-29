@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useState, useMemo, useContext, useEffect } from 'react';
 import { ToggleButtonGroup, ToggleButton } from '@mui/material';
 import { CartContext } from '../../../context/CartContext';
@@ -13,7 +13,7 @@ const SizeSelector = ({ item, sizes }) => {
 
   useEffect(() => {
     addToItemSize(item, sortedSizes[0]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSizeChange = (event, newSize) => {

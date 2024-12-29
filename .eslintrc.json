@@ -1,3 +1,17 @@
 {
-  "extends": "next/core-web-vitals"
+  "root": true,
+  "extends": [
+    "airbnb",
+    "airbnb/hooks",
+    "next",
+    "next/core-web-vitals",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    // Your custom rules
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "prettier/prettier": ["error", { "singleQuote": true, "parser": "flow" }],
+    "jsx-quotes": ["error", "prefer-single"]
+    // "jsx-quotes": ["error", "prefer-single"]
+  }
 }

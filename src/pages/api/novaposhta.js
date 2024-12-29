@@ -18,12 +18,12 @@ export default async function handler(req, res) {
         modelName: 'AddressGeneral',
         calledMethod: 'getWarehouses',
         methodProperties: {
-          FindByString : search,
-          CityName : cityName,
-          Page : 1,
-          Limit : 50,
-          Language : 'UA',
-        }
+          FindByString: search,
+          CityName: cityName,
+          Page: 1,
+          Limit: 50,
+          Language: 'UA',
+        },
       }),
     });
 
@@ -33,8 +33,8 @@ export default async function handler(req, res) {
 
     const data = await response.json();
     const departments = data.data; // Extract departments
-    res.status(200).json(departments);
+    return res.status(200).json(departments);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }

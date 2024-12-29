@@ -2,10 +2,22 @@ import { fetchProduct } from '../actions/fetchProduct';
 
 export default async function sitemap() {
   const baseUrl = process.env.SITE_DOMAIN;
-  const ringProducts = await fetchProduct({ categoryId: process.env.RING_CATEGORY_ID, limit: 100 });
-  const necklaceProducts = await fetchProduct({ categoryId: process.env.NECKLACE_CATEGORY_ID, limit: 100 });
-  const earringProducts = await fetchProduct({ categoryId: process.env.EARING_CATEGORY_ID, limit: 100 });
-  const bracerProducts = await fetchProduct({ categoryId: process.env.BRACER_CATEGORY_ID, limit: 100 });
+  const ringProducts = await fetchProduct({
+    categoryId: process.env.RING_CATEGORY_ID,
+    limit: 100,
+  });
+  const necklaceProducts = await fetchProduct({
+    categoryId: process.env.NECKLACE_CATEGORY_ID,
+    limit: 100,
+  });
+  const earringProducts = await fetchProduct({
+    categoryId: process.env.EARING_CATEGORY_ID,
+    limit: 100,
+  });
+  const bracerProducts = await fetchProduct({
+    categoryId: process.env.BRACER_CATEGORY_ID,
+    limit: 100,
+  });
 
   const categories = ['kabluchki', 'serezhky', 'kolye', 'braslety'];
   const staticRoutes = ['', 'about', 'contact', ...categories];
@@ -38,7 +50,7 @@ export default async function sitemap() {
     ...dynamicRingRoutes,
     ...dynamicNecklaceRoutes,
     ...dynamicEarringRoutes,
-    ...dynamicBracerRoutes
+    ...dynamicBracerRoutes,
   ];
 
   return routes;

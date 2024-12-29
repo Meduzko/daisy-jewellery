@@ -21,7 +21,7 @@ export default async function Header() {
         <div>
           <MobileMenu isMobile={isMobile} />
         </div>
-        <Link href='/' className={styles.logoContainer}>
+        <Link href="/" className={styles.logoContainer}>
           <Image
             src="/logo_black.png"
             alt="logo"
@@ -31,10 +31,16 @@ export default async function Header() {
           />
         </Link>
         <div className={styles.headerActions}>
-          <IconButton className={styles.searchButton} aria-label="Search button">
+          <IconButton
+            className={styles.searchButton}
+            aria-label="Search button"
+          >
             <SearchOutlinedIcon className={styles.searchIcon} />
           </IconButton>
-          <IconButton className={styles.favoritesButton} aria-label="Favorites button">
+          <IconButton
+            className={styles.favoritesButton}
+            aria-label="Favorites button"
+          >
             <FavoriteBorderOutlinedIcon className={styles.favoritesIcon} />
           </IconButton>
           <CartDrawler />

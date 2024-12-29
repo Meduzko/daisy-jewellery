@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { List, ListItem, Divider } from '@mui/material';
@@ -7,14 +7,14 @@ import ProductBuyButton from '../../../components/Buttons/ProductBuy/ProductBuy'
 
 import styles from './styles.module.css';
 
-const OrderList = ({
+function OrderList({
   handleSubmit,
   setShowModal,
   formData,
   orderDescription,
   triggerValidation,
-  validateForm
-}) => {
+  validateForm,
+}) {
   const { cartItems, getTotalPrice, getItemSize } = useContext(CartContext);
   const totalPrice = getTotalPrice();
   const fixedPrice = totalPrice.toFixed(2);
@@ -26,24 +26,31 @@ const OrderList = ({
   const [showBuyButton, setShowBuyButton] = useState(true);
 
   const getOrderData = () => {
-    const totalPrice = getTotalPrice();
-    const cartItemsWithSize = cartItems.map(item => {
-      const { code, sku, title, short_description, price, image_path } = item;
+    // const totalPrice = getTotalPrice();
+    const cartItemsWithSize = cartItems.map((item) => {
+      const {
+        code,
+        sku,
+        title,
+        short_description: sd,
+        price,
+        image_path: imgP,
+      } = item;
       const size = getItemSize(item);
       const baseItem = {
         code,
         sku,
         title,
-        short_description,
+        short_description: sd,
         price,
-        image_path
-      }
+        image_path: imgP,
+      };
 
       if (size) {
         return {
           ...baseItem,
-          size
-        }
+          size,
+        };
       }
 
       return baseItem;
@@ -52,7 +59,7 @@ const OrderList = ({
     return {
       formData,
       cartItems: cartItemsWithSize,
-      totalPrice
+      totalPrice,
     };
   };
 
@@ -79,9 +86,12 @@ const OrderList = ({
 
       widgetRef.current = true;
 
-      const orderedItemsInfo = cartItems.map(item => `Назва: ${item.title}, код: ${item.code}, розмір: ${item.size || ''}, ціна: ${item.price}`);
+      const orderedItemsInfo = cartItems.map(
+        (item) =>
+          `Назва: ${item.title}, код: ${item.code}, розмір: ${item.size || ''}, ціна: ${item.price}`,
+      );
       const orderData = getOrderData();
-  
+
       // Request data and signature from the API
       const response = await fetch('/api/create-payment', {
         method: 'POST',
@@ -90,10 +100,10 @@ const OrderList = ({
           amount: fixedPrice,
           description: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`,
           email,
-          orderData: orderData,
+          orderData,
           // sender_first_name: firstName,
           // sender_last_name: lastName,
-          info: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`
+          info: `${orderDescription}, товари: ${orderedItemsInfo.join(',')}, телефон: ${phone}`,
         }),
       });
 
@@ -113,22 +123,21 @@ const OrderList = ({
             embedTo: '#liqpay_checkout',
             // mode: 'embed', // Use 'popup' for popup mode
             mode: 'popup', // Use 'popup' for popup mode
-            language: 'ua'
-          })
-            .on('liqpay.callback', function (data) {
-              setShowModal(true);
-            });
-            // .on('liqpay.ready', function (data) {
-            //   // Widget is ready
-            // })
-            // .on('liqpay.close', function (data) {
-            //   // Widget is closed
-            // });
+            language: 'ua',
+          }).on('liqpay.callback', function (data) {
+            setShowModal(true);
+          });
+          // .on('liqpay.ready', function (data) {
+          //   // Widget is ready
+          // })
+          // .on('liqpay.close', function (data) {
+          //   // Widget is closed
+          // });
         };
         document.body.appendChild(script);
       } else {
         console.error('Error fetching payment data:', result.error);
-        alert('Error initiating payment: ' + result.error);
+        alert(`Error initiating payment: ${result.error}`);
       }
     } catch (error) {
       console.error('Error initiating payment:', error);
@@ -159,35 +168,35 @@ const OrderList = ({
           const size = getItemSize(item);
 
           return (
-            <ListItem key={index} className={styles.cartListItem} divider>
+            <ListItem key={item.title} className={styles.cartListItem} divider>
               <div className={styles.basketItemContainer}>
                 <div className={styles.basketImageContainer}>
-                <picture>
-                  <img
-                    src={item.images[0]}
-                    alt={item.title}
-                    className={styles.basketImage}
-                  />
-                </picture>
+                  <picture>
+                    <img
+                      src={item.images[0]}
+                      alt={item.title}
+                      className={styles.basketImage}
+                    />
+                  </picture>
                 </div>
                 <div className={styles.itemDetails}>
                   {/* <Link href={`/category/ring/${item.id}`}></Link> */}
                   <h4 className={styles.itemTitle}>{item.title}</h4>
                   <div className={styles.price}>{`${price} грн`}</div>
-                  {size && (
-                    <div>{`Розмір: ${size}`}</div>
-                  )}
+                  {size && <div>{`Розмір: ${size}`}</div>}
                   <div>{`Кількість: ${item.quantity}`}</div>
                 </div>
               </div>
             </ListItem>
-          )
+          );
         })}
       </List>
       <div className={styles.orderSummary}>
         <div className={styles.summaryItem}>
           <p>Доставка</p>
-          <p className={styles.deliveryTax}>{`За тарифами 'Нової Пошти' - від 70 грн`}</p>
+          <p className={styles.deliveryTax}>
+            За тарифами 'Нової Пошти' - від 70 грн
+          </p>
         </div>
       </div>
       <Divider />
@@ -196,12 +205,17 @@ const OrderList = ({
         <p className={styles.totalSumPrice}>{`${fixedPrice} грн`}</p>
       </div>
 
-      {showBuyButton && <ProductBuyButton type="submit" width='100%' onClick={handleSubmitClick} />}
+      {showBuyButton && (
+        <ProductBuyButton
+          type='submit'
+          width='100%'
+          onClick={handleSubmitClick}
+        />
+      )}
 
       <div style={{ zIndex: 200, position: 'relative' }}>
-        <div id="liqpay_checkout"></div>
+        <div id='liqpay_checkout'></div>
       </div>
-
 
       {/* WORKED */}
       {/* <div className={styles.submitButton}>
@@ -216,8 +230,6 @@ const OrderList = ({
       </div> */}
     </div>
   );
-};
-
-
+}
 
 export default OrderList;

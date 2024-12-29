@@ -1,13 +1,22 @@
-export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, paginated, sku, title, website_synch = 1 }) {
+export async function fetchProduct({
+  code,
+  categoryId,
+  limit = 20,
+  offset = 0,
+  paginated,
+  sku,
+  title,
+  website_synch = 1,
+}) {
   try {
     const ROOT_URI = process.env.API_ROOT_URI;
     const API_KEY = process.env.API_KEY;
     const baseURL = `${ROOT_URI}/products/list?`;
-  
+
     const params = new URLSearchParams({
       category_id: categoryId,
       limit,
-      offset
+      offset,
     });
 
     if (website_synch) {
@@ -31,10 +40,10 @@ export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, p
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'ApiKey': API_KEY,
-        'Content-Type': 'application/json'
+        ApiKey: API_KEY,
+        'Content-Type': 'application/json',
       },
-      next: { revalidate: 1800 }
+      next: { revalidate: 1800 },
     });
 
     if (!response.ok) {
@@ -42,7 +51,7 @@ export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, p
     }
 
     const data = await response.json();
-  
+
     if (paginated) {
       const hasMore = data?.products?.length === limit;
       return { products: data?.products || [], hasMore };

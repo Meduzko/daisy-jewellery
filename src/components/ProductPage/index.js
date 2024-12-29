@@ -6,12 +6,7 @@ import CounterWithSubmit from './CounterWithSubmit/CounterWithSubmit';
 import styles from './ProductPage.module.css';
 
 const ProductPageNew = ({ item = {}, productSizes }) => {
-  const {
-    title,
-    short_description: description,
-    images,
-    price,
-  } = item;
+  const { title, short_description: description, images, price } = item;
 
   return (
     <>
@@ -24,13 +19,18 @@ const ProductPageNew = ({ item = {}, productSizes }) => {
         {/* Right Section: Product Details */}
         <section className={styles.rightSection}>
           <h1 className={styles.productTitle}>{title}</h1>
-          <p className={styles.productDescription} dangerouslySetInnerHTML={{ __html: description }} />
+          <p
+            className={styles.productDescription}
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
           <div className={styles.productPrice}>{`${price} грн`}</div>
 
-          {productSizes && <div className={styles.productInfoContainer}>
-            <h3>Розмір:</h3>
-            <SizeSelector item={item} sizes={productSizes} />
-          </div>}
+          {productSizes && (
+            <div className={styles.productInfoContainer}>
+              <h3>Розмір:</h3>
+              <SizeSelector item={item} sizes={productSizes} />
+            </div>
+          )}
 
           <CounterWithSubmit product={item} />
         </section>
