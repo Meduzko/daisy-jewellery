@@ -2,6 +2,7 @@ import ProductPageNew from '../../../../components/ProductPage';
 import { fetchProduct } from '../../../../actions/fetchProduct';
 import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
 import { getProductMetadata } from '../../../../helpers';
+import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
   const [product] = await fetchProduct({
@@ -9,9 +10,11 @@ export async function generateMetadata({ params }) {
     categoryId: process.env.NECKLACE_CATEGORY_ID,
   });
 
-  const productMetaData = getProductMetadata({ product, categoryName: 'necklace' });
+  if (!product || !product.length) {
+    return;
+  }
 
-  return productMetaData;
+  return getProductMetadata({ product, categoryName: 'necklace' });
 }
 
 export async function generateStaticParams() {
@@ -20,7 +23,11 @@ export async function generateStaticParams() {
       categoryId: process.env.NECKLACE_CATEGORY_ID,
     });
 
-    const productCodes = products.map((product) => ({
+    if (!products || !products.length) {
+      return;
+    }
+
+    const productCodes = products?.map((product) => ({
       item: product.code.toString(),
     }));
 
@@ -33,6 +40,10 @@ export async function generateStaticParams() {
 
 export default async function EarringItem({ params }) {
   const [product] = await fetchProduct({ code: params.item, categoryId: process.env.NECKLACE_CATEGORY_ID });
+
+  if (!product) {
+    return notFound();
+  }
 
   return (
     <ProductPageNew item={product} />

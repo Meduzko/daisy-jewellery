@@ -1,4 +1,14 @@
-export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, paginated, sku, title, website_synch = 1 }) {
+export async function fetchProduct({
+  code,
+  categoryId,
+  limit = 20,
+  offset = 0,
+  paginated,
+  sku,
+  title,
+  website_synch = 1,
+  revalidate
+}) {
   try {
     const ROOT_URI = process.env.API_ROOT_URI;
     const API_KEY = process.env.API_KEY;
@@ -34,7 +44,7 @@ export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, p
         'ApiKey': API_KEY,
         'Content-Type': 'application/json'
       },
-      next: { revalidate: 1800 }
+      next: { revalidate: revalidate || 900 }
     });
 
     if (!response.ok) {
@@ -50,6 +60,6 @@ export async function fetchProduct({ code, categoryId, limit = 20, offset = 0, p
 
     return data.products;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }

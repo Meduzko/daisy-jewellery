@@ -2,6 +2,7 @@ import ProductPageNew from '../../../../components/ProductPage';
 import { fetchProduct } from '../../../../actions/fetchProduct';
 import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
 import { getProductMetadata } from '../../../../helpers';
+import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
   const [product] = await fetchProduct({
@@ -9,9 +10,11 @@ export async function generateMetadata({ params }) {
     categoryId: process.env.RING_CATEGORY_ID,
   });
 
-  const productMetaData = getProductMetadata({ product, categoryName: 'ring' });
+  if (!product || !product.length) {
+    return;
+  }
 
-  return productMetaData;
+  return getProductMetadata({ product, categoryName: 'ring' });
 }
 
 export async function generateStaticParams() {
@@ -19,6 +22,10 @@ export async function generateStaticParams() {
     const products = await fetchAllProducts({
       categoryId: process.env.RING_CATEGORY_ID,
     });
+
+    if (!products || !products?.length) {
+      return;
+    }
 
     const productCodes = products.map((product) => ({
       item: product.code.toString(),
@@ -36,6 +43,11 @@ export default async function Page({ params }) {
     code: params.item,
     categoryId: process.env.RING_CATEGORY_ID,
   });
+
+  if (!product) {
+    return notFound();
+  }
+
   // Fetch prodcuts for sizes
   const products = await fetchProduct({
     sku: product.sku,
@@ -43,7 +55,7 @@ export default async function Page({ params }) {
     website_synch: false
   });
 
-  const productSizes = products.flatMap(product => {
+  const productSizes = products?.flatMap(product => {
     const sizeTag = product.tags?.find(tag => tag.title === 'розмір');
 
     if (!sizeTag) return [];

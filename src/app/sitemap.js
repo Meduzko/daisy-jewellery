@@ -16,12 +16,12 @@ export default async function sitemap() {
   }));
 
   const dynamicNecklaceRoutes = necklaceProducts.map((necklace) => ({
-    url: `${baseUrl}/serezhky/kupyty-serezhky-sribni/${necklace.code}`,
+    url: `${baseUrl}/kolye/kupyty-sribne-kolye/${necklace.code}`,
     lastModified: new Date().toISOString(),
   }));
 
   const dynamicEarringRoutes = earringProducts.map((earring) => ({
-    url: `${baseUrl}/kolye/kupyty-sribne-kolye/${earring.code}`,
+    url: `${baseUrl}/serezhky/kupyty-serezhky-sribni/${earring.code}`,
     lastModified: new Date().toISOString(),
   }));
 
