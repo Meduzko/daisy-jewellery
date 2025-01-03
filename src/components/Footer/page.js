@@ -9,7 +9,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import styles from './styles.module.css';
 import { getMenuItems } from '../../helpers/menuItems';
 
-const pagesWithoutFooter = ['/order', '/returns', '/payment-success'];
+const pagesWithoutFooter = ['/order', '/returns', '/payment-success', '/about', '/contact'];
 
 export default function Footer() {
   const pathname = usePathname();
