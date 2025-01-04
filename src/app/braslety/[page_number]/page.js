@@ -18,7 +18,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const title = 'Срібні браслети | Купити срібний браслет Daisy Jewellery';
-  const description = 'Срібні браслети';
+  const description = 'Срібні браслети від Daisy Jewellery. Доставка в будь який куточок України. Купити срібний браслет від виробника за найкращою ціною';
   const currentPage = +params.page_number;
   const lastPage = 2;
   const categorySlug = 'braslety';

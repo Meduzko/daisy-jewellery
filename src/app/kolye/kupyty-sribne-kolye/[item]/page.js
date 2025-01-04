@@ -10,7 +10,7 @@ export async function generateMetadata({ params }) {
     categoryId: process.env.NECKLACE_CATEGORY_ID,
   });
 
-  if (!product || !product.length) {
+  if (!product) {
     return;
   }
 
