@@ -2,6 +2,7 @@ import ProductPageNew from '../../../../components/ProductPage';
 import { fetchProduct } from '../../../../actions/fetchProduct';
 import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
 import { getProductMetadata } from '../../../../helpers';
+import { getProductJsonLd, getLogoJsonLd } from '../../../../helpers/getJsonLd';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
@@ -68,5 +69,20 @@ export default async function Page({ params }) {
     return sizes;
   });
 
-  return <ProductPageNew item={product} productSizes={productSizes} />;
+  const productJsonLd = getProductJsonLd(product, 'kabluchki/kupyty-sribnu-kabluchku');
+  const logoJsonLd = getLogoJsonLd();
+
+  return (
+    <>
+      <ProductPageNew item={product} productSizes={productSizes} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }}
+      />
+    </>
+  );
 }

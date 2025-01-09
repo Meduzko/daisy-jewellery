@@ -1,4 +1,5 @@
 import { fetchProduct } from '../../../actions/fetchProduct';
+import { getLogoJsonLd, getCategoryJsonLd } from '../../../helpers/getJsonLd';
 // import { fetchAllProducts } from '../../../actions/fetchAllProducts';
 import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../helpers';
 import Gallery from '../../../components/Gallery';
@@ -58,6 +59,15 @@ export default async function Page({ params }) {
     notFound();
   }
 
+  const logoJsonLd = getLogoJsonLd();
+  const categoryJsonLd = getCategoryJsonLd({
+    categoryName: 'Срібні каблучки від Daisy Jewellery.',
+    categoryDescription: 'Вишукані срібні каблучки від Daisy Jewellery. Швидка доставка по всій Україні!',
+    url: `${baseURL}/${params.page_number}`,
+    lowPrice: 500,
+    highPrice: 1400
+  });
+
   return (
     <>
       <h1 className="category-title">Каблучки срібні</h1>
@@ -69,6 +79,14 @@ export default async function Page({ params }) {
         itemBaseURL={itemBaseURL}
         withPagination={paginated}
         isMobile={isMobile}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryJsonLd) }}
       />
     </>
   );

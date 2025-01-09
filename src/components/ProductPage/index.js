@@ -13,6 +13,8 @@ const ProductPageNew = ({ item = {}, productSizes }) => {
     price,
   } = item;
 
+  const plainTextDescription = description.replace(/<[^>]*>/g, "");
+
   return (
     <>
       <div className={styles.productPageContainer}>
@@ -24,7 +26,8 @@ const ProductPageNew = ({ item = {}, productSizes }) => {
         {/* Right Section: Product Details */}
         <section className={styles.rightSection}>
           <h1 className={styles.productTitle}>{title}</h1>
-          <p className={styles.productDescription} dangerouslySetInnerHTML={{ __html: description }} />
+          {/* <p className={styles.productDescription} dangerouslySetInnerHTML={{ __html: description }} /> */}
+          <p className={styles.productDescription}>{plainTextDescription}</p>
           <div className={styles.productPrice}>{`${price} грн`}</div>
 
           {productSizes && <div className={styles.productInfoContainer}>
