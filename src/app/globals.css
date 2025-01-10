@@ -173,3 +173,107 @@ a {
     padding-left: 14px;
   }
 }
+
+/**
+*
+* Blog
+*
+**/
+.blog-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blog-h1 {
+  text-align: center;
+}
+
+.blog-content-p {
+  font-size: 1rem;
+  line-height: 1.35;
+  padding: 8px 0;
+}
+
+.blog-main-title {
+  text-align: center;
+}
+
+.blog-link {
+  text-decoration: underline;
+}
+
+.blog-image-inside {
+  aspect-ratio: 2 / 3;
+  height: 512px;
+}
+
+/**
+* Blog promo section
+**/
+
+.item-card__wrapper {
+  aspect-ratio: 2 / 3;
+  height: 100%;
+}
+
+.blog-promo-section {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 52px;
+}
+
+.blog-promo-item-card__title-container {
+  min-height: 144px;
+}
+
+.blog-promo-item__buy-button {
+  padding: 16px;
+  background-color: #000;
+  color: #fff;
+  border: 0;
+  text-transform: uppercase;
+  font-weight: 200;
+  font-size: 1rem;
+  letter-spacing: 0.18rem;
+}
+
+.blog-promo-item__title {
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: 0.18rem;
+}
+
+.blog-promo-item__sub-title {
+  font-size: 1rem;
+  font-weight: 200;
+  padding: 8px 0;
+}
+
+.blog-promo-item__buy-button:hover {
+  cursor: pointer;
+}
+
+.promo-item-card__img {
+  /* max-height: 244px; */
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.blog-promo-item__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+}
+
+@media (max-width: 768px) {
+  .blog-promo-section {
+    flex-direction: column;
+  }
+}
