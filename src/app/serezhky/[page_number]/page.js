@@ -1,7 +1,8 @@
+import { notFound } from 'next/navigation';
+import { getLogoJsonLd, getCategoryJsonLd } from '../../../helpers/getJsonLd';
 import { fetchProduct } from '../../../actions/fetchProduct';
 import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../helpers';
 import Gallery from '../../../components/Gallery';
-import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
   const staticPages = [
@@ -46,6 +47,15 @@ export default async function CategoryPageNumber({ params }) {
     notFound();
   }
 
+  const logoJsonLd = getLogoJsonLd();
+  const categoryJsonLd = getCategoryJsonLd({
+    categoryName: 'Срібні сережки від Daisy Jewellery',
+    categoryDescription: 'Срібні сережки Daisy Jewellery. Отримуйте замовлення без затримок по Україні! Ціни, що вас приємно здивують',
+    url: `${baseURL}/${params.page_number}`,
+    lowPrice: 650,
+    highPrice: 1700
+  });
+
   return (
     <>
       <h1 className="category-title">Срібні сережки</h1>
@@ -57,6 +67,14 @@ export default async function CategoryPageNumber({ params }) {
         itemBaseURL={itemBaseURL}
         withPagination={paginated}
         isMobile={isMobile}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryJsonLd) }}
       />
     </>
   );

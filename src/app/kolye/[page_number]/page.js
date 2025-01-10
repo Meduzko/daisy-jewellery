@@ -1,7 +1,8 @@
+import { notFound } from 'next/navigation';
+import { getLogoJsonLd, getCategoryJsonLd } from '../../../helpers/getJsonLd';
 import { fetchProduct } from '../../../actions/fetchProduct';
 import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../helpers';
 import Gallery from '../../../components/Gallery';
-import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
   const staticPages = [
@@ -44,6 +45,15 @@ export default async function CategoryPageNumber({ params }) {
     notFound();
   }
 
+  const logoJsonLd = getLogoJsonLd();
+  const categoryJsonLd = getCategoryJsonLd({
+    categoryName: 'Срібні кольє від Daisy Jewellery',
+    categoryDescription: 'Купити срібні кольє Daisy Jewellery. Доставка в найкоротші терміни по Україні! Найкраща ціна на ринку від виробника',
+    url: `${baseURL}/${params.page_number}`,
+    lowPrice: 650,
+    highPrice: 1600
+  });
+
   return (
     <>
       <h1 className="category-title">Срібні кольє</h1>
@@ -55,6 +65,14 @@ export default async function CategoryPageNumber({ params }) {
         itemBaseURL={itemBaseURL}
         withPagination={paginated}
         isMobile={isMobile}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryJsonLd) }}
       />
     </>
   );

@@ -2,6 +2,7 @@ import ProductPageNew from '../../../../components/ProductPage';
 import { fetchProduct } from '../../../../actions/fetchProduct';
 import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
 import { getProductMetadata } from '../../../../helpers';
+import { getProductJsonLd, getLogoJsonLd } from '../../../../helpers/getJsonLd';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
@@ -45,7 +46,20 @@ export default async function EarringItem({ params }) {
     return notFound();
   }
 
+  const productJsonLd = getProductJsonLd(product, 'serezhky/kupyty-serezhky-sribn');
+  const logoJsonLd = getLogoJsonLd();
+
   return (
-    <ProductPageNew item={product} />
+    <>
+      <ProductPageNew item={product} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }}
+      />
+    </>
   )
 }
