@@ -1,0 +1,89 @@
+.blogWrapper {
+  background-color: #f7f8f9;
+}
+
+.blogGrid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.blogCard {
+  padding: 20px;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.blogCardHeader {
+  background-color: #fff;
+  padding: 8px 16px;
+  margin-bottom: 8px;
+}
+
+.blogCardHeader p {
+  margin-bottom: 0 !important;
+}
+
+.blogCardContent {
+  background-color: #fff;
+  padding: 8px 16px;
+}
+
+.blogCard img {
+  width: 40%;
+  height: auto;
+  max-height: 244px;
+  border-radius: 8px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.blogCard h3 {
+  font-size: 1.25rem;
+  margin: 15px 0;
+}
+
+.blogCard p {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.35;
+  margin: 12px 0 40px;
+}
+
+.blogImage {
+  width: 300px;
+  height: 50px;
+}
+
+
+/**
+*
+* Blog post styling
+*
+**/
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mainTitle {
+  text-align: center;
+}
+
+.readMoreLink {
+  text-decoration: underline;
+}
+
+
+@media (max-width: 768px) {
+  .blogGrid {
+    padding: 8px 0;
+  }
+}

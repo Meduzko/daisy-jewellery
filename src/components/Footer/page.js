@@ -36,6 +36,9 @@ export default function Footer() {
                 </Link>
               </li>
             ))}
+            <li className={styles.footerListItem}>
+              <Link href="/blog">Блог</Link>
+            </li>
           </ul>
         </div>
         <div className={`${styles.footerContacts}  ${styles.footerCol}`}>
@@ -88,7 +91,7 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <div className={styles.footerBottomText}>© 2024 DAISY.JEWELLERY</div>
+      <div className={styles.footerBottomText}>© 2025 DAISY.JEWELLERY</div>
   </footer>
   );
 }
