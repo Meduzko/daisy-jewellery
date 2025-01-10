@@ -1,4 +1,5 @@
 import React from 'react';
+import { decode } from 'html-entities';
 import ProductImageGallery from './ProductImageGallery/ProductImageGallery';
 import SizeSelector from './sizeSelector/sizeSelector';
 import CounterWithSubmit from './CounterWithSubmit/CounterWithSubmit';
@@ -13,7 +14,10 @@ const ProductPageNew = ({ item = {}, productSizes }) => {
     price,
   } = item;
 
-  const plainTextDescription = description.replace(/<[^>]*>/g, "");
+  // const plainTextDescription = description.replace(/<[^>]*>/g, "");
+  const plainTextDescription = decode(
+    description.replace(/<[^>]*>/g, '')
+  );
 
   return (
     <>

@@ -16,6 +16,7 @@
     "@mui/material-nextjs": "^5.16.6",
     "crypto-js": "^4.2.0",
     "googleapis": "^144.0.0",
+    "html-entities": "^2.5.2",
     "ioredis": "^5.4.1",
     "next": "14.2.4",
     "nodemailer": "^6.9.15",
