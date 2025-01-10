@@ -18,6 +18,7 @@ export default function AboutPage() {
     <div className={styles.container}>
       <h1 className={styles.mainTitle}>Зворотній зв&apos;язок</h1>
       <p>Email: <a href="mailto:daisyjewellery.info@gmail.com">daisyjewellery.info@gmail.com</a></p>
+      <p>Телефон: <a href="tel:+380935492986">+380935492986</a></p>
       <div className={styles.socialContainer}>
         <p>Ми в соціальних мережах:</p>
         <div className={styles.footerSocials}>

@@ -79,6 +79,12 @@ export default function Footer() {
             <li className={styles.footerListItem}>
               <Link href="/oferta">Публічна оферта</Link>
             </li>
+            <li className={styles.footerListItem}>
+              <Link href="/about">Про нас</Link>
+            </li>
+            <li className={styles.footerListItem}>
+              <Link href="/contact">Контакти</Link>
+            </li>
           </ul>
         </div>
       </div>
