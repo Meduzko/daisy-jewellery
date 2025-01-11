@@ -14,7 +14,7 @@ export default function BlogPage() {
               <Link href={`/blog/${post.slug}`}>
                 <h1>{post.title}</h1>
               </Link>
-              <p>{post.date}</p>
+              <p>Дата публікації: {post.date}</p>
             </div>
             <div className={styles.blogCardContent}>
               {post.sections.map((section, index) => (

@@ -211,6 +211,10 @@ a {
   height: 512px;
 }
 
+.blog-publish-date {
+  color: #666;
+}
+
 /**
 * Blog promo section
 **/
