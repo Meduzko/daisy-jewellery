@@ -1,11 +1,14 @@
 import Link from 'next/link';
+import { getTranslation } from '../../dictionaries';
 import Image from 'next/image';
 import styles from './styles.module.css';
 import { getDeviceType } from '../../helpers';
 
-export default function Banner() {
+export default async function Banner({ lang = 'uk' } = {}) {
   const device = getDeviceType();
   const isMobile = device !== 'desktop';
+  const bannerTk = await getTranslation({ lang, key: 'banner' });
+  const bannerTitle = bannerTk?.title || 'Срібні прикраси Daisy Jewellery — ваш улюблений інтернет-магазин';
 
   return (
     <div className={styles.bannerContainer}>
@@ -19,7 +22,7 @@ export default function Banner() {
         style={{ objectFit: 'cover' }}
         className={styles.bannerImg}
       />
-      <h1 className={styles.bannerText}>Срібні прикраси Daisy Jewellery — ваш улюблений інтернет-магазин</h1>
+      <h1 className={styles.bannerText}>{bannerTitle}</h1>
       {/* <h1 className={styles.bannerText}>Срібні прикраси Daisy Jewellery</h1> */}
       {/* <div className={styles.bannerBackground}>
         <h1><Link className={styles.bannerLink} href="/">—Перейти до категорій</Link></h1>

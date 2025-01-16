@@ -10,7 +10,7 @@ import 'swiper/css/free-mode';
 // import 'swiper/css/pagination';
 import './styles.css';
 
-export default function SwiperCarousel({ data }) {
+export default function SwiperCarousel({ data, lang }) {
   const pagination = {
     clickable: true,
     renderBullet: function (index, className) {
@@ -43,7 +43,7 @@ export default function SwiperCarousel({ data }) {
     >
       {data?.map(item => (
         <SwiperSlide key={item.product_id}>
-          <ProductItem product={item} />
+          <ProductItem product={item} lang={lang} />
         </SwiperSlide>
       ))}
     </Swiper>

@@ -1,3 +1,5 @@
+import { getItemTranslations } from '../dictionaries';
+
 export const getCategoryJsonLd = ({ categoryName, categoryDescription, url, lowPrice, highPrice }) => {
   const jsonLd = {
     "@context": "https://schema.org",
@@ -21,7 +23,7 @@ export const getCategoryJsonLd = ({ categoryName, categoryDescription, url, lowP
   return jsonLd;
 }
 
-export const getProductJsonLd = (product, categoryUrl) => {
+export const getProductJsonLd = async (product, categoryUrl, options = {}) => {
   const {
     title,
     short_description: description,
@@ -32,18 +34,25 @@ export const getProductJsonLd = (product, categoryUrl) => {
 
   const plainTextDescription = description.replace(/<[^>]*>/g, "");
 
+  const { lang, categoryName } = options;
+  const tk = await getItemTranslations({ lang, categoryName, code });
+  const tkTitle = tk?.title || title;
+  const tkDescription = tk?.description || plainTextDescription;
+  const locale = lang || 'uk';
+  const material = locale === 'uk' ? "Срібло" : "Серебро";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: title,
+    name: tkTitle,
     image: images[0],
     brand: "Daisy Jewellery",
-    description: plainTextDescription,
+    description: tkDescription,
     sku: `${code}`,
-    "material": ["Срібло"],
+    "material": [material],
     "offers": {
       "@type": "Offer",
-      url: `https://daisy-jewellery.com.ua/${categoryUrl}/${code}`,
+      url: `https://daisy-jewellery.com.ua/${locale}/${categoryUrl}/${code}`,
       price: `${price}`,
       priceCurrency: "UAH",
       availability: "http://schema.org/InStock",
@@ -55,17 +64,18 @@ export const getProductJsonLd = (product, categoryUrl) => {
 };
 
 
-export const getLogoJsonLd = () => {
+export const getLogoJsonLd = ({ lang = 'uk' } = {}) => {
+  const inLanguage = lang === 'uk' ? 'uk-UA' : 'ru-UA';
   const jsonLd = {
     "@context": "http://schema.org",
     "@type": "Organization",
     "name": "Daisy Jewellery",
     "@id": "https://daisy-jewellery.com.ua/#organization",
-    "url": "https://daisy-jewellery.com.ua/",
+    "url": `https://daisy-jewellery.com.ua/${lang}`,
     "logo": {
       "@type": "ImageObject",
       "@id": "https://daisy-jewellery.com.ua/_next/image?url=%2Flogo_black.png&w=128&q=75",
-      "inLanguage": " uk-UA",
+      "inLanguage": inLanguage,
       "url": "https://daisy-jewellery.com.ua/_next/image?url=%2Flogo_black.png&w=128&q=75",
       "contentUrl": "https://daisy-jewellery.com.ua/_next/image?url=%2Flogo_black.png&w=128&q=75",
       "width": 263,
@@ -114,14 +124,25 @@ export const getBussinesJsonLd = () => {
   }
 };
 
-export const getWebSiteJsonLd = () => {
+export const getWebSiteJsonLd = ({ lang = 'uk' } = {}) => {
+  const data = {
+    uk: {
+      name: 'Срібні прикраси Daisy Jewellery',
+      description: 'Daisy Jewellery – вишукані срібні прикраси для будь-якої нагоди. Замовляйте онлайн з доставкою по Україні.'
+    },
+    ru: {
+      name: 'Серебряные украшения Daisy Jewellery',
+      description: 'Daisy Jewellery - изысканные серебряные украшения для любого случая. Заказывайте онлайн с доставкой по Украине.'
+    }
+  };
+
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": "https://daisy-jewellery.com.ua/#website",
     "url": "https://daisy-jewellery.com.ua/",
-    "name": "Срібні прикраси Daisy Jewellery",
-    "description": "Daisy Jewellery – вишукані срібні прикраси для будь-якої нагоди. Замовляйте онлайн з доставкою по Україні.",
+    "name": data[lang].name,
+    "description": data[lang].description,
     "potentialAction": {
       "@type": "SearchAction",
       "target": "https://daisy-jewellery.com.ua/search?query={search_term_string}",

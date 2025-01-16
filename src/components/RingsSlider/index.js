@@ -5,14 +5,13 @@ import SwiperCarousel from '../SwiperCarousel/carousel';
 import newProducts from './new-products.json';
 import styles from './styles.module.css';
 
-export default async function RingsSlider() {
-
+export default async function RingsSlider({ lang = 'uk' }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className={`${styles.sliderContainer} container`}>
         <div className={styles.sliderCtn}>
           <h2 className='title'>Новинки</h2>
-          <SwiperCarousel data={newProducts} />
+          <SwiperCarousel data={newProducts} lang={lang} />
         </div>
       </div>
     </Suspense>

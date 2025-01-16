@@ -3,34 +3,58 @@ import Image from 'next/image';
 
 import styles from './styles.module.css';
 
-export default async function Categories() {
-  const categories = [
-    {
-      title: 'Каблучки',
-      src: '/categories/ring.webp',
-      link: '/kabluchki/1'
-    },
-    {
-      title: 'Сережки',
-      src: '/categories/earring.webp',
-      link: '/serezhky/1'
-    },
-    {
-      title: 'Кольє',
-      src: '/categories/neclackle.webp',
-      link: '/kolye/1'
-    },
-    {
-      title: 'Браслети',
-      src: '/categories/bracer.webp',
-      link: '/braslety/1'
-    }
-  ];
+export default async function Categories({ lang = 'uk' } = {}) {
+  const categories = {
+    uk: [
+      {
+        title: 'Каблучки',
+        src: '/categories/ring.webp',
+        link: '/uk/kabluchki/1'
+      },
+      {
+        title: 'Сережки',
+        src: '/categories/earring.webp',
+        link: '/uk/serezhky/1'
+      },
+      {
+        title: 'Кольє',
+        src: '/categories/neclackle.webp',
+        link: '/uk//kolye/1'
+      },
+      {
+        title: 'Браслети',
+        src: '/categories/bracer.webp',
+        link: '/uk//braslety/1'
+      }
+    ],
+    ru: [
+      {
+        title: 'Кольца',
+        src: '/categories/ring.webp',
+        link: '/ru/koltsa/1'
+      },
+      {
+        title: 'Серьги',
+        src: '/categories/earring.webp',
+        link: '/ru/sergi/1'
+      },
+      {
+        title: 'Колье',
+        src: '/categories/neclackle.webp',
+        link: '/ru/kolye/1'
+      },
+      {
+        title: 'Браслеты',
+        src: '/categories/bracer.webp',
+        link: '/ru/braslety/1'
+      }
+    ]
+  };
 
   return (
     <div className='container'>
       <div className={styles.categoriesContainer}>
-      {categories.map(category => (
+      {categories[lang].map(category => (
         <Link href={category.link} className={styles.category} key={category.title}>
           <div className={styles.square}>
             <picture>
