@@ -5,13 +5,14 @@ import Navigation from '../Navigation/page';
 import CartDrawler from '../Cart/Cart';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import LanguageSwitcher from '../LanguageSwitcher';
 import { IconButton } from '@mui/material';
 
 import MobileMenu from '../Menu/MobileMenu';
 
 import styles from './styles.module.css';
 
-export default async function Header() {
+export default async function Header({ lang }) {
   const deviceType = headers().get('x-device-type');
   const isMobile = deviceType === 'mobile';
 
@@ -21,7 +22,7 @@ export default async function Header() {
         <div>
           <MobileMenu isMobile={isMobile} />
         </div>
-        <Link href='/' className={styles.logoContainer}>
+        <Link href={`/${lang}`} className={styles.logoContainer}>
           <Image
             src="/logo_black.png"
             alt="logo"
@@ -38,10 +39,11 @@ export default async function Header() {
             <FavoriteBorderOutlinedIcon className={styles.favoritesIcon} />
           </IconButton>
           <CartDrawler />
+          <LanguageSwitcher />
         </div>
         {/* <CartDrawler /> */}
       </div>
-      <Navigation isMobile={isMobile} />
+      <Navigation isMobile={isMobile} lang={lang} />
     </header>
   );
 }

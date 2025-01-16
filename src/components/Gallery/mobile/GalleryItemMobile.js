@@ -4,7 +4,7 @@ import BuyButton from '../BuyButton';
 
 import styles from './styles.module.css';
 
-export default async function GalleryItemMobile({ item, baseURL = '/' }) {
+export default async function GalleryItemMobile({ item, baseURL = '/', t }) {
   const {
     code,
     title,
@@ -14,6 +14,9 @@ export default async function GalleryItemMobile({ item, baseURL = '/' }) {
     price
   } = item;
   const priceSymbol = 'грн';
+  const tk = t[code];
+  const tkTitle = tk?.title || title;
+  const tkDescription = tk?.description || short_description;
 
   return (
       <div className={styles.itemWrapper}>
@@ -23,7 +26,7 @@ export default async function GalleryItemMobile({ item, baseURL = '/' }) {
             <div className={styles.imgContainer}>
               <Image
                 src={imageUrl || image_path}
-                alt={title}
+                alt={tkTitle}
                 fill={true}
                 loading="lazy"
                 className={`${styles.defaultImg} ${styles.itemImg}`}
@@ -33,8 +36,8 @@ export default async function GalleryItemMobile({ item, baseURL = '/' }) {
         </Link>
         <div className={styles.itemInfo}>
             <div className={styles.titleContainer}>
-              <Link href={`${baseURL}/${code}`} className={styles.title}>{title}</Link>
-              <Link href={`${baseURL}/${code}`} className={styles.subTitle} dangerouslySetInnerHTML={{ __html: short_description }} />
+              <Link href={`${baseURL}/${code}`} className={styles.title}>{tkTitle}</Link>
+              <Link href={`${baseURL}/${code}`} className={styles.subTitle} dangerouslySetInnerHTML={{ __html: tkDescription }} />
             </div>
             <div className={styles.itemBottomCnt}>
               <div className={styles.price}>{`${price} ${priceSymbol}`}</div>

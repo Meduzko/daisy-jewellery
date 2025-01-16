@@ -9,12 +9,38 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import styles from './styles.module.css';
 import { getMenuItems } from '../../helpers/menuItems';
 
-const pagesWithoutFooter = ['/order', '/returns', '/payment-success', '/about', '/contact'];
+const translations = {
+  uk: {
+    categories: 'Категорії',
+    information: 'Інформація',
+    returns: 'Повернення та обмін',
+    delivery: 'Доставка та оплата',
+    oferta: 'Публічна оферта',
+    about: 'Про нас',
+    contact: 'Контакти'
+  },
+  ru: {
+    categories: 'Категории',
+    information: 'Информация',
+    returns: 'Возврат и обмен',
+    delivery: 'Доставка и оплата',
+    oferta: 'Публичная оферта',
+    about: 'О нас',
+    contact: 'Контакты'
+  }
+};
 
-export default function Footer() {
+export default function Footer({ lang }) {
   const pathname = usePathname();
+  const pagesWithoutFooter = [
+    `/${lang}/order`,
+    `/${lang}/returns`,
+    `/${lang}/payment-success`,
+    `/${lang}/about`,
+    `/${lang}/contact`
+  ];
   const isFooterHidden = pagesWithoutFooter.includes(pathname);
-  const menuItems = getMenuItems();
+  const menuItems = getMenuItems(lang);
 
   if (isFooterHidden) {
     return null;
@@ -24,7 +50,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.footerContainer}>
         <div className={`${styles.footerCategories} ${styles.footerCol}`}>
-          <h3 className={styles.footerCategoryTitle}>Категорії</h3>
+          <h3 className={styles.footerCategoryTitle}>{translations[lang].categories}</h3>
           <ul className={styles.footerList}>
             {menuItems.map(item => (
               <li
@@ -37,12 +63,12 @@ export default function Footer() {
               </li>
             ))}
             <li className={styles.footerListItem}>
-              <Link href="/blog">Блог</Link>
+              <Link href={`/${lang}/blog`}>Блог</Link>
             </li>
           </ul>
         </div>
-        <div className={`${styles.footerContacts}  ${styles.footerCol}`}>
-          <h3 className={styles.footerCategoryTitle}>Контакти</h3>
+        <div className={`${styles.footerContacts} ${styles.footerCol}`}>
+          <h3 className={styles.footerCategoryTitle}>{translations[lang].contact}</h3>
           <ul className={styles.footerList}>
             <li className={styles.footerListItem}>м. Корець, площа Київська 3/3</li>
             <li className={styles.footerListItem}>
@@ -71,22 +97,22 @@ export default function Footer() {
           </ul>
         </div>
         <div className={`${styles.footerInfo}  ${styles.footerCol}`}>
-          <h3 className={styles.footerCategoryTitle}>Інформація</h3>
+          <h3 className={styles.footerCategoryTitle}>{translations[lang].information}</h3>
           <ul className={styles.footerList}>
             <li className={styles.footerListItem}>
-              <Link href="/returns">Повернення та обмін</Link>
+              <Link href={`/${lang}/returns`}>{translations[lang].returns}</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/delivery">Доставка та оплата</Link>
+              <Link href={`/${lang}/delivery`}>{translations[lang].delivery}</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/oferta">Публічна оферта</Link>
+              <Link href={`/${lang}/oferta`}>{translations[lang].oferta}</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/about">Про нас</Link>
+              <Link href={`/${lang}/about`}>{translations[lang].about}</Link>
             </li>
             <li className={styles.footerListItem}>
-              <Link href="/contact">Контакти</Link>
+              <Link href={`/${lang}/contact`}>{translations[lang].contact}</Link>
             </li>
           </ul>
         </div>

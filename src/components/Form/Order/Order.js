@@ -21,7 +21,7 @@ import Select from '@mui/material/Select'
 import { CartContext } from '../../../context/CartContext';
 import DepartmentAutocomplete from './DepartmentAutocomplete/DepartmentAutocomplete';
 import CitySelect from './CitySelect/CitySelect';
-import OrderList from '../../../app/order/OrderList/OrderList';
+import OrderList from './OrderList/OrderList';
 import ProductBuyButton from '../../Buttons/ProductBuy/ProductBuy';
 
 import styles from './styles.module.css';

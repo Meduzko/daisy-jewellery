@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import { getItemTranslations } from '../dictionaries';
 
 export function getDeviceType() {
   const userAgent = headers().get('user-agent') || '';
@@ -36,33 +37,57 @@ export const getPaginationData = (paramsPage) => {
  * @param {number} code 
  * @returns product canonical and keywords metadata
  */
-const getItemMetaData = ({ categoryName, productTitle, code, short_description }) => {
+const getItemMetaData = ({ categoryName, productTitle, code, short_description, lang }) => {
   const keywords = {
-    ring: `Срібло, Каблучки`,
-    earring: `Срібло, Сережки`,
-    necklace: `Срібло, Кольє`,
-    bracer: `Срібло, Браслети`,
+    uk: {
+      ring: 'Срібло, Каблучки',
+      earring: 'Срібло, Сережки',
+      necklace: 'Срібло, Кольє',
+      bracer: 'Срібло, Браслети',
+    },
+    ru: {
+      koltsa: 'Серебро, Кольца',
+      sergi: 'Серебро, Серьги',
+      kolye: 'Серебро, Колье',
+      braslety: 'Серебро, Браслеты',
+    }
   }
 
   const canonical = {
-    ring: 'kabluchki/kupyty-sribnu-kabluchku',
-    earring: 'serezhky/kupyty-serezhky-sribni',
-    necklace: 'kolye/kupyty-sribne-kolye',
-    bracer: 'braslety/kupyty-sribnyy-braslet',
+    uk: {
+      ring: 'kabluchki/kupyty-sribnu-kabluchku',
+      earring: 'serezhky/kupyty-serezhky-sribni',
+      necklace: 'kolye/kupyty-sribne-kolye',
+      bracer: 'braslety/kupyty-sribnyy-braslet',
+    },
+    ru: {
+      koltsa: 'koltsa/kupit-serebryanoye-koltso',
+      sergi: 'sergi/kupit-serebryanyye-sergi',
+      kolye: 'kolye/kupit-serebryanoye-kolye',
+      braslety: 'braslety/kupit-serebryanyy-braslet/',
+    }
   }
 
   const descriptionMap = {
-    ring: 'Купити срібну каблучку від Daisy Jewellery',
-    earring: 'Купити сережки срібні від Daisy Jewellery',
-    necklace: 'Купити срібне кольє від Daisy Jewellery',
-    bracer: 'Купити браслет зі срібла від Daisy Jewellery',
+    uk: {
+      ring: 'Купити срібну каблучку від Daisy Jewellery',
+      earring: 'Купити сережки срібні від Daisy Jewellery',
+      necklace: 'Купити срібне кольє від Daisy Jewellery',
+      bracer: 'Купити браслет зі срібла від Daisy Jewellery',
+    },
+    ru: {
+      koltsa: 'Купить серебряное кольцо от Daisy Jewellery',
+      sergi: 'Купить серьги серебряные от Daisy Jewellery',
+      kolye: 'Купить серебряное колье от Daisy Jewellery',
+      braslety: 'Купить браслет из серебра от Daisy Jewellery',
+    }
   }
 
-  const keywordsRes = `${keywords[categoryName]}, ${productTitle}`;
-  const canonicalRes = `${process.env.SITE_DOMAIN}/${canonical[categoryName]}/${code}`;
+  const keywordsRes = `${keywords[lang][categoryName]}`;
+  const canonicalRes = `${process.env.SITE_DOMAIN}/${lang}/${canonical[lang][categoryName]}/${code}`;
   const shortDescription = short_description.replace(/<[^>]*>/g, '');
   const description = shortDescription.replace(/&[^;\s]+;/g, '');
-  const descriptionRes = `${description.trim()} ${descriptionMap[categoryName]}`;
+  const descriptionRes = `${description.trim()} ${descriptionMap[lang][categoryName]}`;
 
   return {
     canonicalUrl: canonicalRes,
@@ -77,13 +102,20 @@ const getItemMetaData = ({ categoryName, productTitle, code, short_description }
  * @returns 
  */
 
-export const getProductMetadata = ({ product, categoryName }) => {
-  const { title, short_description, code } = product;
+export const getProductMetadata = async ({ product, categoryName, lang = 'uk' }) => {
   const siteName = 'Daisy Jewellery';
-  const { keywords, canonicalUrl, description } = getItemMetaData({ categoryName, title, code, short_description });
+  const locale = lang === 'uk' ? 'uk_UA' : 'ru_UA';
+  const { title, short_description, code } = product;
+
+  const tk = await getItemTranslations({ lang, categoryName, code });
+  const tkTitle = tk?.title || title;
+  const tkDescription = tk?.description || short_description;
+
+  const { keywords, canonicalUrl, description } = getItemMetaData({ categoryName, title, code, short_description: tkDescription, lang });
+
 
   return {
-    title: `${title} | ${siteName}`,
+    title: `${tkTitle} | ${siteName}`,
     description,
     alternates: {
       canonical: canonicalUrl,
@@ -95,7 +127,7 @@ export const getProductMetadata = ({ product, categoryName }) => {
       description,
       url: canonicalUrl,
       siteName,
-      locale: 'uk_UA',
+      locale,
       type: 'website',
     }
   }
@@ -113,9 +145,11 @@ export const generateCategoryMetadata = ({
   lastPage,
   canonicalUrl,
   categorySlug,
-  keywords
+  keywords,
+  lang = 'uk'
 }) => {
   const siteName = 'Daisy Jewellery';
+  const locale = lang === 'uk' ? 'uk_UA' : 'ru_UA';
 
   const baseMetaData = {
     title,
@@ -129,13 +163,13 @@ export const generateCategoryMetadata = ({
       ]
     },
     keywords,
-    url: `${process.env.SITE_DOMAIN}/${categorySlug}/1`,
+    url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/1`,
     openGraph: {
       title,
       description,
-      url: `${process.env.SITE_DOMAIN}/${categorySlug}/1`,
+      url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/1`,
       siteName,
-      locale: 'uk_UA',
+      locale: locale,
       type: 'website',
     }
   }
@@ -145,8 +179,8 @@ export const generateCategoryMetadata = ({
       ...baseMetaData,
       icons: {
         other: [
-          { rel: 'prev', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage - 1}` },
-          { rel: 'next', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage + 1}` },
+          { rel: 'prev', url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage - 1}` },
+          { rel: 'next', url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage + 1}` },
         ]
       }
     }
@@ -157,7 +191,7 @@ export const generateCategoryMetadata = ({
       ...baseMetaData,
       icons: {
         other: [
-          { rel: 'prev', url: `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage - 1}` }
+          { rel: 'prev', url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage - 1}` }
         ]
       }
     }

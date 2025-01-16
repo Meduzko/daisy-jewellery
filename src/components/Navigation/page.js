@@ -6,9 +6,9 @@ import { getMenuItems } from '../../helpers/menuItems';
 
 import styles from './styles.module.css';
 
-export default function Navigation({ isMobile }) {
+export default function Navigation({ isMobile, lang }) {
   const [active, setActive] = useState('');
-  const navList = getMenuItems();
+  const navList = getMenuItems(lang);
 
   useEffect(() => {
     const currentPath = window.location.pathname;

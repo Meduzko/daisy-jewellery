@@ -6,32 +6,35 @@ import CounterWithSubmit from './CounterWithSubmit/CounterWithSubmit';
 
 import styles from './ProductPage.module.css';
 
-const ProductPageNew = ({ item = {}, productSizes }) => {
+const ProductPageNew = ({ item = {}, productSizes, t }) => {
   const {
     title,
     short_description: description,
     images,
     price,
+    code
   } = item;
 
   // const plainTextDescription = description.replace(/<[^>]*>/g, "");
   const plainTextDescription = decode(
     description.replace(/<[^>]*>/g, '')
   );
+  const tkTitle = t?.title || title;
+  const tkDescription = t?.description || plainTextDescription;
 
   return (
     <>
       <div className={styles.productPageContainer}>
         {/* Left Section: Images */}
         <section className={styles.leftSection}>
-          <ProductImageGallery images={images} title={title} />
+          <ProductImageGallery images={images} title={tkTitle} />
         </section>
 
         {/* Right Section: Product Details */}
         <section className={styles.rightSection}>
-          <h1 className={styles.productTitle}>{title}</h1>
+          <h1 className={styles.productTitle}>{tkTitle}</h1>
           {/* <p className={styles.productDescription} dangerouslySetInnerHTML={{ __html: description }} /> */}
-          <p className={styles.productDescription}>{plainTextDescription}</p>
+          <p className={styles.productDescription}>{tkDescription}</p>
           <div className={styles.productPrice}>{`${price} грн`}</div>
 
           {productSizes && <div className={styles.productInfoContainer}>
