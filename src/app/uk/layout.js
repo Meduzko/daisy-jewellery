@@ -1,6 +1,6 @@
 import Script from 'next/script';
 import { Montserrat } from "next/font/google";
-import "./globals.css";
+import '../globals.css';
 // import Header from './components/Header/page';
 import Header from '../../components/Header/page';
 import Footer from '../../components/Footer/page';

@@ -1,6 +1,6 @@
 import Script from 'next/script';
 import { Montserrat } from "next/font/google";
-import "./globals.css";
+import '../globals.css';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { CartProvider } from '../../context/CartContext';
 // import Header from './components/Header/page';

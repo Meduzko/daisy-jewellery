@@ -7,6 +7,23 @@ import Gallery from '../../../../components/Gallery';
 import { notFound } from 'next/navigation';
 
 const lang = 'ru';
+const staticPages = [
+  {
+    page_number: '1',
+  },
+  {
+    page_number: '2',
+  },
+  {
+    page_number: '3',
+  },
+  {
+    page_number: '4',
+  },
+  {
+    page_number: '5',
+  }
+];
 
 // TODO
 export async function generateStaticParams() {
@@ -18,18 +35,6 @@ export async function generateStaticParams() {
   //   page_number: product.code,
   // }))
 
-  const staticPages = [
-    {
-      page_number: '1',
-    },
-    {
-      page_number: '2',
-    },
-    {
-      page_number: '3',
-    }
-  ]
-
   return staticPages;
 }
 
@@ -37,7 +42,7 @@ export async function generateMetadata({ params }) {
   const title = 'Кольца серебряные | Купить серебряные кольца Daisy Jewellery';
   const description = 'Изысканные серебряные кольца от Daisy Jewellery. Быстрая доставка по всей Украине! Серебряные кольца по лучшей цене от производителя';
   const currentPage = +params.page_number;
-  const lastPage = 3;
+  const lastPage = staticPages.length;
   const categorySlug = 'koltsa';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Серебряные кольца, купить';

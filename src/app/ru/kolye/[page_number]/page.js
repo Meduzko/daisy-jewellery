@@ -6,17 +6,16 @@ import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../.
 import Gallery from '../../../../components/Gallery';
 
 const lang = 'ru';
+const staticPages = [
+  {
+    page_number: '1',
+  },
+  {
+    page_number: '2',
+  }
+];
 
 export async function generateStaticParams() {
-  const staticPages = [
-    {
-      page_number: '1',
-    },
-    {
-      page_number: '2',
-    }
-  ]
-
   return staticPages;
 }
 
@@ -24,7 +23,7 @@ export async function generateMetadata({ params }) {
   const title = 'Серебряные Колье | Купить серебряное колье Daisy Jewellery';
   const description = 'Купить серебряные колье Daisy Jewellery. Доставка в кратчайшие сроки по Украине! Лучшая цена на рынке от производителя';
   const currentPage = +params.page_number;
-  const lastPage = 2;
+  const lastPage = staticPages.length;
   const categorySlug = 'kolye';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Серебряные Колье, купити';

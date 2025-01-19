@@ -139,8 +139,8 @@ a {
   text-decoration: none;
 }
 
-.display-none {
-  display: none;
+.list-style-decimal {
+  list-style: decimal;
 }
 
 .main {
