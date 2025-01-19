@@ -2,7 +2,7 @@ import { getHtmlPostBySlug } from '../../../../lib/posts';
 import { notFound } from 'next/navigation';
 
 export default function BlogPostPage({ params }) {
-  const content = getHtmlPostBySlug(params.slug);
+  const content = getHtmlPostBySlug(params.slug, 'uk');
 
   if (!content) {
     notFound();

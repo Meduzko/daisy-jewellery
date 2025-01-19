@@ -15,7 +15,7 @@ export async function generateMetadata({ params }) {
     return;
   }
 
-  return getProductMetadata({ product, categoryName: 'braslety', lang: 'uk' });
+  return getProductMetadata({ product, categoryName: 'bracer', lang: 'uk' });
 }
 
 export async function generateStaticParams() {

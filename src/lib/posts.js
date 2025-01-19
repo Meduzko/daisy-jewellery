@@ -2,20 +2,20 @@ import fs from 'fs';
 import path from 'path';
 import * as cheerio from 'cheerio';
 
-const postsDirectory = path.join(process.cwd(), 'src', 'content');
+const postsDirectory = (lang = 'uk') => path.join(process.cwd(), 'src', 'content', lang);
 
-export function getAllHtmlPosts() {
-  if (!fs.existsSync(postsDirectory)) {
-    console.error(`Error: Directory not found at ${postsDirectory}`);
+export function getAllHtmlPosts({ lang }) {
+  if (!fs.existsSync(postsDirectory(lang))) {
+    console.error(`Error: Directory not found at ${postsDirectory(lang)}`);
     return [];
   }
 
-  const fileNames = fs.readdirSync(postsDirectory);
+  const fileNames = fs.readdirSync(postsDirectory(lang));
   return fileNames
     .filter((fileName) => fileName.endsWith('.html'))
     .map((fileName) => {
       const slug = fileName.replace('.html', '');
-      const content = fs.readFileSync(path.join(postsDirectory, fileName), 'utf8');
+      const content = fs.readFileSync(path.join(postsDirectory(lang), fileName), 'utf8');
       const { title, description, sections, date } = parseHtmlMetadata(content);
 
       return {
@@ -29,8 +29,8 @@ export function getAllHtmlPosts() {
 }
 
 // Get the content of a specific HTML file by slug
-export function getHtmlPostBySlug(slug) {
-  const filePath = path.join(postsDirectory, `${slug}.html`);
+export function getHtmlPostBySlug(slug, lang) {
+  const filePath = path.join(postsDirectory(lang), `${slug}.html`);
   if (!fs.existsSync(filePath)) {
     return null;
   }
@@ -40,9 +40,10 @@ export function getHtmlPostBySlug(slug) {
 function parseHtmlMetadata(htmlContent) {
   const $ = cheerio.load(htmlContent);
 
-  const title = $('title').text() || 'Untitled Post';
-  const description =
-    $('meta[name="description"]').attr('content') || $('p').first().text() || 'No description available.';
+  const title = $('#title').text() || 'Untitled Post';
+  const description = $('#description').text() || 'Untitled Post';
+  // const description =
+  //   $('meta[name="description"]').attr('content') || $('p').first().text() || 'No description available.';
   // const image = $('img').first().attr('src') || null; // Extract the first image
   const sections = $('section')
     .slice(0, 2) // Get the first two <section> elements
@@ -53,13 +54,13 @@ function parseHtmlMetadata(htmlContent) {
   return { title, description, sections, date };
 }
 
-export function getHtmlPostMetadata(slug) {
-  const content = getHtmlPostBySlug(slug);
+export function getHtmlPostMetadata(slug, lang = 'uk') {
+  const content = getHtmlPostBySlug(slug, lang);
   if (!content) return null;
 
   const $ = cheerio.load(content);
-  const title = $('title').text() || `Blog Post - ${slug}`;
-  const description = $('meta[name="description"]').attr('content') || 'No description available.';
+  const title = $('#title').text() || `Blog Post - ${slug}`;
+  const description = $('#description').text() || 'Untitled Post';
 
   return { title, description };
 }

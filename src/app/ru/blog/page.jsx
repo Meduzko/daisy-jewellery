@@ -2,8 +2,16 @@ import Link from 'next/link';
 import { getAllHtmlPosts } from '../../../lib/posts';
 import styles from '../../../styles/BlogPage.module.css';
 
+export async function generateMetadata({ params }) {
+  return {
+    alternates: {
+      canonical: `${process.env.SITE_DOMAIN}/ru/blog`,
+    }
+  }
+}
+
 export default function BlogPage() {
-  const posts = getAllHtmlPosts();
+  const posts = getAllHtmlPosts({ lang: 'ru' });
 
   return (
     <div className={styles.blogWrapper}>
@@ -11,7 +19,7 @@ export default function BlogPage() {
         {posts.map((post) => (
           <div key={post.slug} className={styles.blogCard}>
             <div className={styles.blogCardHeader}>
-              <Link href={`/blog/${post.slug}`}>
+              <Link href={`/ru/blog/${post.slug}`}>
                 <h1>{post.title}</h1>
               </Link>
               <p>Дата публікації: {post.date}</p>
@@ -21,7 +29,7 @@ export default function BlogPage() {
                 <div key={index} dangerouslySetInnerHTML={{ __html: section }} />
               ))}
               <div>
-                <Link href={`/blog/${post.slug}`} className={styles.readMoreLink}>
+                <Link href={`/ru/blog/${post.slug}`} className={styles.readMoreLink}>
                   <h3>Читати повністю</h3>
                 </Link>
               </div>

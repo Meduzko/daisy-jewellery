@@ -8,7 +8,7 @@ import { getDefaultMetaData } from '../../../helpers';
 import styles from './styles.module.css';
 
 export async function generateMetadata({ params }) {
-  const metadata = getDefaultMetaData({ pagePath: 'contact', title: 'Магазин срібних прикрас - Daisy Jewellery | Контакти' });
+  const metadata = getDefaultMetaData({ pagePath: 'contact', title: 'Магазин срібних прикрас - Daisy Jewellery | Контакти', lang: 'uk' });
 
   return metadata;
 }

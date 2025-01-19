@@ -25,7 +25,7 @@ export async function generateMetadata({ params }) {
   const currentPage = +params.page_number;
   const lastPage = 2;
   const categorySlug = 'kolye';
-  const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage}`;
+  const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Срібні кольє, купити';
 
   const categoryMetadata = generateCategoryMetadata({ title, description, currentPage, lastPage, canonicalUrl, categorySlug, keywords, lang });

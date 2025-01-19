@@ -39,7 +39,7 @@ export async function generateMetadata({ params }) {
   const currentPage = +params.page_number;
   const lastPage = 3;
   const categorySlug = 'koltsa';
-  const canonicalUrl = `${process.env.SITE_DOMAIN}/${categorySlug}/${currentPage}`;
+  const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Серебряные кольца, купить';
 
   const categoryMetadata = generateCategoryMetadata({ title, description, currentPage, lastPage, canonicalUrl, categorySlug, keywords, lang });

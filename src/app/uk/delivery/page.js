@@ -3,7 +3,7 @@ import { getDefaultMetaData } from '../../../helpers';
 import styles from './styles.module.css';
 
 export async function generateMetadata({ params }) {
-  const metadata = getDefaultMetaData({ pagePath: 'delivery', title: 'Магазин срібних прикрас - Daisy Jewellery | Доставка' });
+  const metadata = getDefaultMetaData({ pagePath: 'delivery', title: 'Магазин срібних прикрас - Daisy Jewellery | Доставка', lang: 'uk' });
 
   return metadata;
 }

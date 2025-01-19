@@ -8,10 +8,13 @@ export async function generateMetadata({ params }) {
       return {
         title: metadata.title,
         description: metadata.description,
+        alternates: {
+          canonical:`${process.env.SITE_DOMAIN}/uk/blog/${params.slug}`
+        },
         openGraph: {
           title: metadata.title,
           description: metadata.description,
-          url: `https://daisy-jewelry-store.com/blog/${params.slug}`,
+          url: `https://daisy-jewelry-store.com/uk/blog/${params.slug}`,
         },
       };
     }
@@ -21,10 +24,13 @@ export async function generateMetadata({ params }) {
   return {
     title: 'Блог | Daisy Jewellery',
     description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+    alternates: {
+      canonical:`${process.env.SITE_DOMAIN}/uk/blog`
+    },
     openGraph: {
       title: 'Блог | Daisy Jewellery',
       description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
-      url: 'https://daisy-jewellery.com.ua/blog',
+      url: 'https://daisy-jewellery.com.ua/uk/blog',
     },
   };
 }
