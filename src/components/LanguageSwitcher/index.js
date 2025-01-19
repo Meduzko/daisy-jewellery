@@ -67,6 +67,15 @@ const LanguageSwitcher = () => {
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
     const segments = currentPath.split('/').filter(Boolean); // Remove empty segments
 
+    if (currentPath.includes('/blog/')) {
+      const currentLocale = segments[0];
+
+      router.push(`/${newLocale}/blog`);
+      setDropdownOpen(false);
+
+      return;
+    }
+
     if (segments.length > 1) {
       const currentLocale = segments[0]; // First segment is the current locale
       const translatedSegments = segments.map((segment, index) => {

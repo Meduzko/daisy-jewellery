@@ -75,9 +75,10 @@ export const metadata = {
     nocache: true,
   },
   alternates: {
-    canonical: 'https://daisy-jewellery.com.ua',
+    canonical: 'https://daisy-jewellery.com.ua/uk',
     languages: {
-      'uk-UA': 'https://daisy-jewellery.com.ua/uk-UA',
+      'uk-UA': 'https://daisy-jewellery.com.ua/uk',
+      'ru-UA': 'https://daisy-jewellery.com.ua/ru',
     },
   },
   other: {

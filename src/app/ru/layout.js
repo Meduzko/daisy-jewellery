@@ -10,7 +10,7 @@ import Footer from '../../components/Footer/page';
 const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
 
 export const metadata = {
-  metadataBase: new URL('https://daisy-jewellery.com.ua'),
+  metadataBase: new URL('https://daisy-jewellery.com.ua/ru'),
   title: 'Магазин срібних прикрас - Daisy Jewellery',
   description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
   keywords: [
@@ -21,11 +21,11 @@ export const metadata = {
     'кольє',
     'браслети',
   ],
-  authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua' }],
+  authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua/ru' }],
   openGraph: {
     title: 'Магазин срібних прикрас - Daisy Jewellery',
     description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
-    url: 'https://daisy-jewellery.com.ua',
+    url: 'https://daisy-jewellery.com.ua/ru',
     siteName: 'Daisy Jewellery',
     images: [
       {
@@ -35,7 +35,7 @@ export const metadata = {
         alt: 'Магазин срібних прикрас - Daisy Jewellery',
       },
     ],
-    locale: 'uk_UA', // Updated locale for Ukrainian language
+    locale: 'ru-UA', // Updated locale for Ukrainian language
     type: 'website',
   },
   twitter: {
@@ -75,9 +75,10 @@ export const metadata = {
     nocache: true,
   },
   alternates: {
-    canonical: 'https://daisy-jewellery.com.ua',
+    canonical: 'https://daisy-jewellery.com.ua/ru',
     languages: {
-      'uk-UA': 'https://daisy-jewellery.com.ua/uk-UA',
+      'uk-UA': 'https://daisy-jewellery.com.ua/uk',
+      'ru-UA': 'https://daisy-jewellery.com.ua/ru',
     },
   },
   other: {
