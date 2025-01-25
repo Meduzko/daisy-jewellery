@@ -64,3 +64,12 @@ export function getHtmlPostMetadata(slug, lang = 'uk') {
 
   return { title, description };
 }
+
+export async function getBlogContent(locale, slug) {
+  const filePath = path.join(process.cwd(), 'src', 'content', locale, `${slug}.html`);
+  try {
+    return fs.readFileSync(filePath, 'utf-8'); // Read the HTML file content
+  } catch (error) {
+    return null; // Return null if the file is not found
+  }
+}

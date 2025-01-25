@@ -46,7 +46,7 @@ export default async function EarringItem({ params }) {
     return notFound();
   }
 
-  const productJsonLd = await getProductJsonLd(product, 'serezhky/kupyty-serezhky-sribn');
+  const productJsonLd = await getProductJsonLd(product, 'serezhky/kupyty-serezhky-sribni');
   const logoJsonLd = getLogoJsonLd();
 
   return (

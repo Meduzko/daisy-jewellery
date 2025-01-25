@@ -11,8 +11,8 @@ const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
 
 export const metadata = {
   metadataBase: new URL('https://daisy-jewellery.com.ua/ru'),
-  title: 'Магазин срібних прикрас - Daisy Jewellery',
-  description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+  title: 'Магазин серебряных украшений - Daisy Jewellery',
+  description: 'Купить серебряные украшения - это легко с Daisy Jewellery. Изысканность в каждой детали!',
   keywords: [
     'Інтернет-магазин',
     'срібні прикраси',
@@ -23,8 +23,8 @@ export const metadata = {
   ],
   authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua/ru' }],
   openGraph: {
-    title: 'Магазин срібних прикрас - Daisy Jewellery',
-    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+    title: 'Магазин серебряных украшений - Daisy Jewellery',
+    description: 'Купить серебряные украшения - это легко с Daisy Jewellery. Изысканность в каждой детали!',
     url: 'https://daisy-jewellery.com.ua/ru',
     siteName: 'Daisy Jewellery',
     images: [
@@ -32,7 +32,7 @@ export const metadata = {
         url: '/logo_black.png',
         width: 800,
         height: 600,
-        alt: 'Магазин срібних прикрас - Daisy Jewellery',
+        alt: 'Магазин серебряных украшений - Daisy Jewellery',
       },
     ],
     locale: 'ru-UA', // Updated locale for Ukrainian language
@@ -42,8 +42,8 @@ export const metadata = {
     card: 'summary_large_image',
     site: '@daisy-jewellery.com.ua',
     creator: '@O.P',
-    title: 'Магазин срібних прикрас - Daisy Jewellery',
-    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
+    title: 'Магазин серебряных украшений - Daisy Jewellery',
+    description: 'Купить серебряные украшения - это легко с Daisy Jewellery. Изысканность в каждой детали!',
     image: '/logo_black.png',
     images: ['/logo_black.png'],
   },
@@ -87,7 +87,7 @@ export const metadata = {
       '@context': 'https://schema.org',
       '@type': 'Organization',
       'name': 'Daisy Jewellery',
-      'url': 'https://daisy-jewellery.com.ua',
+      'url': 'https://daisy-jewellery.com.ua/ru',
       'logo': 'https://daisy-jewellery.com.ua/logo_black.png',
     }),
   },

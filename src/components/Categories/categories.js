@@ -19,12 +19,12 @@ export default async function Categories({ lang = 'uk' } = {}) {
       {
         title: 'Кольє',
         src: '/categories/neclackle.webp',
-        link: '/uk//kolye/1'
+        link: '/uk/kolye/1'
       },
       {
         title: 'Браслети',
         src: '/categories/bracer.webp',
-        link: '/uk//braslety/1'
+        link: '/uk/braslety/1'
       }
     ],
     ru: [
