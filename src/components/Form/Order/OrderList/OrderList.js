@@ -138,6 +138,11 @@ const OrderList = ({
 
   const handleSubmitClick = (e) => {
     const isFormValid = validateForm();
+    const price = getTotalPrice();
+
+    if (!price || price <= 0) {
+      return;
+    }
 
     if (paymentByCard) {
       if (isFormValid) {

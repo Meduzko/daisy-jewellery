@@ -59,3 +59,9 @@
     background-color: rgba(0, 0, 0, 0.4);
     z-index: 102;
 }
+
+.emptyTitle {
+    text-align: center;
+    width: 100%;
+    padding-top: 32px;
+}

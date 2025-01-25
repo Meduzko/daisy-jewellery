@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useContext } from 'react';
+import InputMask from "react-input-mask";
 import {
   Box,
   Grid,
@@ -101,6 +102,7 @@ const OrderForm = () => {
   const validateForm = () => {
     const errors = {};
     const { firstName, lastName, email, phone, cityName, department, contact, payment } = formData;
+    const rawPhone = phone.replace(/\D/g, '');
 
     if (!firstName) errors.firstName = 'Ім\'я є обов\'язковим полем';
     if (!lastName) errors.lastName = 'Прізвище є обов\'язковим полем';
@@ -109,10 +111,10 @@ const OrderForm = () => {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = 'Введіть валідну Email адресу';
     }
-    if (!phone) {
+    if (!rawPhone) {
       errors.phone = 'Телефон є обов\'язковим полем';
-    } else if (!/^[0-9]{12}$/.test(phone)) {
-      errors.phone = 'Введіть валідний номер телефону у форматі: 380######### (12 цифр)';
+    } else if (!/^[0-9]{12}$/.test(rawPhone)) {
+      errors.phone = 'Введіть валідний номер телефону у форматі: 380 (##)-##-###-## (12 цифр)';
     }
     if (!cityName) errors.cityName = 'Населений пункт є обов\'язковим полем';
     if (!department) errors.department = 'Відділення є обов\'язковим полем';
@@ -201,6 +203,10 @@ const OrderForm = () => {
     window.location.href = '/';
   };
 
+  if (!cartItems?.length) {
+    return <h2 className={styles.emptyTitle}>Кошик пустий, додайте товар для замовлення.</h2>
+  }
+
   return (
     <>
       {loading && (
@@ -256,16 +262,24 @@ const OrderForm = () => {
           </Grid>
 
           <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Телефон"
-              name="phone"
+            <InputMask
+              mask="+380 (99)-99-999-99"
               value={formData.phone}
               onChange={handleChange}
-              required
-              error={!!formErrors.phone}
-              helperText={formErrors.phone}
-            />
+            >
+              {() => (
+                <TextField
+                  fullWidth
+                  label="Телефон"
+                  name="phone"
+                  // value={formData.phone}
+                  // onChange={handleChange}
+                  required
+                  error={!!formErrors.phone}
+                  helperText={formErrors.phone}
+                />
+              )}
+            </InputMask>
           </Grid>
         </Grid>
 

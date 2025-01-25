@@ -24,6 +24,7 @@
     "rate-limiter-flexible": "^5.0.3",
     "react": "^18",
     "react-dom": "^18",
+    "react-input-mask": "^2.0.4",
     "swiper": "^11.1.9",
     "uuid": "^11.0.3"
   },

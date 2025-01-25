@@ -15,6 +15,10 @@ import nodemailer from 'nodemailer';
 //   duration: 60 * 15,  // Per 15 minutes per IP address
 // });
 
+function generateOrderNumber() {
+  return Math.floor(100000 + Math.random() * 900000);
+}
+
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { formData = {}, cartItems, totalPrice, paidInfo } = req.body;
@@ -57,8 +61,9 @@ export default async function handler(req, res) {
     )
     .join('');
 
+    const orderNumber = generateOrderNumber();
     const paidText = paidInfo?.order_id ? `<strong>Ми отримали оплату, очікуйте доставку, номер замовлення - ${paidInfo.order_id} </strong>` : `Наш менеджер зв'яжеться з вами найближчим часом, щоб підтвердити деталі замовлення`;
-    const mailTitle = paidInfo?.order_id ? 'Замовлення успішно оплачено' : 'Замовлення прийнято';
+    const mailTitle = paidInfo?.order_id ? `Замовлення #${paidInfo.order_id} успішно оплачено` : `Замовлення #${orderNumber} прийнято`;
 
     const mailOptions = {
       from: process.env.GMAIL_USER, // sender address
