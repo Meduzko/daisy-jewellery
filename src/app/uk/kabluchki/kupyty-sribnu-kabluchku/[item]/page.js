@@ -1,3 +1,4 @@
+import Breadcrumbs from '../../../../../components/Breadcrumbs';
 import ProductPageNew from '../../../../../components/ProductPage';
 import { fetchProduct } from '../../../../../actions/fetchProduct';
 import { fetchAllProducts } from '../../../../../actions/fetchAllProducts';
@@ -6,16 +7,26 @@ import { getProductJsonLd, getLogoJsonLd } from '../../../../../helpers/getJsonL
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }) {
-  const [product] = await fetchProduct({
-    code: params.item,
-    categoryId: process.env.RING_CATEGORY_ID,
-  });
-
-  if (!product) {
-    return;
+  if (!params?.item) {
+    return notFound();
   }
 
-  return getProductMetadata({ product, categoryName: 'ring', lang: 'uk' });
+  try {
+    const response = await fetchProduct({
+      code: params.item,
+      categoryId: process.env.RING_CATEGORY_ID,
+    });
+
+    if (!response || response?.length === 0) {
+      return notFound();
+    }
+
+    const [product] = response;
+    return getProductMetadata({ product, categoryName: 'ring', lang: 'uk' });
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return notFound();
+  }
 }
 
 export async function generateStaticParams() {
@@ -40,6 +51,10 @@ export async function generateStaticParams() {
 }
 
 export default async function Page({ params }) {
+  if (!params?.item) {
+    return notFound();
+  }
+
   const [product] = await fetchProduct({
     code: params.item,
     categoryId: process.env.RING_CATEGORY_ID,
@@ -69,11 +84,18 @@ export default async function Page({ params }) {
     return sizes;
   });
 
+  const segments = [
+    { name: 'Головна', href: '/uk' },
+    { name: 'Каблучки', href: '/uk/kabluchki/1' },
+    { name: product?.title, href: `/uk/kabluchki/kupyty-sribnu-kabluchku/${params.item}` },
+  ];
+
   const productJsonLd = await getProductJsonLd(product, 'kabluchki/kupyty-sribnu-kabluchku');
   const logoJsonLd = getLogoJsonLd();
 
   return (
     <>
+      <Breadcrumbs segments={segments} />
       <ProductPageNew item={product} productSizes={productSizes} />
       <script
         type="application/ld+json"
