@@ -18,9 +18,6 @@ const staticPages = [
   },
   {
     page_number: '4',
-  },
-  {
-    page_number: '5',
   }
 ];
 
