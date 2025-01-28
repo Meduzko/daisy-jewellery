@@ -5,24 +5,23 @@ import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../.
 import Gallery from '../../../../components/Gallery';
 
 const lang = 'uk';
-const staticPages = [
-  {
-    page_number: '1',
-  },
-  {
-    page_number: '2',
-  }
-];
 
 export async function generateStaticParams() {
-  return staticPages;
+  return [
+    {
+      page_number: '1',
+    },
+    {
+      page_number: '2',
+    }
+  ];
 }
 
 export async function generateMetadata({ params }) {
   const title = 'Срібні браслети | Купити срібний браслет Daisy Jewellery';
   const description = 'Срібні браслети від Daisy Jewellery. Доставка в будь який куточок України. Купити срібний браслет від виробника за найкращою ціною';
   const currentPage = +params.page_number;
-  const lastPage = staticPages.length;
+  const lastPage = 2;
   const categorySlug = 'braslety';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Срібні браслети, купити';

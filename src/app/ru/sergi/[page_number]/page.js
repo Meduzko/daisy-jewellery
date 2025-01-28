@@ -6,27 +6,26 @@ import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../.
 import Gallery from '../../../../components/Gallery';
 
 const lang = 'ru';
-const staticPages = [
-  {
-    page_number: '1',
-  },
-  {
-    page_number: '2',
-  },
-  {
-    page_number: '3',
-  }
-];
 
 export async function generateStaticParams() {
-  return staticPages;
+  return [
+    {
+      page_number: '1',
+    },
+    {
+      page_number: '2',
+    },
+    {
+      page_number: '3',
+    }
+  ];
 }
 
 export async function generateMetadata({ params }) {
   const title = 'Серебряные серьги | Купить серебряные серьги Daisy Jewellery';
   const description = 'Серебряные серьги Daisy Jewellery. Получайте заказы без задержек по Украине! Цены, которые вас приятно удивят';
   const currentPage = +params.page_number;
-  const lastPage = staticPages.length;
+  const lastPage = 3;
   const categorySlug = 'sergi';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Серебряные серьги, купить';

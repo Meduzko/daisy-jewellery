@@ -6,24 +6,23 @@ import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../.
 import Gallery from '../../../../components/Gallery';
 
 const lang = 'ru';
-const staticPages = [
-  {
-    page_number: '1',
-  },
-  {
-    page_number: '2',
-  }
-];
 
 export async function generateStaticParams() {
-  return staticPages;
+  return [
+    {
+      page_number: '1',
+    },
+    {
+      page_number: '2',
+    }
+  ];
 }
 
 export async function generateMetadata({ params }) {
   const title = 'Серебряные браслеты | Купить серебряный браслет Daisy Jewellery';
   const description = 'Серебряные браслеты от Daisy Jewellery. Доставка в любой уголок Украины. Купить серебряный браслет от производителя по лучшей цене';
   const currentPage = +params.page_number;
-  const lastPage = staticPages.length;
+  const lastPage = 2;
   const categorySlug = 'braslety';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Серебряные браслеты, купить';

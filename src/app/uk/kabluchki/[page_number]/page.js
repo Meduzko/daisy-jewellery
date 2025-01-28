@@ -6,20 +6,6 @@ import Gallery from '../../../../components/Gallery';
 import { notFound } from 'next/navigation';
 
 const lang = 'uk';
-const staticPages = [
-  {
-    page_number: '1',
-  },
-  {
-    page_number: '2',
-  },
-  {
-    page_number: '3',
-  },
-  {
-    page_number: '4',
-  }
-];
 
 // TODO
 export async function generateStaticParams() {
@@ -31,14 +17,27 @@ export async function generateStaticParams() {
   //   page_number: product.code,
   // }))
 
-  return staticPages;
+  return [
+    {
+      page_number: '1',
+    },
+    {
+      page_number: '2',
+    },
+    {
+      page_number: '3',
+    },
+    {
+      page_number: '4',
+    }
+  ];
 }
 
 export async function generateMetadata({ params }) {
   const title = 'Каблучки срібні | Купити срібні кільця Daisy Jewellery';
   const description = 'Вишукані срібні каблучки від Daisy Jewellery. Швидка доставка по всій Україні! Срібні кольца за найкращою ціною від виробника';
   const currentPage = +params.page_number;
-  const lastPage = staticPages.length;
+  const lastPage = 4;
   const categorySlug = 'kabluchki';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Срібні каблучки, купити';

@@ -5,16 +5,20 @@ import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../.
 import Gallery from '../../../../components/Gallery';
 
 const lang = 'uk';
-const staticPages = [
-  {
-    page_number: '1',
-  },
-  {
-    page_number: '2',
-  }
-];
 
 export async function generateStaticParams() {
+  const staticPages = [
+    {
+      page_number: '1',
+    },
+    {
+      page_number: '2',
+    },
+    {
+      page_number: '3',
+    }
+  ];
+
   return staticPages;
 }
 
@@ -22,7 +26,7 @@ export async function generateMetadata({ params }) {
   const title = 'Срібні Кольє | Купити срібне кольє Daisy Jewellery';
   const description = 'Купити срібні кольє Daisy Jewellery. Доставка в найкоротші терміни по Україні! Найкраща ціна на ринку від виробника';
   const currentPage = +params.page_number;
-  const lastPage = staticPages.length;
+  const lastPage = 3;
   const categorySlug = 'kolye';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Срібні кольє, купити';

@@ -18,7 +18,8 @@ export async function generateMetadata({ params }) {
     });
 
     if (!response || response?.length === 0) {
-      return notFound();
+      // return notFound();
+      return;
     }
 
     const [product] = response;
