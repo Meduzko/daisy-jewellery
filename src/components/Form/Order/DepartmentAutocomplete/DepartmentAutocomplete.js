@@ -85,10 +85,27 @@
 
 // export default DepartmentAutocomplete;
 
-
 "use client";
 
-import { useState, useEffect } from 'react';
+/**
+ * Simple debounce utility (no external libraries).
+ * @param {Function} fn - The function to debounce
+ * @param {number} delay - Delay in ms
+ * @return {Function} A debounced version of fn
+ */
+function debounce(fn, delay) {
+  let timerId;
+  return (...args) => {
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+    timerId = setTimeout(() => {
+      fn(...args);
+    }, delay);
+  };
+}
+
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { TextField, Autocomplete, CircularProgress } from '@mui/material';
 
 const DepartmentAutocomplete = ({ cityName, handleChange, error, helperText }) => {
@@ -96,8 +113,6 @@ const DepartmentAutocomplete = ({ cityName, handleChange, error, helperText }) =
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
-
-  console.log('test');
 
   // Handle change from Autocomplete
   const onAutocompleteChange = (event, newValue) => {
@@ -122,13 +137,21 @@ const DepartmentAutocomplete = ({ cityName, handleChange, error, helperText }) =
   };
 
   // Triggered on *every* keystroke
+  const debouncedHandleChange = useMemo(
+    () =>
+      debounce((event, newValue) => {
+        setInputValue(newValue);
+        handleChange(event, 'department', newValue);
+      }, 500),
+    [handleChange]
+  );
+
   const onAutocompleteInputChange = (event, newInputValue) => {
-    setInputValue(newInputValue);
-    // Report the typed text to parent
-    handleChange(event, 'department', newInputValue);
+    // setInputValue(newInputValue);
+    debouncedHandleChange(event, newInputValue);
   };
 
-  const fetchDepartments = async (query = '') => {
+  const fetchDepartments = useCallback(async (query = '') => {
     setLoading(true);
     try {
       const response = await fetch(`/api/novaposhta?cityName=${cityName}&search=${encodeURIComponent(query)}`);
@@ -143,7 +166,7 @@ const DepartmentAutocomplete = ({ cityName, handleChange, error, helperText }) =
     } finally {
       setLoading(false);
     }
-  };
+  }, [cityName]);
 
   // Fetch when dropdown opens the first time
   useEffect(() => {
@@ -151,7 +174,7 @@ const DepartmentAutocomplete = ({ cityName, handleChange, error, helperText }) =
       // If there's already inputValue, use it; otherwise fetch all possible
       fetchDepartments(inputValue);
     }
-  }, [open]);
+  }, [fetchDepartments, inputValue, open]);
 
   // Fetch filtered options as the user types (if >= 2 chars)
   useEffect(() => {
@@ -164,7 +187,7 @@ const DepartmentAutocomplete = ({ cityName, handleChange, error, helperText }) =
     return () => {
       clearTimeout(handler);
     };
-  }, [inputValue]);
+  }, [fetchDepartments, inputValue]);
 
   return (
     <Autocomplete

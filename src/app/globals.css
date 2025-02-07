@@ -143,6 +143,10 @@ input, textarea, select {
   font-size: 16px;
 }
 
+.MuiInputBase-input {
+  font-size: 16px !important;
+}
+
 .display-none {
   display: none;
 }
