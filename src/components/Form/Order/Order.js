@@ -267,6 +267,7 @@ const OrderForm = () => {
                 fullWidth
                 label="Телефон"
                 name="phone"
+                type="tel"
                 value={formData.phone}
                 onChange={handleChange}
                 required
