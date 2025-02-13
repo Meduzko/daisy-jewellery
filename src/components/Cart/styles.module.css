@@ -48,9 +48,10 @@
     margin: auto;
     text-align: center;
     z-index: 3;
-    height: 65px;
+    /* height: 65px; */
     display: flex;
     align-items: center;
+    flex-direction: column;
     justify-content: center;
     bottom: 0;
     background-color: #fff;
@@ -94,11 +95,12 @@
 }
 
 .deliveryCtn {
-    padding: 8px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
+    width: 100%;
+    padding: 8px 0;
 }
 
 .freeDeliveryOldText {

@@ -20,6 +20,8 @@ const OrderList = ({
   const fixedPrice = totalPrice.toFixed(2);
   const { email, payment, phone } = formData;
   const paymentByCard = payment === 'liqPay';
+  const PRICE_FOR_FREE_DELIVERY = 2500;
+  const isFreeDelivery = totalPrice >= PRICE_FOR_FREE_DELIVERY;
 
   const widgetRef = useRef();
 
@@ -190,10 +192,19 @@ const OrderList = ({
         })}
       </List>
       <div className={styles.orderSummary}>
-        <div className={styles.summaryItem}>
+        {/* <div className={styles.summaryItem}>
           <p>Доставка</p>
           <p className={styles.deliveryTax}>{`За тарифами 'Нової Пошти' - від 70 грн`}</p>
-        </div>
+        </div> */}
+          <div className={styles.deliveryCtn}>
+            <span>Доставка</span>
+            <div className={`${styles.deliveryPrice} ${isFreeDelivery ? styles.freeDeliveryPrice : ''}`}>
+              <span className={`${styles.deliveryTax} ${isFreeDelivery ? styles.freeDeliveryOldText : ''}`}>
+                {`За тарифами 'Нової Пошти' - від 70 грн`}
+              </span>
+              {isFreeDelivery && <span>Безкоштовна доставка</span>}
+            </div>
+          </div>
       </div>
       <Divider />
       <div className={styles.totalSum}>

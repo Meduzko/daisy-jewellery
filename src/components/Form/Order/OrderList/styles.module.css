@@ -77,6 +77,24 @@
     justify-content: space-between;
 }
 
+.deliveryCtn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+    padding: 8px 0;
+}
+
+.deliveryPrice {
+    display: flex;
+    flex-direction: column;
+}
+
+.freeDeliveryOldText {
+    text-decoration: line-through;
+}
+
 .totalSum {
     display: flex;
     justify-content: space-between;
@@ -95,8 +113,8 @@
     }
 }
 
-@media (max-width: 1024px) {
+/* @media (max-width: 1024px) {
     .deliveryTax {
         max-width: 60%;
     }
-}
+} */

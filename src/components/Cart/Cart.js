@@ -106,9 +106,6 @@ const CartDrawler = () => {
                               <span>Розмір: {itemSize}</span>
                             </div>
                           )}
-                          {/* <div className={styles.counterWrapper}>
-                            <ProductCounter initialCount={item.quantity} maxCount={10} cartItem={item} />
-                          </div> */}
                           <div className={styles.price}>{`${itemPrice} грн`}</div>
                         </div>
                         <div className={styles.deleteContainer}>
@@ -129,6 +126,7 @@ const CartDrawler = () => {
               <RemainingPriceProgressBar price={totalPrice} maxPrice={PRICE_FOR_FREE_DELIVERY} />
             </div>
 
+            <div className={styles.buttonContainer}>
             <div className={styles.deliveryCtn}>
               <span>Доставка</span>
               <div className={`${styles.deliveryPrice} ${isFreeDelivery ? styles.freeDeliveryPrice : ''}`}>
@@ -139,7 +137,6 @@ const CartDrawler = () => {
               </div>
             </div>
 
-            <div className={styles.buttonContainer}>
               <ProductBuyButton text={buyButtonText} onClick={handleBuyClick} width="100%" />
             </div></> : <Typography variant="h3" className={styles.emptyCartMessage}>Кошик порожній</Typography>}
           </>
