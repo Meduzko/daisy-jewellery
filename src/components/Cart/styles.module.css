@@ -1,5 +1,6 @@
 .basketItemContainer {
     display: flex;
+    width: 100%;
 }
 
 .basketImage {
@@ -22,17 +23,22 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .itemTitle {
-    font-size: 18px;
-    font-weight: 800;
+    /* font-size: 18px;
+    font-weight: 800; */
+    font-size: 14px;
+    font-weight: 500;
     max-width: 296px;
 }
 
 .price {
     font-size: 16px;
     font-weight: 600;
+    text-align: right;
 }
 
 .buttonContainer {
@@ -48,12 +54,15 @@
     justify-content: center;
     bottom: 0;
     background-color: #fff;
+    padding: 8px 24px;
+    width: 100%;
 }
 
 .deleteContainer {
     width: 35px;
-    align-items: flex-end;
-    display: flex;
+    align-items: flex-start;
+    top: -8px;
+    position: relative;
 }
 
 .emptyCartMessage {
@@ -72,13 +81,38 @@
     overflow-y: auto;
 }
 
-.badge {
-
+.counterWrapper {
+    padding: 8px 0 0;
 }
 
 .cartIcon {
     font-size: 2rem !important;
 }
+
+.freeDeliveryHint {
+    padding: 8px 24px;
+}
+
+.deliveryCtn {
+    padding: 8px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.freeDeliveryOldText {
+    text-decoration: line-through;
+}
+
+.deliveryPrice {
+    display: flex;
+    flex-direction: column;
+}
+
+/* .deleteItem {
+    padding-bottom: 0 !important;
+} */
 
 @media (max-width: 1024px) {
     .cartButton {

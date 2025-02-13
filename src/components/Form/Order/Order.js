@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useContext } from 'react';
-import InputMask from "react-input-mask";
+// import InputMask from "react-input-mask";
 import {
   Box,
   Grid,
@@ -262,7 +262,7 @@ const OrderForm = () => {
           </Grid>
 
           <Grid item xs={12}>
-            <InputMask
+            {/* <InputMask
               mask="+380 (99)-99-999-99"
               value={formData.phone}
               onChange={handleChange}
@@ -279,7 +279,17 @@ const OrderForm = () => {
                   helperText={formErrors.phone}
                 />
               )}
-            </InputMask>
+            </InputMask> */}
+              <TextField
+                fullWidth
+                label="Телефон"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+                error={!!formErrors.phone}
+                helperText={formErrors.phone}
+              />
           </Grid>
         </Grid>
 

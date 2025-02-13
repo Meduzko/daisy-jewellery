@@ -80,13 +80,19 @@
 .totalSum {
     display: flex;
     justify-content: space-between;
-    padding: 24px 0 0;
+    padding: 24px 0 12px;
     font-weight: 700;
     font-size: 24px;
 }
 
 .submitButton {
     padding-top: 16px;
+}
+
+@media (min-width: 768px) {
+    .orderListContainer {
+        min-width: 33%;
+    }
 }
 
 @media (max-width: 1024px) {
