@@ -7,11 +7,6 @@ import {
   Grid,
   TextField,
   Typography,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   InputLabel,
   MenuItem,
   FormControl,
@@ -23,7 +18,6 @@ import { CartContext } from '../../../context/CartContext';
 import DepartmentAutocomplete from './DepartmentAutocomplete/DepartmentAutocomplete';
 import CitySelect from './CitySelect/CitySelect';
 import OrderList from './OrderList/OrderList';
-import ProductBuyButton from '../../Buttons/ProductBuy/ProductBuy';
 
 import styles from './styles.module.css';
 
@@ -42,9 +36,8 @@ const OrderForm = () => {
   const [statusMessage, setStatusMessage] = useState('');
   const [formErrors, setFormErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
-  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { cartItems, getTotalPrice, getItemSize } = useContext(CartContext);
+  const { cartItems, getTotalPrice, getItemSize, handleOrderSuccess } = useContext(CartContext);
   const orderDescription = `Оплата товару через веб-сайт: ${formData.firstName} ${formData.lastName} ${formData.email} ${formData.department} ${formData.cityName}`;
 
   const handleChange = (e, newName, newVal) => {
@@ -147,8 +140,7 @@ const OrderForm = () => {
 
       const result = await res.json();
       if (res.status === 200) {
-        // setStatusMessage('Order submitted and email sent!');
-        setShowModal(true);
+        handleOrderSuccess();
       } else {
         setStatusMessage('Error' );
       }
@@ -197,15 +189,6 @@ const OrderForm = () => {
       return;
     }
   };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    window.location.href = '/';
-  };
-
-  if (!cartItems?.length) {
-    return <h2 className={styles.emptyTitle}>Кошик пустий, додайте товар для замовлення.</h2>
-  }
 
   return (
     <>
@@ -394,35 +377,11 @@ const OrderForm = () => {
 
       <OrderList
         handleSubmit={handleSubmit}
-        setShowModal={setShowModal}
         orderDescription={orderDescription}
         triggerValidation={triggerValidation}
         validateForm={validateForm}
         formData={formData}
       />
-
-      <Dialog
-        open={showModal}
-        onClose={null}
-        PaperProps={{
-          style: {
-            borderRadius: '15px',
-            padding: '30px',
-            backgroundColor: '#f7f9fc',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-          },
-        }}
-      >
-        <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }} variant="h4">🎉 Вітаємо!</DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ textAlign: 'center', fontSize: '1.3rem', color: '#333' }}>
-            Ваше замовлення успішно сформоване.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center' }}>
-          <ProductBuyButton text="На головну" onClick={handleCloseModal} />
-        </DialogActions>
-      </Dialog>
     </>
   );
 };

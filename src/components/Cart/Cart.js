@@ -50,6 +50,10 @@ const CartDrawler = () => {
 
   const closeCart = () => setCartOpen(false);
 
+  const removeItemFromCart = productId => {
+    removeFromCart(productId);
+  };
+
   const handleBuyClick = () => {
     closeCart();
     router.push('/order');
@@ -122,20 +126,19 @@ const CartDrawler = () => {
                 })}
             </List>
 
-            <div className={styles.freeDeliveryHint}>
-              <RemainingPriceProgressBar price={totalPrice} maxPrice={PRICE_FOR_FREE_DELIVERY} />
-            </div>
-
             <div className={styles.buttonContainer}>
-            <div className={styles.deliveryCtn}>
-              <span>Доставка</span>
-              <div className={`${styles.deliveryPrice} ${isFreeDelivery ? styles.freeDeliveryPrice : ''}`}>
-                <span className={`${styles.deliveryTax} ${isFreeDelivery ? styles.freeDeliveryOldText : ''}`}>
-                  {`За тарифами 'Нової Пошти' - від 70 грн`}
-                </span>
-                {isFreeDelivery && <span>Безкоштовна доставка</span>}
+              <div className={styles.freeDeliveryHint}>
+                <RemainingPriceProgressBar price={totalPrice} maxPrice={PRICE_FOR_FREE_DELIVERY} />
               </div>
-            </div>
+              <div className={styles.deliveryCtn}>
+                <span>Доставка</span>
+                <div className={`${styles.deliveryPrice} ${isFreeDelivery ? styles.freeDeliveryPrice : ''}`}>
+                  <span className={`${styles.deliveryTax} ${isFreeDelivery ? styles.freeDeliveryOldText : ''}`}>
+                    {`За тарифами 'Нової Пошти' - від 70 грн`}
+                  </span>
+                  {isFreeDelivery && <span>Безкоштовна доставка</span>}
+                </div>
+              </div>
 
               <ProductBuyButton text={buyButtonText} onClick={handleBuyClick} width="100%" />
             </div></> : <Typography variant="h3" className={styles.emptyCartMessage}>Кошик порожній</Typography>}

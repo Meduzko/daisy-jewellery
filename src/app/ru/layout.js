@@ -6,6 +6,7 @@ import { CartProvider } from '../../context/CartContext';
 // import Header from './components/Header/page';
 import Header from '../../components/Header/page';
 import Footer from '../../components/Footer/page';
+import PopupManager from '../../components/Popups/PopupManager';
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
 
@@ -130,6 +131,7 @@ export default async function RootLayout({ children }) {
             <Header lang="ru" />
             {children}
             <Footer lang="ru" />
+            <PopupManager />
           </CartProvider>
         </AppRouterCacheProvider>
       </body>

@@ -22,6 +22,7 @@ export default function Home() {
         <WhyWe />
         <HowToOreder isMobile={isMobile} />
       </main>
+      
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }}

@@ -8,6 +8,18 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [itemSize, setItemSize] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  const updateStorageItems = newItems => {
+    sessionStorage.removeItem('cartItems');
+    sessionStorage.setItem('cartItems', JSON.stringify(newItems));
+  };
+
+  const updateStorageItemsSize = newItemSize => {
+    sessionStorage.removeItem('itemSize');
+    sessionStorage.setItem('itemSize', JSON.stringify(newItemSize));
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -20,20 +32,20 @@ export const CartProvider = ({ children }) => {
       if (storedItemSizes) {
         setItemSize(JSON.parse(storedItemSizes));
       }
+
+      setLoaded(true);
     }
   }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && cartItems?.length) {
-      sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
-    }
-  }, [cartItems]);
+    if (!loaded) return; // do nothing until we've read from storage
+    sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }, [cartItems, loaded]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && itemSize?.length) {
-      sessionStorage.setItem('itemSize', JSON.stringify(itemSize));
-    }
-  }, [itemSize]);
+    if (!loaded) return;
+    sessionStorage.setItem('itemSize', JSON.stringify(itemSize));
+  }, [itemSize, loaded]);
 
   const addToCart = (product, quantity = 1) => {
     const { pices, ...restOfProduct } = product;
@@ -120,6 +132,7 @@ export const CartProvider = ({ children }) => {
 
   const handleOrderSuccess = () => {
     clearCart();
+    setOrderSuccess(true);
   };
 
   return (
@@ -136,6 +149,8 @@ export const CartProvider = ({ children }) => {
         cartOpen,
         setCartOpen,
         getTotalPrice,
+        orderSuccess,
+        setOrderSuccess,
         handleOrderSuccess,
       }}
     >

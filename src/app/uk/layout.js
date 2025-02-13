@@ -6,6 +6,7 @@ import Header from '../../components/Header/page';
 import Footer from '../../components/Footer/page';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { CartProvider } from '../../context/CartContext';
+import PopupManager from '../../components/Popups/PopupManager';
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
 
@@ -130,6 +131,7 @@ export default function RootLayout({ children }) {
             <Header lang="uk" />
             {children}
             <Footer lang="uk" />
+            <PopupManager />
           </CartProvider>
         </AppRouterCacheProvider>
       </body>

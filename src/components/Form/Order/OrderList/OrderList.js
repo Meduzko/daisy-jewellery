@@ -9,13 +9,12 @@ import styles from './styles.module.css';
 
 const OrderList = ({
   handleSubmit,
-  setShowModal,
   formData,
   orderDescription,
   triggerValidation,
   validateForm
 }) => {
-  const { cartItems, getTotalPrice, getItemSize } = useContext(CartContext);
+  const { cartItems, getTotalPrice, getItemSize, handleOrderSuccess } = useContext(CartContext);
   const totalPrice = getTotalPrice();
   const fixedPrice = totalPrice.toFixed(2);
   const { email, payment, phone } = formData;
@@ -118,7 +117,7 @@ const OrderList = ({
             language: 'ua'
           })
             .on('liqpay.callback', function (data) {
-              setShowModal(true);
+              handleOrderSuccess();
             });
             // .on('liqpay.ready', function (data) {
             //   // Widget is ready

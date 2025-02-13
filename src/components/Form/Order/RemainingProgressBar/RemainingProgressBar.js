@@ -15,7 +15,7 @@ const RemainingPriceProgressBar = ({ price, maxPrice }) => {
   return (
     <Box sx={{ width: "100%", my: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography variant="span" gutterBottom>
+        <Typography variant="span" gutterBottom align="left">
           До безкоштовної доставки залишилося:
         </Typography>
         <Typography variant="span" gutterBottom sx={{ ml: 1 }}>
