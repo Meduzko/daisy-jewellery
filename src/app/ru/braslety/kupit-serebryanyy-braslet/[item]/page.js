@@ -37,7 +37,7 @@ export async function generateStaticParams() {
     });
 
     if (!products || !products?.length) {
-      return;
+      return notFound();
     }
 
     const productCodes = products.map((product) => ({

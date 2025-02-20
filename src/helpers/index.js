@@ -176,6 +176,11 @@ export const getProductMetadata = async ({ product, categoryName, lang = 'uk' })
       languages
     },
     keywords,
+    robots: {
+      index: true,
+      follow: true,
+      nocache: true,
+    },
     url: canonicalUrl,
     openGraph: {
       title: `${title} | ${siteName}`,
@@ -218,6 +223,11 @@ export const generateCategoryMetadata = ({
         'ru-UA': `${process.env.SITE_DOMAIN}/ru/${translatedSlugs.ru}/${currentPage}`
       }
     },
+    // robots: {
+    //   index: true,
+    //   follow: true,
+    //   nocache: true,
+    // },
     icons: {
       other: [
         { rel: 'next', url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage + 1}` },
@@ -453,4 +463,18 @@ export const getDefaultMetaData = ({ pagePath, title, description, lang = 'uk' }
   };
 
   return result;
+};
+
+export const generate404MetaData = () => ({
+  title: '404 - Page Not Found',
+  robots: {
+    index: false,
+    follow: false,
+  },
+});
+
+export const is404Page = (currentPage, allowedPages) => {
+  const currPage = allowedPages.find(ap => +ap.page_number === +currentPage)
+
+  return !currPage;
 };

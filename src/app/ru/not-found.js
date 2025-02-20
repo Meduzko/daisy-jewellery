@@ -1,5 +1,10 @@
-import Link from 'next/link'
- 
+import Link from 'next/link';
+import { generate404MetaData } from '../../helpers/index';
+
+export function generateMetadata() {
+  return generate404MetaData();
+}
+
 export default function NotFound() {
   return (
     <div className='not-found-container'>

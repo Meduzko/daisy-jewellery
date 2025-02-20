@@ -18,8 +18,7 @@ export async function generateMetadata({ params }) {
     });
 
     if (!response || response?.length === 0) {
-      // return notFound();
-      return;
+      return notFound();
     }
 
     const [product] = response;
@@ -37,7 +36,7 @@ export async function generateStaticParams() {
     });
 
     if (!products || !products?.length) {
-      return;
+      return notFound();
     }
 
     const productCodes = products.map((product) => ({

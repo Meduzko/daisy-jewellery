@@ -1,10 +1,22 @@
 import { notFound } from 'next/navigation';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
 import { fetchProduct } from '../../../../actions/fetchProduct';
-import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../../helpers';
+import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
 import Gallery from '../../../../components/Gallery';
 
 const lang = 'uk';
+const allowedPages = [
+  {
+    page_number: '1',
+  },
+  {
+    page_number: '2',
+  },
+  {
+    page_number: '3',
+  }
+];
+
 
 export async function generateStaticParams() {
   return [
@@ -21,9 +33,15 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
+  const currentPage = +params.page_number;
+  const is404 = is404Page(currentPage, allowedPages);
+
+  if (is404) {
+    return generate404MetaData();
+  }
+
   const title = 'Срібні сережки | Купити срібні кульчики Daisy Jewellery';
   const description = 'Срібні сережки Daisy Jewellery. Отримуйте замовлення без затримок по Україні! Ціни, що вас приємно здивують';
-  const currentPage = +params.page_number;
   const lastPage = 3;
   const categorySlug = 'serezhky';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
@@ -44,7 +62,7 @@ export default async function CategoryPageNumber({ params }) {
   const isMobile = device !== 'desktop';
 
   if (!products || !products.length) {
-    notFound();
+    return notFound();
   }
 
   const logoJsonLd = getLogoJsonLd();

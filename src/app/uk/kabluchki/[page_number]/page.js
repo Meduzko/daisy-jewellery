@@ -1,11 +1,25 @@
 import { fetchProduct } from '../../../../actions/fetchProduct';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
 // import { fetchAllProducts } from '../../../actions/fetchAllProducts';
-import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../../helpers';
+import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
 import Gallery from '../../../../components/Gallery';
 import { notFound } from 'next/navigation';
 
 const lang = 'uk';
+const allowedPages = [
+  {
+    page_number: '1',
+  },
+  {
+    page_number: '2',
+  },
+  {
+    page_number: '3',
+  },
+  {
+    page_number: '4',
+  }
+];
 
 // TODO
 export async function generateStaticParams() {
@@ -34,9 +48,15 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
+  const currentPage = +params.page_number;
+  const is404 = is404Page(currentPage, allowedPages);
+
+  if (is404) {
+    return generate404MetaData();
+  }
+
   const title = 'Каблучки срібні | Купити срібні кільця Daisy Jewellery';
   const description = 'Вишукані срібні каблучки від Daisy Jewellery. Швидка доставка по всій Україні! Срібні кольца за найкращою ціною від виробника';
-  const currentPage = +params.page_number;
   const lastPage = 4;
   const categorySlug = 'kabluchki';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
@@ -53,15 +73,17 @@ export default async function Page({ params }) {
   const categoryId = process.env.RING_CATEGORY_ID;
   const { currentPage, limit, offset } = getPaginationData(params.page_number);
   const paginated = true;
-  const { products, hasMore } = await fetchProduct({ offset, limit, categoryId, paginated });
+  // const { products, hasMore } = await fetchProduct({ offset, limit, categoryId, paginated });
+  const data = await fetchProduct({ offset, limit, categoryId, paginated });
   const device = getDeviceType();
   const isMobile = device !== 'desktop';
 
 
-  if (!products || !products.length) {
+  if (!data || !data?.products || !data?.products?.length) {
     notFound();
   }
 
+  const { products, hasMore} = data;
   const logoJsonLd = getLogoJsonLd();
   const categoryJsonLd = getCategoryJsonLd({
     categoryName: 'Срібні каблучки від Daisy Jewellery.',

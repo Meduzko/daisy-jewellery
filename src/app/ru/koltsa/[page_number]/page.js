@@ -2,11 +2,25 @@ import { fetchProduct } from '../../../../actions/fetchProduct';
 import { getTranslations, getCategoryTranslations } from '../../../../dictionaries';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
 // import { fetchAllProducts } from '../../../actions/fetchAllProducts';
-import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../../helpers';
+import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
 import Gallery from '../../../../components/Gallery';
 import { notFound } from 'next/navigation';
 
 const lang = 'ru';
+const allowedPages = [
+  {
+    page_number: '1',
+  },
+  {
+    page_number: '2',
+  },
+  {
+    page_number: '3',
+  },
+  {
+    page_number: '4',
+  }
+];
 
 // TODO
 export async function generateStaticParams() {
@@ -35,9 +49,15 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
+  const currentPage = +params.page_number;
+  const is404 = is404Page(currentPage, allowedPages);
+
+  if (is404) {
+    return generate404MetaData();
+  }
+
   const title = 'Кольца серебряные | Купить серебряные кольца Daisy Jewellery';
   const description = 'Изысканные серебряные кольца от Daisy Jewellery. Быстрая доставка по всей Украине! Серебряные кольца по лучшей цене от производителя';
-  const currentPage = +params.page_number;
   const lastPage = 4;
   const categorySlug = 'koltsa';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;

@@ -36,8 +36,8 @@ export async function generateStaticParams() {
       categoryId: process.env.EARING_CATEGORY_ID,
     });
 
-    if (!products || !products.length) {
-      return;
+    if (!products || !products?.length) {
+      return notFound();
     }
 
     const productCodes = products.map((product) => ({

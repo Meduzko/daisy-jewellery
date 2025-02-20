@@ -1,10 +1,18 @@
 import { notFound } from 'next/navigation';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
 import { fetchProduct } from '../../../../actions/fetchProduct';
-import { getPaginationData, getDeviceType, generateCategoryMetadata } from '../../../../helpers';
+import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
 import Gallery from '../../../../components/Gallery';
 
 const lang = 'uk';
+const allowedPages = [
+  {
+    page_number: '1',
+  },
+  {
+    page_number: '2',
+  }
+];
 
 export async function generateStaticParams() {
   return [
@@ -18,9 +26,15 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
+  const currentPage = +params.page_number;
+  const is404 = is404Page(currentPage, allowedPages);
+
+  if (is404) {
+    return generate404MetaData();
+  }
+
   const title = 'Срібні браслети | Купити срібний браслет Daisy Jewellery';
   const description = 'Срібні браслети від Daisy Jewellery. Доставка в будь який куточок України. Купити срібний браслет від виробника за найкращою ціною';
-  const currentPage = +params.page_number;
   const lastPage = 2;
   const categorySlug = 'braslety';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
