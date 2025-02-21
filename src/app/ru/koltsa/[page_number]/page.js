@@ -1,5 +1,5 @@
 import { fetchProduct } from '../../../../actions/fetchProduct';
-import { getTranslations, getCategoryTranslations } from '../../../../dictionaries';
+import { getCategoryTranslations } from '../../../../dictionaries';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
 // import { fetchAllProducts } from '../../../actions/fetchAllProducts';
 import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
@@ -19,6 +19,9 @@ const allowedPages = [
   },
   {
     page_number: '4',
+  },
+  {
+    page_number: '5',
   }
 ];
 

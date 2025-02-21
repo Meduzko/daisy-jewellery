@@ -18,6 +18,9 @@ const allowedPages = [
   },
   {
     page_number: '4',
+  },
+  {
+    page_number: '5',
   }
 ];
 
