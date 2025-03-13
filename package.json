@@ -25,6 +25,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-input-mask": "^2.0.4",
+    "sharp": "^0.33.5",
     "swiper": "^11.1.9",
     "uuid": "^11.0.3"
   },

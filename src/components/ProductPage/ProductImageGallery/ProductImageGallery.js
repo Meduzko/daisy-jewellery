@@ -9,11 +9,14 @@ const ProductImageGallery = ({ images, title }) => {
   return (
     <div className={styles.imageGallery}>
       <div className={`${styles.imgContainer} ${styles.transparentImgContainer}`}>
-        {firstImage && <Image
+        {firstImage &&
+        <Image
           src={firstImage}
           alt={title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority
+          // quality={60} // Optimized for size
           className={styles.image}
         />}
       </div>
@@ -28,6 +31,8 @@ const ProductImageGallery = ({ images, title }) => {
             alt={title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            loading="lazy"
+            // quality={60} // Compressed for speed
             className={styles.image}
           />
         </div>

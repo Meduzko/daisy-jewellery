@@ -14,6 +14,9 @@ const allowedPages = [
   },
   {
     page_number: '3',
+  },
+  {
+    page_number: '4',
   }
 ];
 
@@ -28,6 +31,9 @@ export async function generateStaticParams() {
     },
     {
       page_number: '3',
+    },
+    {
+      page_number: '4',
     }
   ];
 }
@@ -42,7 +48,7 @@ export async function generateMetadata({ params }) {
 
   const title = 'Срібні сережки | Купити срібні кульчики Daisy Jewellery';
   const description = 'Срібні сережки Daisy Jewellery. Отримуйте замовлення без затримок по Україні! Ціни, що вас приємно здивують';
-  const lastPage = 3;
+  const lastPage = 4;
   const categorySlug = 'serezhky';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Срібні сережки, купити';

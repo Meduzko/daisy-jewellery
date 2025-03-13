@@ -15,6 +15,9 @@ const allowedPages = [
   },
   {
     page_number: '3',
+  },
+  {
+    page_number: '4',
   }
 ];
 
@@ -28,6 +31,9 @@ export async function generateStaticParams() {
     },
     {
       page_number: '3',
+    },
+    {
+      page_number: '4',
     }
   ];
 }
@@ -42,7 +48,7 @@ export async function generateMetadata({ params }) {
 
   const title = 'Серебряные серьги | Купить серебряные серьги Daisy Jewellery';
   const description = 'Серебряные серьги Daisy Jewellery. Получайте заказы без задержек по Украине! Цены, которые вас приятно удивят';
-  const lastPage = 3;
+  const lastPage = 4;
   const categorySlug = 'sergi';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Серебряные серьги, купить';

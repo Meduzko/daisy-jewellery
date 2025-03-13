@@ -1,7 +1,10 @@
+// import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from "next/link"
 import BuyButton from './BuyButton';
 import styles from './styles.module.css';
+
+// const LazyImage = dynamic(() => import('next/image'), { ssr: false });
 
 export default async function GalleryItem({ item, baseURL = '/', t, lang }) {
   const {
@@ -24,24 +27,33 @@ export default async function GalleryItem({ item, baseURL = '/', t, lang }) {
           <div className={styles.galleryItem}>
             <div className={styles.itemBackground} />
             <div className={styles.imgContainer}>
-              {image_path && <Image
+            {image_path && (
+              <Image
                 src={image_path}
                 alt={`Зображення ${tkTitle}`}
-                fill={true}
+                fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 loading="lazy"
+                priority={false}
                 className={`${styles.defaultImg} ${styles.itemImg}`}
-              />}
-              {
-                images[1] && <Image
-                  src={images[1]}
-                  alt={`Зображення ${tkTitle} при наведенні`}
-                  fill={true}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  loading="lazy"
-                  className={`${styles.hoverImg} ${styles.itemImg}`}
-                />
-              }
+                style={{ objectFit: 'cover', objectPosition: 'center' }}
+                // quality={60}
+              />
+            )}
+
+            {images?.[1] && (
+              <Image
+                src={images[1]}
+                alt={`Зображення ${tkTitle} при наведенні`}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                loading="lazy"
+                priority={false}
+                className={`${styles.hoverImg} ${styles.itemImg}`}
+                style={{ objectFit: 'cover', objectPosition: 'center' }}
+                // quality={60}
+              />
+            )}
             </div>
           </div>
         </Link>

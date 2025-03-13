@@ -29,6 +29,7 @@ export default async function GalleryItemMobile({ item, baseURL = '/', t }) {
                 alt={tkTitle}
                 fill={true}
                 loading="lazy"
+                priority={false}
                 className={`${styles.defaultImg} ${styles.itemImg}`}
               />
             </div>
