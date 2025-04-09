@@ -25,6 +25,15 @@ export function getAllHtmlPosts({ lang }) {
         sections,
         date
       };
+    })
+    .sort((a, b) => {
+      const parseDate = (str) => {
+        // Очікується формат DD.MM.YYYY
+        const [day, month, year] = str.split('.');
+        return new Date(`${year}-${month}-${day}`);
+      };
+
+      return parseDate(b.date) - parseDate(a.date); // Від новішого до старішого
     });
 }
 
