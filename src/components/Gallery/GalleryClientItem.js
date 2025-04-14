@@ -4,13 +4,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import BuyButton from './BuyButton';
-
-// import styles from './styles.module.css';
 import styles from './styles-client.module.css';
 
-export default function GalleryClientItem({ item, baseURL = '/', t }) {
+export default function GalleryItem({ item, baseURL = '/', t }) {
   const {
-    product_id,
     code,
     title,
     short_description,
@@ -30,13 +27,15 @@ export default function GalleryClientItem({ item, baseURL = '/', t }) {
   const hoverImage = images?.[1];
 
   return (
-    <article className={styles.itemWrapper}>
+    <article
+      className={styles.itemWrapper}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <Link
         href={`${baseURL}/${code}`}
         aria-label={`Переглянути ${tkTitle}`}
         className={styles.galleryItem}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         <div className={styles.itemBackground} />
         <div className={styles.imgContainer}>
@@ -46,11 +45,11 @@ export default function GalleryClientItem({ item, baseURL = '/', t }) {
             width={784}
             height={1176}
             loading="lazy"
-            // className={styles.itemImg}
-            className={`${styles.defaultImg} ${styles.itemImg}`}
+            className={`${styles.itemImg} ${styles.fadeImage}`}
             style={{ objectFit: 'cover', objectPosition: 'center' }}
             quality={70}
-            placeholder="empty"
+            placeholder="blur"
+            blurDataURL="/path-to-blur-image.jpg"
           />
         </div>
       </Link>

@@ -6,6 +6,7 @@ const nextConfig = {
   //   formats: ['image/avif', 'image/webp']
   // }
   images: {
+    domains: ['cdn.dntrade.com.ua'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -14,7 +15,7 @@ const nextConfig = {
       },
     ],
     minimumCacheTTL: 60 * 60 * 24 * 7, // Cache for 7 days
-    formats: ['image/avif', 'image/webp'],
+    // formats: ['image/avif', 'image/webp'],
   },
   // async redirects() {
   //   return [
