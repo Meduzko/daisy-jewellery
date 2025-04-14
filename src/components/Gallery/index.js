@@ -1,8 +1,12 @@
+import dynamic from 'next/dynamic';
 import { Grid } from '@mui/material';
 import PaginationComponent from '../Pagination/index';
-import GalleryItem from './GalleryItem';
-import GalleryItemMobile from './mobile/GalleryItemMobile';
+// import GalleryItem from './GalleryItem';
+// import GalleryItemMobile from './mobile/GalleryItemMobile';
 import styles from './styles.module.css';
+
+const GalleryItem = dynamic(() => import('./GalleryItem'), { ssr: false });
+const GalleryItemMobile = dynamic(() => import('./mobile/GalleryItemMobile'), { ssr: false });
 
 export default async function Gallery({
   items,

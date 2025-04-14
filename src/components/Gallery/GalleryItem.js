@@ -13,7 +13,7 @@ export default async function GalleryItem({ item, baseURL = '/', t, lang }) {
     title,
     short_description,
     price,
-    image_path,
+    image_path = '/',
     images
   } = item;
   const priceSymbol = 'грн';
@@ -22,7 +22,7 @@ export default async function GalleryItem({ item, baseURL = '/', t, lang }) {
   const tkDescription = tk?.description || short_description;
 
   return (
-      <article  className={styles.itemWrapper}>
+      <article className={styles.itemWrapper}>
         <Link href={`${baseURL}/${code}`} aria-label={`Переглянути ${tkTitle}`}>
           <div className={styles.galleryItem}>
             <div className={styles.itemBackground} />
@@ -31,10 +31,11 @@ export default async function GalleryItem({ item, baseURL = '/', t, lang }) {
               <Image
                 src={image_path}
                 alt={`Зображення ${tkTitle}`}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                // fill
+                // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                width={784}
+                height={1176}
                 loading="lazy"
-                priority={false}
                 className={`${styles.defaultImg} ${styles.itemImg}`}
                 style={{ objectFit: 'cover', objectPosition: 'center' }}
                 // quality={60}
@@ -45,10 +46,11 @@ export default async function GalleryItem({ item, baseURL = '/', t, lang }) {
               <Image
                 src={images[1]}
                 alt={`Зображення ${tkTitle} при наведенні`}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                // fill
+                // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                width={784}
+                height={1176}
                 loading="lazy"
-                priority={false}
                 className={`${styles.hoverImg} ${styles.itemImg}`}
                 style={{ objectFit: 'cover', objectPosition: 'center' }}
                 // quality={60}

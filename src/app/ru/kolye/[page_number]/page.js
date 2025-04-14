@@ -3,7 +3,8 @@ import { getCategoryTranslations } from '../../../../dictionaries';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
 import { fetchProduct } from '../../../../actions/fetchProduct';
 import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
-import Gallery from '../../../../components/Gallery';
+// import Gallery from '../../../../components/Gallery';
+import Gallery from '../../../../components/Gallery/GalleryClient';
 
 const lang = 'ru';
 const allowedPages = [
