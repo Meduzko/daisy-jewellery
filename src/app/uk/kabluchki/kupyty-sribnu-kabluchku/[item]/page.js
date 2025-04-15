@@ -1,6 +1,6 @@
 import Breadcrumbs from '../../../../../components/Breadcrumbs';
 import ProductPageNew from '../../../../../components/ProductPage';
-import { fetchProduct } from '../../../../../actions/fetchProduct';
+import { fetchProduct, getServerProductSizes } from '../../../../../actions/fetchProduct';
 import { fetchAllProducts } from '../../../../../actions/fetchAllProducts';
 import { getProductMetadata } from '../../../../../helpers';
 import { getProductJsonLd, getLogoJsonLd } from '../../../../../helpers/getJsonLd';
@@ -64,25 +64,7 @@ export default async function Page({ params }) {
     return notFound();
   }
 
-  // Fetch prodcuts for sizes
-  const products = await fetchProduct({
-    sku: product.sku,
-    categoryId: process.env.RING_CATEGORY_ID,
-    website_synch: false
-  });
-
-  const productSizes = products?.flatMap(product => {
-    const sizeTag = product.tags?.find(tag => tag.title === 'розмір');
-
-    if (!sizeTag) return [];
-
-    const sizes = sizeTag?.items?.map(item => {
-      const size = parseFloat(item?.title?.replace(',', '.'));
-      return !isNaN(size) ? size : null;
-    }).filter(size => Boolean(size));
-
-    return sizes;
-  });
+  const productSizes = await getServerProductSizes(product.sku, process.env.RING_CATEGORY_ID);
 
   const segments = [
     { name: 'Головна', href: '/uk' },

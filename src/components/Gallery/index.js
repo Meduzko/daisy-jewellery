@@ -1,12 +1,13 @@
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 import { Grid } from '@mui/material';
 import PaginationComponent from '../Pagination/index';
-// import GalleryItem from './GalleryItem';
-// import GalleryItemMobile from './mobile/GalleryItemMobile';
+import GalleryItem from './GalleryItem';
+import GalleryItemMobile from './mobile/GalleryItemMobile';
+// import GalleryClientItem from './GalleryClientItem';
 import styles from './styles.module.css';
 
-const GalleryItem = dynamic(() => import('./GalleryItem'), { ssr: false });
-const GalleryItemMobile = dynamic(() => import('./mobile/GalleryItemMobile'), { ssr: false });
+// const GalleryItem = dynamic(() => import('./GalleryItem'), { ssr: false });
+// const GalleryItemMobile = dynamic(() => import('./mobile/GalleryItemMobile'), { ssr: false });
 
 export default async function Gallery({
   items,
@@ -16,7 +17,8 @@ export default async function Gallery({
   baseURL,
   itemBaseURL,
   isMobile,
-  t = {}
+  t = {},
+  showSizes
 }) {
   const GalleryComponent = isMobile ? GalleryItemMobile : GalleryItem;
   const spacing = isMobile ? 1 : 6;
@@ -28,7 +30,7 @@ export default async function Gallery({
         {items.map((item) => (
           item.image_path && (
             <Grid item xs={12} sm={6} md={4} key={item.id || item.product_id}>
-              <GalleryComponent item={item} baseURL={itemBaseURL || baseURL} t={t} />
+              <GalleryComponent item={item} baseURL={itemBaseURL || baseURL} t={t} showSizes={showSizes} />
             </Grid>
           )
         ))}

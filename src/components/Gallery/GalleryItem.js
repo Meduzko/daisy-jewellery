@@ -6,7 +6,7 @@ import styles from './styles.module.css';
 
 // const LazyImage = dynamic(() => import('next/image'), { ssr: false });
 
-export default async function GalleryItem({ item, baseURL = '/', t, lang }) {
+export default async function GalleryItem({ item, baseURL = '/', t, showSizes }) {
   const {
     product_id,
     code,
@@ -35,7 +35,6 @@ export default async function GalleryItem({ item, baseURL = '/', t, lang }) {
                 // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 width={784}
                 height={1176}
-                // loading="lazy"
                 className={`${styles.defaultImg} ${styles.itemImg}`}
                 style={{ objectFit: 'cover', objectPosition: 'center' }}
                 // quality={60}
@@ -50,7 +49,6 @@ export default async function GalleryItem({ item, baseURL = '/', t, lang }) {
                 // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 width={784}
                 height={1176}
-                // loading="lazy"
                 className={`${styles.hoverImg} ${styles.itemImg}`}
                 style={{ objectFit: 'cover', objectPosition: 'center' }}
                 // quality={60}
@@ -69,7 +67,7 @@ export default async function GalleryItem({ item, baseURL = '/', t, lang }) {
           </header >
           <div className={styles.itemBottomCnt}>
             <div className={styles.price}>{`${price} ${priceSymbol}`}</div>
-            <BuyButton item={item} />
+            <BuyButton item={item} showSizes={showSizes} />
           </div >
         </div>
       </article >

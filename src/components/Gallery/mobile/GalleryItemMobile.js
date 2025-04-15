@@ -4,7 +4,7 @@ import BuyButton from '../BuyButton';
 
 import styles from './styles.module.css';
 
-export default async function GalleryItemMobile({ item, baseURL = '/', t }) {
+export default async function GalleryItemMobile({ item, baseURL = '/', t, showSizes }) {
   const {
     code,
     title,
@@ -41,7 +41,7 @@ export default async function GalleryItemMobile({ item, baseURL = '/', t }) {
             </div>
             <div className={styles.itemBottomCnt}>
               <div className={styles.price}>{`${price} ${priceSymbol}`}</div>
-              <BuyButton item={item} />
+              <BuyButton item={item} showSizes={showSizes} />
             </div>
           </div>
       </div>

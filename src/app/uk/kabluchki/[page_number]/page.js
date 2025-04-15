@@ -108,6 +108,7 @@ export default async function Page({ params }) {
         itemBaseURL={itemBaseURL}
         withPagination={paginated}
         isMobile={isMobile}
+        showSizes={true}
       />
       <script
         type="application/ld+json"

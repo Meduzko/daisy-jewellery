@@ -1,18 +1,16 @@
 "use client";
-import React, { useState, useMemo, useContext, useEffect } from 'react';
+
+import React, { useState, useContext, useEffect } from 'react';
 import { ToggleButtonGroup, ToggleButton } from '@mui/material';
 import { CartContext } from '../../../context/CartContext';
 import styles from './styles.module.css';
 
 const SizeSelector = ({ item, sizes }) => {
   const { addToItemSize, itemSize } = useContext(CartContext);
-  const sortedSizes = useMemo(() => {
-    return [...new Set(sizes)].sort((a, b) => a - b);
-  }, [sizes]);
-  const [selectedSize, setSelectedSize] = useState(sortedSizes[0]);
+  const [selectedSize, setSelectedSize] = useState(sizes[0]);
 
   useEffect(() => {
-    addToItemSize(item, sortedSizes[0]);
+    addToItemSize(item, sizes[0]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -31,7 +29,7 @@ const SizeSelector = ({ item, sizes }) => {
       aria-label="Size Selector"
       className={styles.toggleButtonGroup}
     >
-      {sortedSizes.map((size) => (
+      {sizes.map((size) => (
         <ToggleButton
           key={size}
           value={size}

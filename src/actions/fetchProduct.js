@@ -63,3 +63,78 @@ export async function fetchProduct({
     console.error(error);
   }
 }
+
+// Server side fetch only.
+export const getServerProductSizes = async (sku, categoryId) => {
+  const products = await fetchProduct({
+    sku,
+    categoryId,
+    website_synch: 0
+  });
+
+  const sizes = getSizes(products);
+
+  return sizes;
+};
+
+
+// Client fetch only.
+export const getProductSizes = async (sku, categoryId) => {
+  try {
+    const response = await fetch(`/api/products`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        sku,
+        categoryId
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch products');
+    }
+
+    const data = await response.json() || {};
+    const products = data?.products;
+
+    if (!Array.isArray(products) || products.length === 0) {
+      console.warn('No products returned for SKU:', sku);
+      return [];
+    }
+
+    const sizes = getSizes(products);
+
+    return sizes;
+  } catch (error) {
+    console.error('Error in getProductSizes:', error);
+    return [];
+  }
+};
+
+const getSizes = (products) => {
+  const sizes = [];
+
+  for (const product of products) {
+    const sizeTag = product.tags?.find(tag => tag.title === 'розмір');
+
+    if (!sizeTag || !Array.isArray(sizeTag.items)) continue;
+
+    const productSizes = sizeTag.items
+      .map(item => {
+        const rawTitle = item?.title?.replace(',', '.');
+        const parsedSize = parseFloat(rawTitle);
+        return !isNaN(parsedSize) ? parsedSize : null;
+      })
+      .filter(size => size !== null);
+
+    sizes.push(...productSizes);
+  }
+
+  if (sizes.length) {
+    return [...new Set(sizes)].sort((a, b) => a - b);
+  }
+
+  return sizes;
+};

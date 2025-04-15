@@ -1,4 +1,4 @@
-/* .galleryCnt {
+.galleryCnt {
     padding: 48px;
 }
 
@@ -107,10 +107,10 @@
 
 .buyButton:hover {
     cursor: pointer;
-} */
+}
 
 
-.itemWrapper {
+/* .itemWrapper {
     display: flex;
     flex-direction: column;
     background: #fff;
@@ -235,4 +235,4 @@
     .price {
       font-size: 0.9rem;
     }
-  }
+  } */
