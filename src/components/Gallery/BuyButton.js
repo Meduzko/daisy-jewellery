@@ -35,7 +35,7 @@ export default function BuyButton({ item, showSizes }) {
     if (showSizes) {
       const fetchedSizes = await getSizes();
 
-      if (fetchedSizes.length > 0) {
+      if (fetchedSizes?.length > 0) {
         setSizes(fetchedSizes);
         setOpen(true)
 

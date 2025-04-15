@@ -72,6 +72,11 @@ export const getServerProductSizes = async (sku, categoryId) => {
     website_synch: 0
   });
 
+  if (!Array.isArray(products) || products?.length === 0) {
+    console.warn('No products returned for SKU:', sku);
+    return [];
+  }
+
   const sizes = getSizes(products);
 
   return sizes;
@@ -99,7 +104,7 @@ export const getProductSizes = async (sku, categoryId) => {
     const data = await response.json() || {};
     const products = data?.products;
 
-    if (!Array.isArray(products) || products.length === 0) {
+    if (!Array.isArray(products) || products?.length === 0) {
       console.warn('No products returned for SKU:', sku);
       return [];
     }
