@@ -6,6 +6,7 @@ export default async function handler(req, res) {
   try {
     const { sku, categoryId} = req.body; 
     const ROOT_URI = process.env.API_ROOT_URI;
+    const API_KEY = process.env.API_KEY;
     const baseURL = `${ROOT_URI}/products/list?`;
   
     const params = new URLSearchParams({
@@ -18,13 +19,16 @@ export default async function handler(req, res) {
   
     const url = `${baseURL}${params.toString()}`;
   
+    console.log('get products request url', url);
     const apiRes = await fetch(url, {
       method: 'POST',
       headers: {
-        'ApiKey': process.env.API_KEY,
+        'ApiKey': API_KEY,
         'Content-Type': 'application/json',
       }
     });
+
+    console.log('get products request apiRes', apiRes);
   
     const data = await apiRes.json();
     res.status(200).json(data);

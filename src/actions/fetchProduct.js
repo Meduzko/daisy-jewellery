@@ -86,7 +86,9 @@ export const getServerProductSizes = async (sku, categoryId) => {
 // Client fetch only.
 export const getProductSizes = async (sku, categoryId) => {
   try {
-    const response = await fetch(`/api/products`, {
+    const baseURL = isProduction() ? 'https://daisy-jewellery.com.ua' : '';
+
+    const response = await fetch(`${baseURL}/api/products`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -142,4 +144,9 @@ const getSizes = (products) => {
   }
 
   return sizes;
+};
+
+const isProduction = () => {
+  if (typeof window === 'undefined') return false;
+  return window.location.hostname === 'daisy-jewellery.com.ua';
 };
