@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     const apiRes = await fetch(url, {
       method: 'POST',
       headers: {
-        'ApiKey': process.env.NEXT_PUBLIC_API_KEY,
+        'ApiKey': process.env.API_KEY,
         'Content-Type': 'application/json',
       }
     });
