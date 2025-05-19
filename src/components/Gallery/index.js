@@ -3,7 +3,6 @@ import { Grid } from '@mui/material';
 import PaginationComponent from '../Pagination/index';
 import GalleryItem from './GalleryItem';
 import GalleryItemMobile from './mobile/GalleryItemMobile';
-// import GalleryClientItem from './GalleryClientItem';
 import styles from './styles.module.css';
 
 // const GalleryItem = dynamic(() => import('./GalleryItem'), { ssr: false });
@@ -18,7 +17,8 @@ export default async function Gallery({
   itemBaseURL,
   isMobile,
   t = {},
-  showSizes
+  showSizes,
+  lang
 }) {
   const GalleryComponent = isMobile ? GalleryItemMobile : GalleryItem;
   const spacing = isMobile ? 1 : 6;
@@ -30,7 +30,7 @@ export default async function Gallery({
         {items.map((item) => (
           item.image_path && (
             <Grid item xs={12} sm={6} md={4} key={item.id || item.product_id}>
-              <GalleryComponent item={item} baseURL={itemBaseURL || baseURL} t={t} showSizes={showSizes} />
+              <GalleryComponent item={item} baseURL={itemBaseURL || baseURL} t={t} showSizes={showSizes} lang={lang} />
             </Grid>
           )
         ))}

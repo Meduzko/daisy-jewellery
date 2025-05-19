@@ -11,7 +11,8 @@ export default async function GalleryItemMobile({ item, baseURL = '/', t, showSi
     short_description,
     imageUrl,
     image_path,
-    price
+    price,
+    lang
   } = item;
   const priceSymbol = 'грн';
   const tk = t[code];
@@ -41,7 +42,7 @@ export default async function GalleryItemMobile({ item, baseURL = '/', t, showSi
             </div>
             <div className={styles.itemBottomCnt}>
               <div className={styles.price}>{`${price} ${priceSymbol}`}</div>
-              <BuyButton item={item} showSizes={showSizes} />
+              <BuyButton item={item} showSizes={showSizes} lang={lang} />
             </div>
           </div>
       </div>

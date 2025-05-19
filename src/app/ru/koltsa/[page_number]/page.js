@@ -108,6 +108,8 @@ export default async function Page({ params }) {
         withPagination={paginated}
         isMobile={isMobile}
         t={tk}
+        showSizes={true}
+        lang="ru"
       />
       <script
         type="application/ld+json"

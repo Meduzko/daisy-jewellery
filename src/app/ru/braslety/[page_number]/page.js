@@ -82,6 +82,7 @@ export default async function CategoryPageNumber({ params }) {
         withPagination={paginated}
         isMobile={isMobile}
         t={tk}
+        lang="ru"
       />
       <script
         type="application/ld+json"

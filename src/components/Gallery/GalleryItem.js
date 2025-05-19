@@ -6,7 +6,7 @@ import styles from './styles.module.css';
 
 // const LazyImage = dynamic(() => import('next/image'), { ssr: false });
 
-export default async function GalleryItem({ item, baseURL = '/', t, showSizes }) {
+export default async function GalleryItem({ item, baseURL = '/', t, showSizes, lang }) {
   const {
     product_id,
     code,
@@ -67,7 +67,7 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes })
           </header >
           <div className={styles.itemBottomCnt}>
             <div className={styles.price}>{`${price} ${priceSymbol}`}</div>
-            <BuyButton item={item} showSizes={showSizes} />
+            <BuyButton item={item} showSizes={showSizes} lang={lang} />
           </div >
         </div>
       </article >
