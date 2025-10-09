@@ -37,7 +37,7 @@ export async function generateMetadata({ params }) {
     ? 'Изысканные серебряные кольца от Daisy Jewellery. Быстрая доставка по всей Украине! Серебряные кольца по лучшей цене от производителя'
     : 'Вишукані срібні каблучки від Daisy Jewellery. Швидка доставка по всій Україні! Срібні кільця за найкращою ціною від виробника';
 
-  const lastPage = 4;
+  const lastPage = 6;
   const categorySlug = lang === 'ru' ? 'koltsa' : 'kabluchki';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = lang === 'ru' ? 'Серебряные кольца, купить' : 'Срібні каблучки, купити';

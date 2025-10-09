@@ -34,7 +34,7 @@ export async function generateMetadata({ params }) {
     ? 'Серебряные браслеты от Daisy Jewellery. Доставка по всей Украине. Купить серебряный браслет от производителя по лучшей цене'
     : 'Срібні браслети від Daisy Jewellery. Доставка в будь який куточок України. Купити срібний браслет від виробника за найкращою ціною';
 
-  const lastPage = 2;
+  const lastPage = 3;
   const categorySlug = 'braslety';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = lang === 'ru' ? 'Серебряные браслеты, купить' : 'Срібні браслети, купити';
