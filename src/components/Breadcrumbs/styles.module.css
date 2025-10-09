@@ -3,7 +3,7 @@
   inset-block-start: 193px;
   z-index: 101;
   background-color: #fff;
-  padding: 24px 46px;
+  padding: 16px 46px;
 }
 
 .nav[aria-label="Breadcrumb"] ol {
@@ -25,5 +25,16 @@
   .nav {
     padding: 14px 12px;
     inset-block-start: 125px;
+  }
+}
+
+/* When header is compact, pull breadcrumbs directly below header */
+:global(body.header-compact) .nav {
+  inset-block-start: 48px;
+}
+
+@media (max-width: 768px) {
+  :global(body.header-compact) .nav {
+    inset-block-start: 48px;
   }
 }
