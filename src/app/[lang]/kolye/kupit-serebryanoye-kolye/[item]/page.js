@@ -26,8 +26,7 @@ export async function generateStaticParams() {
   try {
     const products = await fetchAllProducts({ categoryId: process.env.NECKLACE_CATEGORY_ID });
     if (!products || !products?.length) return [];
-    const langs = ['uk', 'ru'];
-    return langs.flatMap(lang => products.map(product => ({ lang, item: product.code.toString() })));
+    return products.map(product => ({ lang: 'ru', item: product.code.toString() }));
   } catch (e) {
     console.error('Error in generateStaticParams:', e);
     return [];
