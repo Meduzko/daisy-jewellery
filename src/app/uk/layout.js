@@ -4,7 +4,7 @@ import '../globals.css';
 // import Header from './components/Header/page';
 import Header from '../../components/Header/page';
 import Footer from '../../components/Footer/page';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { CartProvider } from '../../context/CartContext';
 import PopupManager from '../../components/Popups/PopupManager';
 

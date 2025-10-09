@@ -2,7 +2,7 @@ import { fetchProduct } from '../actions/fetchProduct';
 import { getAllHtmlPosts } from '../lib/posts';
 
 export default async function sitemap() {
-  const baseUrl = process.env.SITE_DOMAIN;
+  const baseUrl = process.env.SITE_DOMAIN || process.env.NEXT_PUBLIC_BASE_URL || 'https://daisy-jewellery.com.ua';
   const locales = ['uk', 'ru'];
   const localedCategoryItem = {
     uk: {
@@ -51,10 +51,10 @@ export default async function sitemap() {
     limit: 100
   });
 
-  const ringPages = 4;
+  const ringPages = 6;
   const necklacePages = 3;
-  const earringPages = 3;
-  const bracerPages = 2;
+  const earringPages = 4;
+  const bracerPages = 3;
 
   // These are your "base" routes for each locale
   const staticRoutes = ['', 'about', 'contact', 'delivery', 'oferta', 'returns', 'blog'];

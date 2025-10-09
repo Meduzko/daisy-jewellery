@@ -11,7 +11,7 @@ export const getProductLink = (product, lang) => {
       ring: 'koltsa/kupit-serebryanoye-koltso',
       earring: 'sergi/kupit-serebryanyye-sergi',
       necklace: 'kolye/kupit-serebryanoye-kolye',
-      bracer: 'braslety/kupit-serebryanyy-braslet/',
+      bracer: 'braslety/kupit-serebryanyy-braslet',
     }
   }
   const cat = categoryMap[lang][category];

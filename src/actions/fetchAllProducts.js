@@ -1,6 +1,7 @@
 export async function fetchProducts({ offset, limit, categoryId }) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/product`, {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.SITE_DOMAIN || '';
+    const res = await fetch(`${baseUrl}/api/products`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -19,9 +20,10 @@ export async function fetchProducts({ offset, limit, categoryId }) {
   
     const data = await res.json();
   
-    const hasMore = data.length === limit;
+    const products = data?.products || [];
+    const hasMore = products.length === limit;
   
-    return { products: data, hasMore };
+    return { products, hasMore };
   } catch (error) {
     console.log(error);
   }

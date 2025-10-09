@@ -23,6 +23,9 @@ const allowedPages = [
   },
   {
     page_number: '5',
+  },
+  {
+    page_number: '6',
   }
 ];
 
@@ -48,6 +51,12 @@ export async function generateStaticParams() {
     },
     {
       page_number: '4',
+    },
+    {
+      page_number: '5',
+    },
+    {
+      page_number: '6',
     }
   ];
 }

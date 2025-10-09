@@ -1,7 +1,7 @@
 import Script from 'next/script';
 import { Montserrat } from "next/font/google";
 import '../globals.css';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { CartProvider } from '../../context/CartContext';
 // import Header from './components/Header/page';
 import Header from '../../components/Header/page';
@@ -36,7 +36,7 @@ export const metadata = {
         alt: 'Магазин серебряных украшений - Daisy Jewellery',
       },
     ],
-    locale: 'ru-UA', // Updated locale for Ukrainian language
+    locale: 'ru_UA',
     type: 'website',
   },
   twitter: {
@@ -96,7 +96,7 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   return (
-    <html lang="ru-UA">
+    <html lang="ru">
       <head>
         {/* Other head elements can be included here */}
         {/* Google Analytics Script */}
