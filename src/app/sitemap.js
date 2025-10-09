@@ -2,7 +2,7 @@ import { fetchProduct } from '../actions/fetchProduct';
 import { getAllHtmlPosts } from '../lib/posts';
 
 export default async function sitemap() {
-  const baseUrl = process.env.SITE_DOMAIN;
+  const baseUrl = process.env.SITE_DOMAIN || process.env.NEXT_PUBLIC_BASE_URL || 'https://daisy-jewellery.com.ua';
   const locales = ['uk', 'ru'];
   const localedCategoryItem = {
     uk: {
@@ -34,27 +34,40 @@ export default async function sitemap() {
     }
   }
 
-  const ringProducts = await fetchProduct({
-    categoryId: process.env.RING_CATEGORY_ID, 
-    limit: 100
-  });
-  const necklaceProducts = await fetchProduct({
-    categoryId: process.env.NECKLACE_CATEGORY_ID, 
-    limit: 100
-  });
-  const earringProducts = await fetchProduct({
-    categoryId: process.env.EARING_CATEGORY_ID, 
-    limit: 100
-  });
-  const bracerProducts = await fetchProduct({
-    categoryId: process.env.BRACER_CATEGORY_ID, 
-    limit: 100
-  });
+  // Fetch all products for a category by paging through the API
+  async function fetchAllByCategory(categoryId, pageLimit = 100) {
+    const allProducts = [];
+    let offset = 0;
+    let hasMore = true;
 
-  const ringPages = 4;
-  const necklacePages = 3;
-  const earringPages = 3;
-  const bracerPages = 2;
+    while (hasMore) {
+      const page = await fetchProduct({
+        categoryId,
+        limit: pageLimit,
+        offset,
+        paginated: true
+      });
+
+      const products = page?.products || [];
+      allProducts.push(...products);
+
+      hasMore = Boolean(page?.hasMore) && products.length > 0;
+      offset += pageLimit;
+    }
+
+    return allProducts;
+  }
+
+  const limitPerPage = 20;
+  const ringProducts = await fetchAllByCategory(process.env.RING_CATEGORY_ID, 100);
+  const necklaceProducts = await fetchAllByCategory(process.env.NECKLACE_CATEGORY_ID, 100);
+  const earringProducts = await fetchAllByCategory(process.env.EARING_CATEGORY_ID, 100);
+  const bracerProducts = await fetchAllByCategory(process.env.BRACER_CATEGORY_ID, 100);
+
+  const ringPages = Math.ceil(ringProducts?.length / limitPerPage) || 6;
+  const necklacePages = Math.ceil(necklaceProducts?.length / limitPerPage) || 3;
+  const earringPages = Math.ceil(earringProducts?.length / limitPerPage) || 4;
+  const bracerPages = Math.ceil(bracerProducts?.length / limitPerPage) || 3;
 
   // These are your "base" routes for each locale
   const staticRoutes = ['', 'about', 'contact', 'delivery', 'oferta', 'returns', 'blog'];

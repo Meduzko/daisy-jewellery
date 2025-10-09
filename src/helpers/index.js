@@ -138,8 +138,8 @@ const getItemMetaData = ({ categoryName, productTitle, code, short_description, 
   // Canonical hreflang
   const translatedSlugs = getTralslatedCategorySlugs({ lang, categoryName });
   const languages = {
-    'uk-UA': `${process.env.SITE_DOMAIN}/uk/${canonical.uk[translatedSlugs.uk]}/${code}`,
-    'ru-UA': `${process.env.SITE_DOMAIN}/ru/${canonical.ru[[translatedSlugs.ru]]}/${code}`
+    'uk-UA': `${process.env.SITE_DOMAIN || 'https://daisy-jewellery.com.ua'}/uk/${canonical.uk[translatedSlugs.uk]}/${code}`,
+    'ru-UA': `${process.env.SITE_DOMAIN || 'https://daisy-jewellery.com.ua'}/ru/${canonical.ru[translatedSlugs.ru]}/${code}`
   };
 
   return {

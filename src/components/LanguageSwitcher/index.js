@@ -49,9 +49,9 @@ const LanguageSwitcher = () => {
   const getCurrentLocale = () => {
     if (typeof window !== 'undefined') {
       const pathSegments = window.location.pathname.split('/').filter(Boolean);
-      return locales.find((locale) => locale.code === pathSegments[0])?.code || 'en';
+      return locales.find((locale) => locale.code === pathSegments[0])?.code || 'uk';
     }
-    return 'en'; // Default for server-side rendering
+    return 'uk'; // Default for server-side rendering
   };
   
   useEffect(() => {
@@ -118,9 +118,7 @@ const LanguageSwitcher = () => {
             <li key={locale.code} className={styles.dropdownItem}>
               <button
                 onClick={() => handleLanguageChange(locale.code)}
-                className={`${styles.button} ${
-                  router.locale === locale.code ? styles.active : ''
-                }`}
+                className={`${styles.button}`}
               >
                 {locale.label}
               </button>

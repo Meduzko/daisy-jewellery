@@ -38,17 +38,37 @@ export async function fetchProduct({
 
     const url = `${baseURL}${params.toString()}`;
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'ApiKey': API_KEY,
-        'Content-Type': 'application/json'
-      },
-      next: { revalidate: revalidate || 900 }
-    });
+    let response;
+    let attempt = 0;
+    const maxAttempts = 3;
+    while (attempt < maxAttempts) {
+      response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'ApiKey': API_KEY,
+          'Content-Type': 'application/json'
+        },
+        next: { revalidate: revalidate || 900 }
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch products');
+      if (response.ok) break;
+
+      const shouldRetry = response.status === 429 || (response.status >= 500 && response.status < 600);
+      if (!shouldRetry) {
+        console.error('Failed to fetch products', { status: response.status, url });
+        if (paginated) return { products: [], hasMore: false };
+        return [];
+      }
+
+      const backoffMs = 300 * Math.pow(2, attempt); // 300, 600, 1200
+      await new Promise((r) => setTimeout(r, backoffMs));
+      attempt += 1;
+    }
+
+    if (!response || !response.ok) {
+      console.error('Failed to fetch products after retries', { url });
+      if (paginated) return { products: [], hasMore: false };
+      return [];
     }
 
     const data = await response.json();
@@ -61,6 +81,11 @@ export async function fetchProduct({
     return data.products;
   } catch (error) {
     console.error(error);
+    // Ensure consistent return shape to prevent build-time crashes
+    if (paginated) {
+      return { products: [], hasMore: false };
+    }
+    return [];
   }
 }
 

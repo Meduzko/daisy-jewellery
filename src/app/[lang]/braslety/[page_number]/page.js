@@ -1,0 +1,94 @@
+import { notFound } from 'next/navigation';
+import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
+import { fetchProduct } from '../../../../actions/fetchProduct';
+import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
+import Gallery from '../../../../components/Gallery';
+
+const allowedPages = [
+  { page_number: '1' },
+  { page_number: '2' },
+  { page_number: '3' },
+];
+
+export async function generateStaticParams() {
+  const langs = ['uk', 'ru'];
+  const pages = allowedPages.map(p => p.page_number);
+
+  return langs.flatMap(lang => pages.map(page_number => ({ lang, page_number })));
+}
+
+export async function generateMetadata({ params }) {
+  const lang = params?.lang === 'ru' ? 'ru' : 'uk';
+  const currentPage = +params.page_number;
+  const is404 = is404Page(currentPage, allowedPages);
+
+  if (is404) {
+    return generate404MetaData();
+  }
+
+  const title = lang === 'ru'
+    ? 'Серебряные браслеты | Купить серебряный браслет Daisy Jewellery'
+    : 'Срібні браслети | Купити срібний браслет Daisy Jewellery';
+
+  const description = lang === 'ru'
+    ? 'Серебряные браслеты от Daisy Jewellery. Доставка по всей Украине. Купить серебряный браслет от производителя по лучшей цене'
+    : 'Срібні браслети від Daisy Jewellery. Доставка в будь який куточок України. Купити срібний браслет від виробника за найкращою ціною';
+
+  const lastPage = 3;
+  const categorySlug = 'braslety';
+  const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
+  const keywords = lang === 'ru' ? 'Серебряные браслеты, купить' : 'Срібні браслети, купити';
+
+  return generateCategoryMetadata({ title, description, currentPage, lastPage, canonicalUrl, categorySlug, keywords, lang });
+}
+
+export default async function CategoryPageNumber({ params }) {
+  const lang = params?.lang === 'ru' ? 'ru' : 'uk';
+  const baseURL = `/${lang}/braslety`;
+  const itemBaseURL = `${baseURL}/${lang === 'ru' ? 'kupit-serebryanyy-braslet' : 'kupyty-sribnyy-braslet'}`;
+  const paginated = true;
+  const { currentPage, limit, offset } = getPaginationData(params.page_number);
+  const { products, hasMore } = await fetchProduct({ offset, limit, categoryId: process.env.BRACER_CATEGORY_ID, paginated });
+  const device = getDeviceType();
+  const isMobile = device !== 'desktop';
+
+  if (!products || !products.length) {
+    notFound();
+  }
+
+  const logoJsonLd = getLogoJsonLd({ lang });
+  const categoryJsonLd = getCategoryJsonLd({
+    categoryName: lang === 'ru' ? 'Серебряные браслеты от Daisy Jewellery' : 'Срібні браслети від Daisy Jewellery',
+    categoryDescription: lang === 'ru'
+      ? 'Серебряные браслеты от Daisy Jewellery. Доставка по всей Украине. Купить серебряный браслет от производителя по лучшей цене'
+      : 'Срібні браслети від Daisy Jewellery. Доставка в будь який куточок України. Купити срібний браслет від виробника за найкращою ціною',
+    url: `${baseURL}/${params.page_number}`,
+    lowPrice: 650,
+    highPrice: 5400
+  });
+
+  return (
+    <>
+      <h1 className="category-title">{lang === 'ru' ? 'Серебряные браслеты' : 'Срібні браслети'}</h1>
+      <Gallery
+        items={products}
+        hasMore={hasMore}
+        currentPage={currentPage}
+        baseURL={baseURL}
+        itemBaseURL={itemBaseURL}
+        withPagination={paginated}
+        isMobile={isMobile}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryJsonLd) }}
+      />
+    </>
+  );
+}
+
+
