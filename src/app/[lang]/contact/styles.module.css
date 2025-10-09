@@ -1,0 +1,25 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+}
+
+.mainTitle {
+    text-align: center;
+}
+
+.li {
+    margin-left: 16px;
+}
+
+.socialContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
