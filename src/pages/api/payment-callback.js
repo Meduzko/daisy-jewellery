@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { sendFacebookEvent } from '../../lib/facebookCapi';
 
 export default async function handler(req, res) {
   try {
@@ -29,6 +30,38 @@ export default async function handler(req, res) {
           },
           body: JSON.stringify({ ...decodedDataInfo, paidInfo: { order_id: decodedData.order_id } }),
         });
+
+          // Fire Facebook Conversions API Purchase event
+          try {
+            const { formData, cartItems, totalPrice } = decodedDataInfo || {};
+            const contents = Array.isArray(cartItems) ? cartItems.map((it) => ({
+              id: it?.sku || it?.code || '',
+              quantity: 1,
+              item_price: Number(it?.price) || 0
+            })) : [];
+
+            await sendFacebookEvent({
+              eventName: 'Purchase',
+              eventId: decodedData?.order_id,
+              eventSourceUrl: process.env.SITE_DOMAIN || process.env.NEXT_PUBLIC_BASE_URL,
+              customData: {
+                currency: 'UAH',
+                value: Number(totalPrice) || Number(decodedData?.amount) || 0,
+                contents,
+                content_type: 'product',
+                order_id: decodedData?.order_id
+              },
+              userData: {
+                email: formData?.email,
+                phone: formData?.phone,
+                firstName: formData?.firstName,
+                lastName: formData?.lastName
+              },
+              req
+            });
+          } catch (capErr) {
+            console.error('Facebook CAPI Purchase error:', capErr);
+          }
       } else {
         console.error('Something went wrong during payment, decodedData:', decodedData);
       }

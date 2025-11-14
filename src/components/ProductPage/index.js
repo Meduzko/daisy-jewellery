@@ -3,6 +3,7 @@ import { decode } from 'html-entities';
 import ProductImageGallery from './ProductImageGallery/ProductImageGallery';
 import SizeSelector from './sizeSelector/sizeSelector';
 import CounterWithSubmit from './CounterWithSubmit/CounterWithSubmit';
+import ClientViewContent from './ClientViewContent';
 
 import styles from './ProductPage.module.css';
 
@@ -12,7 +13,9 @@ const ProductPageNew = ({ item = {}, productSizes, t }) => {
     short_description: description,
     images,
     price,
-    code
+    code,
+    sku,
+    product_id
   } = item;
 
   // const plainTextDescription = description.replace(/<[^>]*>/g, "");
@@ -45,6 +48,11 @@ const ProductPageNew = ({ item = {}, productSizes, t }) => {
           <CounterWithSubmit product={item} />
         </section>
       </div>
+      <ClientViewContent
+        id={sku || code || product_id}
+        name={tkTitle}
+        price={price}
+      />
     </>
   );
 };

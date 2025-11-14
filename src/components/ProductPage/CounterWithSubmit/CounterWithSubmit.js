@@ -4,6 +4,7 @@ import React, { useState, useContext } from 'react';
 import { CartContext } from '../../../context/CartContext';
 import ProductCounter from '../counter/productCounter';
 import ProductBuyButton from '../../Buttons/ProductBuy/ProductBuy';
+import { trackFacebookEvent } from '../../../helpers/fbpixel';
 
 import styles from './styes.module.css';
 
@@ -17,6 +18,15 @@ const CounterWithSubmit = ({ product }) => {
 
     if (!cartItem) {
       addToCart(product, count);
+      try {
+        trackFacebookEvent('AddToCart', {
+          content_ids: [product.sku || product.code || product.product_id].filter(Boolean),
+          content_type: 'product',
+          content_name: product.title,
+          value: Number(product.price) * (count || 1),
+          currency: 'UAH'
+        });
+      } catch (e) {}
     }
   };
 

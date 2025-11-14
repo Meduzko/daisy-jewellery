@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { List, ListItem, Divider } from '@mui/material';
 import { CartContext } from '../../../../context/CartContext';
 import ProductBuyButton from '../../../Buttons/ProductBuy/ProductBuy';
+import { trackFacebookEvent } from '../../../../helpers/fbpixel';
 
 import styles from './styles.module.css';
 
@@ -147,12 +148,30 @@ const OrderList = ({
 
     if (paymentByCard) {
       if (isFormValid) {
+        try {
+          trackFacebookEvent('InitiateCheckout', {
+            value: Number(fixedPrice),
+            currency: 'UAH',
+            num_items: cartItems?.length || 0,
+            content_type: 'product'
+          });
+        } catch (err) {}
         setShowBuyButton(false);
         handlePaymentRender();
       } else {
         triggerValidation();
       }
     } else {
+      if (isFormValid) {
+        try {
+          trackFacebookEvent('InitiateCheckout', {
+            value: Number(fixedPrice),
+            currency: 'UAH',
+            num_items: cartItems?.length || 0,
+            content_type: 'product'
+          });
+        } catch (err) {}
+      }
       handleSubmit(e);
     }
   };

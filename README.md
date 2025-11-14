@@ -34,3 +34,29 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Meta Pixel + Conversions API
+
+Client-side and server-side tracking are integrated:
+- PageView, ViewContent, AddToCart, InitiateCheckout are tracked via Meta Pixel.
+- Purchase is sent server-side via the Conversions API after successful LiqPay callback.
+
+Required environment variables:
+```
+NEXT_PUBLIC_FACEBOOK_PIXEL_ID=xxxxxxxxxxxxxxxx
+FACEBOOK_PIXEL_ID=xxxxxxxxxxxxxxxx            # optional, falls back to NEXT_PUBLIC_FACEBOOK_PIXEL_ID
+FACEBOOK_ACCESS_TOKEN=EAAB...                 # system user token with ads_management permission
+FB_TEST_EVENT_CODE=TESTxxxxxx                 # optional, for Events Manager Test Events
+SITE_DOMAIN=https://daisy-jewellery.com.ua    # used as event_source_url
+```
+
+Notes:
+- `_fbp` is set automatically by Pixel; `_fbc` is set from the `fbclid` URL param when present.
+- Purchase event includes hashed user data (email/phone), contents, value, currency, and `event_id` (LiqPay `order_id`).
+
+Testing:
+1. Set `FB_TEST_EVENT_CODE` and deploy/run.
+2. Open the site with a clean session and navigate to a product page — you should see PageView and ViewContent in Test Events.
+3. Add to cart — you should see AddToCart.
+4. Begin checkout — you should see InitiateCheckout.
+5. Complete a test payment — server should log the Purchase event in Test Events.
