@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "i18n:sync": "node scripts/sync-translations.js",
+    "i18n:export": "node scripts/export-translations.js",
+    "i18n:import": "node scripts/import-translations-xlsx.js"
   },
   "dependencies": {
     "@emotion/cache": "^11.13.1",
@@ -27,6 +30,7 @@
     "react-input-mask": "^2.0.4",
     "sharp": "^0.33.5",
     "swiper": "^11.1.9",
+    "xlsx": "^0.18.5",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
