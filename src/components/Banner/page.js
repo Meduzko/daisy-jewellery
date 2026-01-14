@@ -17,7 +17,7 @@ export default async function Banner({ lang = 'uk' } = {}) {
         alt="Main banner"
         fill
         priority={true}
-        quality={35}
+        quality={75}
         sizes="100vw"
         style={{ objectFit: 'cover' }}
         className={styles.bannerImg}
