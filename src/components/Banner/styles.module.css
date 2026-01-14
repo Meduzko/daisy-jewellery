@@ -35,9 +35,9 @@
 
 .bannerContainer {
   width: 100%;
-  height: 100vh;
-  aspect-ratio: 16 / 9;
+  height: calc(100vh - 192px);
   position: relative;
+  overflow: hidden;
 }
 
 .bannerBackground {
@@ -53,7 +53,7 @@
 }
 
 .bannerImg {
-  top: -192px !important;
+  top: 0 !important;
   filter: brightness(50%);
 }
 
@@ -62,7 +62,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: -192px;
+  top: 0;
   bottom: 0;
   text-align: center;
   margin: auto;
@@ -83,6 +83,6 @@
   }
 
   .bannerImg {
-    top: -124px !important;
+    top: 0 !important;
   }
 }

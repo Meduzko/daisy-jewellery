@@ -117,7 +117,7 @@ export default function Footer({ lang }) {
           </ul>
         </div>
       </div>
-      <div className={styles.footerBottomText}>© 2025 DAISY.JEWELLERY</div>
+      <div className={styles.footerBottomText}>2026 DAISY.JEWELLERY © </div>
   </footer>
   );
 }

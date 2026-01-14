@@ -35,3 +35,13 @@
         width: 100% !important;
     }
 }
+
+@media (max-width: 768px) {
+    .whyTitle {
+        font-size: 31px;
+        text-align: center;
+        letter-spacing: 2px;
+        padding: 0;
+        font-weight: 600;
+    }
+}

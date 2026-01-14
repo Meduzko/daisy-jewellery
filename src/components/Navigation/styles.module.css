@@ -6,6 +6,21 @@
     align-items: center;
     gap: .625rem 6.25rem;
     padding: 24px 0;
+    max-height: 80px;
+    overflow: hidden;
+    transition: max-height 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.collapsed {
+    max-height: 0;
+    display: none;
+}
+
+/* Hide navigation on mobile devices */
+@media (max-width: 600px) {
+    .nav {
+        display: none;
+    }
 }
 
 .navList {

@@ -1,13 +1,13 @@
 "use client";
 
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode } from 'swiper/modules';
+import { FreeMode, Navigation } from 'swiper/modules';
 import ProductItem from '../ProductItem/productItem';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/free-mode';
-// import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 import './styles.css';
 
 export default function SwiperCarousel({ data, lang }) {
@@ -29,16 +29,14 @@ export default function SwiperCarousel({ data, lang }) {
       // slidesPerView={4}
       slidesPerView="auto"
       spaceBetween={16}
-      freeMode={true}
-      // centeredSlides={true}
-      // centeredSlidesBounds={true}
+      freeMode={{
+        enabled: true,
+        sticky: true,
+      }}
       centerInsufficientSlides={true}
-      // pagination={{
-      //   clickable: true,
-      // }}
-      // pagination={pagination}
-      // slidesOffsetAfter={50}
-      modules={[FreeMode]}
+      navigation={true}
+      slidesPerGroup={1}
+      modules={[FreeMode, Navigation]}
       className="manualCarousel"
     >
       {data?.map(item => (

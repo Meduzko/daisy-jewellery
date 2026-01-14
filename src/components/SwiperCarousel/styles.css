@@ -14,6 +14,11 @@
   align-items: center;
   flex: 0 0 24%;
   height: auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .swiper-slide img {
@@ -21,6 +26,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
 }
 
 /*
@@ -54,6 +61,19 @@ Taken from another site
   background: #007aff;
 }
 
+/* Navigation arrows - hidden by default on desktop */
+.manualCarousel .swiper-button-next,
+.manualCarousel .swiper-button-prev {
+  display: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  outline: none;
+}
+
 @media (max-width: 1024px) {
   .manualCarousel {
     padding: 8px;
@@ -61,5 +81,35 @@ Taken from another site
 
   .swiper-slide {
     flex: 0 0 48%;
+  }
+
+  /* Show navigation arrows on mobile */
+  .manualCarousel .swiper-button-next,
+  .manualCarousel .swiper-button-prev {
+    display: flex;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .manualCarousel .swiper-button-next::after,
+  .manualCarousel .swiper-button-prev::after {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000;
+  }
+
+  .manualCarousel .swiper-button-prev {
+    left: 8px;
+  }
+
+  .manualCarousel .swiper-button-next {
+    right: 8px;
+  }
+
+  .manualCarousel .swiper-button-disabled {
+    display: none;
   }
 }

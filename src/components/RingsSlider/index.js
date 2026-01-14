@@ -10,7 +10,7 @@ export default async function RingsSlider({ lang = 'uk' }) {
     <Suspense fallback={<div>Loading...</div>}>
       <div className={`${styles.sliderContainer} container`}>
         <div className={styles.sliderCtn}>
-          <h2 className='title'>Новинки</h2>
+          <h2 className={`${styles.sliderTitle} title`}>Новинки</h2>
           <SwiperCarousel data={newProducts} lang={lang} />
         </div>
       </div>

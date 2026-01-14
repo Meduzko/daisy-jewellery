@@ -109,7 +109,7 @@ export default function Header({ lang }) {
           <Image
             src="/logo_black.png"
             alt="logo"
-            width={100}
+            width={95}
             height={65}
             className={styles.logo}
           />
