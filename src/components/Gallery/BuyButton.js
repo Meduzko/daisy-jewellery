@@ -5,6 +5,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/
 import { CartContext } from '../../context/CartContext';
 import { getProductSizes } from '../../actions/fetchProduct';
 import SizeSelector from '../ProductPage/sizeSelector/sizeSelector';
+import { trackFacebookEvent, getFacebookEventId } from '../../helpers/fbpixel';
 
 import styles from './styles.module.css';
 
@@ -45,6 +46,31 @@ export default function BuyButton({ item, showSizes, lang }) {
 
     addToCart(item);
     setCartOpen(true);
+    try {
+      const id = item?.sku || item?.code || item?.product_id;
+      const price = Number(item?.price) || 0;
+      const eventId = getFacebookEventId();
+      trackFacebookEvent('AddToCart', {
+        content_ids: [id],
+        content_type: 'product',
+        content_name: item?.title,
+        value: price,
+        currency: 'UAH'
+      }, eventId);
+      const payload = { id, name: item?.title, price, quantity: 1, eventId };
+      const body = JSON.stringify(payload);
+      if (navigator.sendBeacon) {
+        const blob = new Blob([body], { type: 'application/json' });
+        navigator.sendBeacon('/api/capi-addtocart', blob);
+      } else {
+        fetch('/api/capi-addtocart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body,
+          keepalive: true
+        });
+      }
+    } catch {}
   };
 
 
@@ -52,6 +78,31 @@ export default function BuyButton({ item, showSizes, lang }) {
     addToCart(item);
     setCartOpen(true);
     setOpen(false);
+    try {
+      const id = item?.sku || item?.code || item?.product_id;
+      const price = Number(item?.price) || 0;
+      const eventId = getFacebookEventId();
+      trackFacebookEvent('AddToCart', {
+        content_ids: [id],
+        content_type: 'product',
+        content_name: item?.title,
+        value: price,
+        currency: 'UAH'
+      }, eventId);
+      const payload = { id, name: item?.title, price, quantity: 1, eventId };
+      const body = JSON.stringify(payload);
+      if (navigator.sendBeacon) {
+        const blob = new Blob([body], { type: 'application/json' });
+        navigator.sendBeacon('/api/capi-addtocart', blob);
+      } else {
+        fetch('/api/capi-addtocart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body,
+          keepalive: true
+        });
+      }
+    } catch {}
   };
 
   return (

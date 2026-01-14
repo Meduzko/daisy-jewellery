@@ -1,6 +1,7 @@
 // import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from "next/link"
+import TrackedLink from './TrackedLink';
 import BuyButton from './BuyButton';
 import styles from './styles.module.css';
 
@@ -23,7 +24,11 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
 
   return (
       <article className={styles.itemWrapper}>
-        <Link href={`${baseURL}/${code}`} aria-label={`Переглянути ${tkTitle}`}>
+        <TrackedLink
+          href={`${baseURL}/${code}`}
+          aria-label={`Переглянути ${tkTitle}`}
+          track={{ id: code || product_id, name: tkTitle, price }}
+        >
           <div className={styles.galleryItem}>
             <div className={styles.itemBackground} />
             <div className={styles.imgContainer}>
@@ -56,13 +61,20 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
             )}
             </div>
           </div>
-        </Link>
+        </TrackedLink>
         <div className={styles.itemInfo}>
           <header className={styles.titleContainer}>
             <h2 className={styles.title}>
-              <Link href={`${baseURL}/${code}`}>{tkTitle}</Link>
+              <TrackedLink href={`${baseURL}/${code}`} track={{ id: code || product_id, name: tkTitle, price }}>
+                {tkTitle}
+              </TrackedLink>
             </h2>
-            <Link href={`${baseURL}/${code}`} className={styles.subTitle} dangerouslySetInnerHTML={{ __html: tkDescription }} />
+            <TrackedLink
+              href={`${baseURL}/${code}`}
+              className={styles.subTitle}
+              dangerouslySetInnerHTML={{ __html: tkDescription }}
+              track={{ id: code || product_id, name: tkTitle, price }}
+            />
             {/* <div className={styles.price}>{`${price} ${priceSymbol}`}</div> */}
           </header >
           <div className={styles.itemBottomCnt}>
