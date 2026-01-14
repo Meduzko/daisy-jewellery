@@ -1,8 +1,8 @@
+/* Modern Image Gallery for Jewelry */
 .imageGallery {
   width: 100%;
   display: flex;
-  gap: 16px;
-
+  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -11,7 +11,7 @@
   height: 100%;
   position: relative;
   flex: 1 1 50%;
-  background-color: #eee;
+  background: linear-gradient(180deg, #f8f7f5 0%, #f2f1ef 100%);
 }
 
 .mainImage {
@@ -22,21 +22,63 @@
   top: 0;
   bottom: 0;
   margin: auto;
-  object-fit: none;
 }
 
 .transparentImgContainer {
-  background-color: #eee;
+  background: linear-gradient(180deg, #f8f7f5 0%, #f2f1ef 100%);
 }
 
 .imgContainer {
-  width: 48%;
+  width: calc(50% - 6px);
   position: relative;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  cursor: zoom-in;
+  background: linear-gradient(180deg, #f8f7f5 0%, #f2f1ef 100%);
+}
+
+.imgContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+  z-index: 2;
+  pointer-events: none;
 }
 
 .image {
   object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.imgContainer:hover .image {
+  transform: scale(1.03);
+}
+
+/* Shimmer effect on hover */
+.imgContainer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.8s ease;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.imgContainer:hover::after {
+  left: 150%;
 }
 
 .thumbnailColumn {
@@ -67,7 +109,30 @@
 }
 
 @media (max-width: 1024px) {
+  .imageGallery {
+    gap: 8px;
+  }
+
+  .imgContainer {
+    width: calc(50% - 4px);
+  }
+}
+
+@media (max-width: 768px) {
+  .imageGallery {
+    gap: 4px;
+  }
+
   .imgContainer {
     width: 100%;
+    aspect-ratio: 3 / 4;
+  }
+
+  .imgContainer:hover .image {
+    transform: none;
+  }
+
+  .imgContainer::after {
+    display: none;
   }
 }

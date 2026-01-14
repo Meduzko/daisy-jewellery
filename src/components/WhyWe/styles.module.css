@@ -2,13 +2,20 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 24px;
+    padding: 48px 24px;
 }
 
 .listItem {
-    width: 50% !important;
+    width: 60% !important;
     margin: 0 auto;
-    gap: 14px;
+    gap: 20px;
+    padding: 16px 0 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.listItem:last-child {
+    border-bottom: none;
 }
 
 .listItem svg {
@@ -16,32 +23,70 @@
 }
 
 .textPrimary {
-    font-size: 24px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    letter-spacing: 0.02em;
 }
 
 .textSecondary {
-    font-size: 18px;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
 }
 
 .whyTitle {
-    font-size: 36px;
-    letter-spacing: 6px;
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    letter-spacing: 0.2em;
+    color: #1a1a1a;
     text-align: center;
+    position: relative;
+    padding-bottom: 16px;
 }
 
+.whyTitle::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #8b7355, #c9a86c);
+}
 
 @media (max-width: 1024px) {
     .listItem {
-        width: 100% !important;
+        width: 80% !important;
+    }
+
+    .whyWeContainer {
+        padding: 32px 16px;
     }
 }
 
 @media (max-width: 768px) {
     .whyTitle {
-        font-size: 31px;
-        text-align: center;
-        letter-spacing: 2px;
-        padding: 0;
-        font-weight: 600;
+        font-size: 1.1rem;
+        letter-spacing: 0.12em;
+    }
+
+    .whyTitle::after {
+        width: 40px;
+    }
+
+    .listItem {
+        width: 100% !important;
+        gap: 14px;
+    }
+
+    .textPrimary {
+        font-size: 1rem;
+    }
+
+    .textSecondary {
+        font-size: 0.9rem;
     }
 }

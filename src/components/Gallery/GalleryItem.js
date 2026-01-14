@@ -19,7 +19,8 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
   const priceSymbol = 'грн';
   const tk = t[code];
   const tkTitle = tk?.title || title;
-  const tkDescription = tk?.description || short_description;
+  const tkDescription = tk?.description || short_description || '';
+  const hasDescription = tkDescription && tkDescription.trim().length > 0;
 
   return (
       <article className={styles.itemWrapper}>
@@ -27,33 +28,26 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
           <div className={styles.galleryItem}>
             <div className={styles.itemBackground} />
             <div className={styles.imgContainer}>
-            {image_path && (
-              <Image
-                src={image_path}
-                alt={`Зображення ${tkTitle}`}
-                // fill
-                // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                width={784}
-                height={1176}
-                className={`${styles.defaultImg} ${styles.itemImg}`}
-                style={{ objectFit: 'cover', objectPosition: 'center' }}
-                // quality={60}
-              />
-            )}
-
-            {images?.[1] && (
-              <Image
-                src={images[1]}
-                alt={`Зображення ${tkTitle} при наведенні`}
-                // fill
-                // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                width={784}
-                height={1176}
-                className={`${styles.hoverImg} ${styles.itemImg}`}
-                style={{ objectFit: 'cover', objectPosition: 'center' }}
-                // quality={60}
-              />
-            )}
+              {image_path && (
+                <Image
+                  src={image_path}
+                  alt={`Зображення ${tkTitle}`}
+                  width={600}
+                  height={800}
+                  className={`${styles.defaultImg} ${styles.itemImg}`}
+                  style={{ objectFit: 'cover', objectPosition: 'center' }}
+                />
+              )}
+              {images?.[1] && (
+                <Image
+                  src={images[1]}
+                  alt={`Зображення ${tkTitle} при наведенні`}
+                  width={600}
+                  height={800}
+                  className={`${styles.hoverImg} ${styles.itemImg}`}
+                  style={{ objectFit: 'cover', objectPosition: 'center' }}
+                />
+              )}
             </div>
           </div>
         </Link>
@@ -62,14 +56,15 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
             <h2 className={styles.title}>
               <Link href={`${baseURL}/${code}`}>{tkTitle}</Link>
             </h2>
-            <Link href={`${baseURL}/${code}`} className={styles.subTitle} dangerouslySetInnerHTML={{ __html: tkDescription }} />
-            {/* <div className={styles.price}>{`${price} ${priceSymbol}`}</div> */}
-          </header >
+            {hasDescription && (
+              <p className={styles.subTitle} dangerouslySetInnerHTML={{ __html: tkDescription }} />
+            )}
+          </header>
           <div className={styles.itemBottomCnt}>
-            <div className={styles.price}>{`${price} ${priceSymbol}`}</div>
+            <span className={styles.price}>{`${price} ${priceSymbol}`}</span>
             <BuyButton item={item} showSizes={showSizes} lang={lang} />
-          </div >
+          </div>
         </div>
-      </article >
+      </article>
   );
 }

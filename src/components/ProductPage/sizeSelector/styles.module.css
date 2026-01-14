@@ -1,21 +1,54 @@
+/* Modern Size Selector */
 .toggleButtonGroup {
   display: flex;
-  flex-wrap: nowrap;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
 }
 
 .toggleButton {
-  width: 3rem;
-  height: 3rem;
-  margin: 4px;
+  min-width: 56px !important;
+  height: 48px !important;
+  margin: 0 !important;
   border-radius: 0 !important;
-  border: 1px solid #bdbdbd !important;
-  transition: border-color 0.3s;
-  font-size: 12px !important;
+  border: 1px solid rgba(139, 115, 85, 0.2) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.05em !important;
+  color: #1a1a1a !important;
+  background: #fff !important;
+  position: relative;
+}
+
+.toggleButton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(139, 115, 85, 0.05) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.toggleButton:hover {
+  border-color: #8b7355 !important;
+  color: #8b7355 !important;
+}
+
+.toggleButton:hover::before {
+  opacity: 1;
 }
 
 .selected {
   color: #fff !important;
-  background-color: #000 !important;
-  border-color: #000 !important;
+  background: linear-gradient(135deg, #8b7355 0%, #c9a86c 100%) !important;
+  border-color: #8b7355 !important;
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.25) !important;
+}
+
+.selected:hover {
+  background: linear-gradient(135deg, #9a8262 0%, #d4b878 100%) !important;
+  border-color: #9a8262 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(139, 115, 85, 0.35) !important;
 }

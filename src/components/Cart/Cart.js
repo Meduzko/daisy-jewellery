@@ -16,10 +16,27 @@ import RemainingPriceProgressBar from '../Form/Order/RemainingProgressBar/Remain
 import styles from './styles.module.css';
 
 const StyledBadge = styled(Badge)(() => ({
+  overflow: 'visible',
   '& .MuiBadge-badge': {
     right: 2,
-    top: 4,
-    backgroundColor: '#000'
+    top: 2,
+    backgroundColor: '#8b7355',
+    color: '#fff',
+    fontSize: '0.65rem',
+    minWidth: '16px',
+    height: '16px',
+    padding: '0 4px',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+  },
+  '@media (max-width: 768px)': {
+    '& .MuiBadge-badge': {
+      right: 0,
+      top: 0,
+      fontSize: '0.55rem',
+      minWidth: '14px',
+      height: '14px',
+      padding: '0 3px',
+    },
   },
 }));
 

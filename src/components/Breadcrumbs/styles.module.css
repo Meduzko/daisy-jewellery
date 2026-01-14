@@ -1,39 +1,59 @@
+/* Breadcrumb Navigation */
 .nav {
   position: sticky;
-  inset-block-start: 193px;
-  z-index: 101;
+  inset-block-start: 94px;
+  z-index: 100;
   background-color: #fff;
-  padding: 16px 46px;
+  padding: 14px 48px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: inset-block-start 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .nav[aria-label="Breadcrumb"] ol {
   list-style: none;
   display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.nav[aria-label="Breadcrumb"] li {
+  display: flex;
+  align-items: center;
 }
   
 .nav[aria-label="Breadcrumb"] li + li:before {
-  content: '>';
-  padding: 0 8px;
+  content: '/';
+  padding: 0 10px;
+  color: #ccc;
+}
+
+.linkItem {
+  color: #666;
+  transition: color 0.2s ease;
 }
 
 .linkItem:hover {
-  text-decoration: underline;
+  color: #8b7355;
+  text-decoration: none;
 }
 
-
-@media (max-width: 768px) {
-  .nav {
-    padding: 14px 12px;
-    inset-block-start: 125px;
-  }
-}
-
-/* When header is compact, pull breadcrumbs directly below header */
+/* When header is compact */
 :global(body.header-compact) .nav {
   inset-block-start: 48px;
 }
 
 @media (max-width: 768px) {
+  .nav {
+    padding: 12px 16px;
+    inset-block-start: 68px;
+  }
+
+  .nav[aria-label="Breadcrumb"] ol {
+    font-size: 0.8rem;
+  }
+
   :global(body.header-compact) .nav {
     inset-block-start: 48px;
   }

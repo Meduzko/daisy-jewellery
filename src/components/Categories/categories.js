@@ -3,6 +3,11 @@ import Image from 'next/image';
 
 import styles from './styles.module.css';
 
+const sectionTitle = {
+  uk: 'Категорії',
+  ru: 'Категории'
+};
+
 export default async function Categories({ lang = 'uk' } = {}) {
   const categories = {
     uk: [
@@ -52,30 +57,30 @@ export default async function Categories({ lang = 'uk' } = {}) {
   };
 
   return (
-    <div className='container'>
+    <section className={styles.section}>
+      <h2 className={styles.sectionTitle}>{sectionTitle[lang]}</h2>
       <div className={styles.categoriesContainer}>
-      {categories[lang].map(category => (
-        <Link href={category.link} className={styles.category} key={category.title}>
-          <div className={styles.square}>
-            <picture>
-              <Image
-                src={category.src}
-                alt={`Зображення ${category.title}`}
-                fill={true}
-                // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                loading="lazy"
-                quality={35}
-                className={styles.categoryImg}
-              />
-            </picture>
-            <div className={styles.categoryContent}>
-              <h2 className={styles.categoryTitle}>{category.title}</h2>
+        {categories[lang].map(category => (
+          <Link href={category.link} className={styles.category} key={category.title}>
+            <div className={styles.square}>
+              <picture>
+                <Image
+                  src={category.src}
+                  alt={`Зображення ${category.title}`}
+                  fill={true}
+                  loading="lazy"
+                  quality={35}
+                  className={styles.categoryImg}
+                />
+              </picture>
+              <div className={styles.categoryContent}>
+                <h3 className={styles.categoryTitle}>{category.title}</h3>
+              </div>
+              <div className={styles.categoryBackground} />
             </div>
-            <div className={styles.categoryBackground} />
-          </div>
-        </Link>
-      ))}
-    </div>
-    </div>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
