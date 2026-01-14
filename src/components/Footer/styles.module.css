@@ -1,57 +1,174 @@
+/* Modern Footer for Jewelry Store */
 .footer {
-  background-color: #010307;
-  color: white;
-  padding: 20px;
-  text-align: center;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+  color: #fff;
+  padding: 80px 60px 40px;
+  position: relative;
 }
 
-.footerText {
-  margin: 0;
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #8b7355, #c9a86c, #8b7355, transparent);
 }
 
 .footerContainer {
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footerCol {
+  text-align: left;
 }
 
 .footerCategoryTitle {
-  font-size: 24px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #c9a86c;
+  margin-bottom: 24px;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.footerCategoryTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 1px;
+  background: linear-gradient(90deg, #8b7355, transparent);
 }
 
 .footerList {
-  padding-top: 16px;
+  padding: 0;
+  margin: 0;
 }
 
 .footerListItem {
-  padding: 8px 0;
+  padding: 10px 0;
   list-style: none;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+}
+
+.footerListItem a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.footerListItem a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #c9a86c;
+  transition: width 0.3s ease;
+}
+
+.footerListItem a:hover {
+  color: #c9a86c;
+}
+
+.footerListItem a:hover::after {
+  width: 100%;
 }
 
 .footerSocials {
   display: flex;
-  justify-content: center;
-  gap: 24px;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .social {
-  color: #fff !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  transition: all 0.3s ease !important;
+  padding: 8px !important;
+}
+
+.social:hover {
+  color: #c9a86c !important;
+  transform: translateY(-3px);
+  background: rgba(201, 168, 108, 0.1) !important;
+}
+
+.social svg {
+  font-size: 22px !important;
 }
 
 .footerBottomText {
-  padding-top: 16px;
+  text-align: center;
+  padding-top: 60px;
+  margin-top: 60px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
 }
 
 @media (max-width: 1024px) {
+  .footer {
+    padding: 60px 40px 32px;
+  }
+
   .footerContainer {
-    flex-direction: column;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
   }
 
-  .footerCol {
-    text-align: left;
-    margin-top: 16px;
+  .footerCol:last-child {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer {
+    padding: 48px 24px 28px;
   }
 
-  .footerSocials {
-    justify-content: start;
+  .footer::before {
+    width: 60px;
+  }
+
+  .footerContainer {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .footerCol:last-child {
+    grid-column: span 1;
+  }
+
+  .footerCategoryTitle {
+    font-size: 0.8rem;
+    margin-bottom: 16px;
+  }
+
+  .footerListItem {
+    padding: 8px 0;
+    font-size: 0.85rem;
+  }
+
+  .footerBottomText {
+    padding-top: 32px;
+    margin-top: 32px;
+    font-size: 0.75rem;
   }
 }

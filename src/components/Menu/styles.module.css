@@ -1,26 +1,212 @@
-.mobileMenuList {
+/* Menu button */
+.menuButton {
+    color: #2a2a2a !important;
+    transition: all 0.3s ease !important;
+}
+
+.menuButton:hover {
+    color: #8b7355 !important;
+    background-color: rgba(139, 115, 85, 0.08) !important;
+}
+
+.menuIcon {
+    font-size: 1.75rem !important;
+}
+
+/* Drawer */
+.drawer :global(.MuiDrawer-paper) {
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.1) !important;
+    border-right: none !important;
+}
+
+.drawerContent {
     width: 100vw;
-    padding: 52px 0px !important;
+    max-width: 300px;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #ffffff 0%, #faf8f5 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Menu header */
+.menuHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 16px;
+}
+
+.menuLogo {
+    display: flex;
+    align-items: center;
+    transition: opacity 0.3s ease;
+}
+
+.menuLogo:hover {
+    opacity: 0.8;
+}
+
+/* Decorative divider */
+.headerDivider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 24px 20px;
+}
+
+.dividerLine {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139, 115, 85, 0.3), transparent);
+}
+
+.dividerIcon {
+    color: #c9a86c;
+    font-size: 0.6rem;
+    opacity: 0.8;
+}
+
+/* Menu list */
+.mobileMenuList {
+    padding: 0 !important;
+    flex: 1;
 }
 
 .mobileMenuListItem {
     padding: 0 !important;
+    animation: slideIn 0.4s ease forwards;
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .menuItemText {
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    padding: 1.5rem 2rem;
+    letter-spacing: 0.12em;
+    padding: 16px 24px;
     width: 100%;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #2a2a2a;
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid rgba(139, 115, 85, 0.08);
 }
 
-.mobileMenuClose {
-    position: absolute !important;
-    right: 0;
+.menuItemIcon {
+    color: #c9a86c;
+    font-size: 0.5rem;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+}
+
+.menuItemText:hover .menuItemIcon,
+.menuItemText:active .menuItemIcon {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.menuItemText::after {
+    content: '';
+    position: absolute;
+    left: 0;
     top: 0;
-    z-index: 1;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, #8b7355, #c9a86c);
+    transform: scaleY(0);
+    transform-origin: center;
+    transition: transform 0.3s ease;
+}
+
+.menuItemText:hover,
+.menuItemText:active {
+    color: #8b7355;
+    background-color: rgba(139, 115, 85, 0.04);
+}
+
+.menuItemText:hover::after,
+.menuItemText:active::after {
+    transform: scaleY(1);
+}
+
+/* Close button */
+.mobileMenuClose {
+    color: #2a2a2a !important;
+    transition: all 0.3s ease !important;
+    width: 40px !important;
+    height: 40px !important;
+}
+
+.mobileMenuClose:hover {
+    color: #8b7355 !important;
+    background-color: rgba(139, 115, 85, 0.08) !important;
+    transform: rotate(90deg);
 }
 
 .closeIcon {
-    font-size: 2.25rem !important;
+    font-size: 1.5rem !important;
+}
+
+/* Menu footer */
+.menuFooter {
+    padding: 24px;
+    border-top: 1px solid rgba(139, 115, 85, 0.1);
+    text-align: center;
+}
+
+.socialLinks {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.socialLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #8b7355;
+    border: 1px solid rgba(139, 115, 85, 0.2);
+    transition: all 0.3s ease;
+}
+
+.socialLink:hover {
+    background: linear-gradient(135deg, #8b7355, #c9a86c);
+    color: #fff;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 115, 85, 0.25);
+}
+
+.socialLink svg {
+    font-size: 1.25rem;
+}
+
+.menuTagline {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #8b7355;
+    margin: 0;
+    opacity: 0.8;
+}
+
+/* Hide MUI dividers */
+.mobileMenuList :global(.MuiDivider-root) {
+    display: none !important;
 }

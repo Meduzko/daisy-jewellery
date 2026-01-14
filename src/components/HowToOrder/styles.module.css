@@ -1,35 +1,137 @@
+/* Modern How To Order Section */
 .howToOrderContainer {
     display: flex;
     align-items: center;
     flex-direction: column;
-    gap: 32px;
-    margin: 64px 0;
-    background-color: #f8e5eb;
-    padding: 174px 0;
+    gap: 48px;
+    margin: 0;
+    background: linear-gradient(135deg, #f8f7f5 0%, #f2f1ef 50%, #ebe8e4 100%);
+    padding: 80px 48px;
+    position: relative;
 }
 
+/* .howToOrderContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, #8b7355);
+} */
+
 .howToOrderContainerMobile {
-    padding: 64px 24px;
+    padding: 60px 24px;
     margin: 0;
 }
 
+.howToOrderContainerMobile::before {
+    display: none;
+}
+
+.howToOrderTitle {
+    font-weight: 300;
+    font-size: 1.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #1a1a1a;
+    text-align: center;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.howToOrderTitle::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #8b7355, #c9a86c);
+}
+
 .stepLabel {
-    font-size: 24px !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    color: #1a1a1a !important;
+    letter-spacing: 0.02em !important;
 }
 
 .stepDescription {
     text-align: center;
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.6;
+    max-width: 200px;
+    margin: 8px auto 0;
 }
 
 .stepDescriptionMobile {
     text-align: left;
+    max-width: 100%;
+    margin: 8px 0 0;
 }
 
-.howToOrderTitle {
-    font-size: 36px;
-    letter-spacing: 6px;
-}
-
+/* Step icons */
 .stepLabelContainer svg {
-    color: #000 !important;
+    color: #8b7355 !important;
+    font-size: 28px !important;
+}
+
+.stepLabelContainer svg.Mui-active {
+    color: #8b7355 !important;
+}
+
+.stepLabelContainer .MuiStepIcon-text {
+    fill: #fff !important;
+    font-weight: 500 !important;
+}
+
+/* Step connector line */
+.howToOrderContainer :global(.MuiStepConnector-root) {
+    margin-left: 28px;
+}
+
+.howToOrderContainer :global(.MuiStepConnector-line) {
+    border-color: rgba(139, 115, 85, 0.3) !important;
+}
+
+.howToOrderContainer :global(.MuiStep-root) {
+    padding: 0 16px;
+}
+
+@media (max-width: 1024px) {
+    .howToOrderContainer {
+        padding: 60px 32px;
+        gap: 32px;
+    }
+
+    .howToOrderTitle {
+        font-size: 1.25rem;
+    }
+
+    .stepLabel {
+        font-size: 0.9rem !important;
+    }
+
+    .stepDescription {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .howToOrderContainer {
+        padding: 48px 20px;
+    }
+
+    .howToOrderTitle {
+        font-size: 1.1rem;
+        letter-spacing: 0.12em;
+    }
+
+    .howToOrderTitle::after {
+        width: 40px;
+    }
 }

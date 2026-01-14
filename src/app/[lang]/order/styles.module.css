@@ -1,3 +1,5 @@
+/* Modern Order Page for Jewelry Store */
+
 .wrapper {
     height: 100%;
     text-align: center;
@@ -6,27 +8,34 @@
 
 .container {
     position: relative;
-    gap: 40px;
-    padding: 16px 32px;
-
+    gap: 60px;
+    padding: 60px 48px;
     display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, #fafafa 0%, #fff 100%);
+    min-height: 100vh;
 }
 
 @media (max-width: 1024px) {
     .container {
-        grid-template-columns: 1fr;
-        padding: 32px 16px;
-
+        padding: 40px 24px;
+        gap: 0;
         flex-direction: column;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 24px 16px;
     }
 }
 
 @media only screen and (min-width: 1440px) {
     .container {
-        max-width: 75%;
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 0;
+        padding: 60px 0;
     }
 }
-
 

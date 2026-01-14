@@ -6,19 +6,17 @@
 .swiper-slide {
   text-align: center;
   font-size: 18px;
-  /* background: #fff; */
-
-  /* Center slide text vertically */
   display: flex;
   justify-content: center;
-  align-items: center;
-  flex: 0 0 24%;
+  align-items: stretch;
+  flex: 0 0 23%;
   height: auto;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  transition: transform 0.3s ease;
 }
 
 .swiper-slide img {
@@ -30,35 +28,54 @@
   -webkit-user-drag: none;
 }
 
-/*
-Taken from another site
-*/
 .manualCarousel {
-  /* padding-left: 24px; */
   width: 100%;
   margin-right: auto;
   margin-left: auto;
   overflow: hidden;
-  /* padding: 120px 0 32px; */
-
-  padding: 16px;
+  padding: 20px 16px;
+  position: relative;
 }
 
+/* Subtle fade edges for elegance */
+.manualCarousel::before,
+.manualCarousel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.manualCarousel::before {
+  left: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,0.9) 0%, transparent 100%);
+}
+
+.manualCarousel::after {
+  right: 0;
+  background: linear-gradient(-90deg, rgba(255,255,255,0.9) 0%, transparent 100%);
+}
 
 .swiper-pagination-bullet {
-  width: 20px;
-  height: 20px;
+  width: 8px;
+  height: 8px;
   text-align: center;
-  line-height: 20px;
-  font-size: 12px;
-  color: #000;
+  line-height: 8px;
+  font-size: 0;
+  color: transparent;
   opacity: 1;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(139, 115, 85, 0.3);
+  transition: all 0.3s ease;
 }
 
 .swiper-pagination-bullet-active {
-  color: #fff;
-  background: #007aff;
+  background: linear-gradient(135deg, #8b7355, #c9a86c);
+  transform: scale(1.2);
 }
 
 /* Navigation arrows - hidden by default on desktop */
@@ -76,40 +93,71 @@ Taken from another site
 
 @media (max-width: 1024px) {
   .manualCarousel {
-    padding: 8px;
+    padding: 12px 8px;
   }
 
   .swiper-slide {
-    flex: 0 0 48%;
+    flex: 0 0 46%;
   }
 
   /* Show navigation arrows on mobile */
   .manualCarousel .swiper-button-next,
   .manualCarousel .swiper-button-prev {
     display: flex;
-    width: 36px;
-    height: 36px;
-    background-color: rgba(255, 255, 255, 0.9);
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(250,248,245,0.95) 100%);
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 12px rgba(139, 115, 85, 0.2);
+    border: 1px solid rgba(139, 115, 85, 0.15);
+    transition: all 0.3s ease;
+  }
+
+  .manualCarousel .swiper-button-next:hover,
+  .manualCarousel .swiper-button-prev:hover {
+    background: linear-gradient(135deg, #8b7355, #c9a86c);
+    box-shadow: 0 4px 16px rgba(139, 115, 85, 0.35);
   }
 
   .manualCarousel .swiper-button-next::after,
   .manualCarousel .swiper-button-prev::after {
-    font-size: 16px;
-    font-weight: bold;
-    color: #000;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8b7355;
+    transition: color 0.3s ease;
+  }
+
+  .manualCarousel .swiper-button-next:hover::after,
+  .manualCarousel .swiper-button-prev:hover::after {
+    color: #fff;
   }
 
   .manualCarousel .swiper-button-prev {
-    left: 8px;
+    left: 12px;
   }
 
   .manualCarousel .swiper-button-next {
-    right: 8px;
+    right: 12px;
   }
 
   .manualCarousel .swiper-button-disabled {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .swiper-slide {
+    flex: 0 0 70%;
+  }
+  
+  .manualCarousel .swiper-button-next,
+  .manualCarousel .swiper-button-prev {
+    width: 36px;
+    height: 36px;
+  }
+
+  .manualCarousel .swiper-button-next::after,
+  .manualCarousel .swiper-button-prev::after {
+    font-size: 12px;
   }
 }

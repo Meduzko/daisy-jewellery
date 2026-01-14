@@ -25,7 +25,7 @@ export default function ProductBuyButton({
       style={{ width }}
       {...rest}
     >
-      {text}
+      <span>{text}</span>
     </button>
   )
 };

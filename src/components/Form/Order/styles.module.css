@@ -1,36 +1,95 @@
+/* Modern Order Form for Jewelry Store */
+
 .container {
     display: flex;
     justify-content: center;
 }
 
+/* Form Section Title */
 .formTitle {
     text-align: left;
+    font-weight: 300 !important;
+    font-size: 1.25rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #1a1a1a;
+    position: relative;
+    padding-bottom: 16px !important;
+    margin-bottom: 8px !important;
 }
 
+.formTitle::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(90deg, #8b7355, #c9a86c);
+}
+
+/* Form Grid */
 .formGrid {
-    padding-bottom: 72px;
+    padding-bottom: 48px;
+}
+
+/* MUI Input Styling Override */
+.formGrid :global(.MuiOutlinedInput-root) {
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+
+.formGrid :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+    border-color: #8b7355;
+}
+
+.formGrid :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+    border-color: #8b7355;
+    border-width: 1px;
+}
+
+.formGrid :global(.MuiInputLabel-root.Mui-focused) {
+    color: #8b7355;
+}
+
+.formGrid :global(.MuiFormLabel-root) {
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
 }
 
 .dialogTitle {
     text-align: center;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 .dialogText {
-    font-size: 16px;
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.6;
 }
 
 .dialogPaper {
-    padding: 16px;
+    padding: 24px;
+    border-radius: 0;
 }
 
+/* Select Inputs */
 .contactSelect {
     text-align: left;
 }
 
-.commentsTextArea textarea {
-    min-height: 124px !important;
+.contactSelect :global(.MuiOutlinedInput-root) {
+    border-radius: 0;
 }
 
+/* Comments TextArea */
+.commentsTextArea textarea {
+    min-height: 100px !important;
+}
+
+/* Preloader */
 .preloader {
     position: fixed;
     top: 0;
@@ -40,8 +99,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(255, 255, 255, 0.9);
     z-index: 9999;
+    backdrop-filter: blur(4px);
+}
+
+.preloader :global(.MuiCircularProgress-root) {
+    color: #8b7355 !important;
 }
 
 .defaultBlured {
@@ -56,12 +120,31 @@
     filter: blur(5px);
     pointer-events: none;
     opacity: 0.5;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(255, 255, 255, 0.6);
     z-index: 102;
 }
 
 .emptyTitle {
     text-align: center;
     width: 100%;
-    padding-top: 32px;
+    padding-top: 48px;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .formTitle {
+        font-size: 1.1rem !important;
+        letter-spacing: 0.1em;
+    }
+
+    .formTitle::after {
+        width: 40px;
+    }
+
+    .formGrid {
+        padding-bottom: 32px;
+    }
 }

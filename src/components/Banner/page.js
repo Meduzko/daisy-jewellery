@@ -22,11 +22,19 @@ export default async function Banner({ lang = 'uk' } = {}) {
         style={{ objectFit: 'cover' }}
         className={styles.bannerImg}
       />
-      <h1 className={styles.bannerText}>{bannerTitle}</h1>
-      {/* <h1 className={styles.bannerText}>Срібні прикраси Daisy Jewellery</h1> */}
-      {/* <div className={styles.bannerBackground}>
-        <h1><Link className={styles.bannerLink} href="/">—Перейти до категорій</Link></h1>
-      </div> */}
+      <div className={styles.bannerOverlay} />
+      <div className={styles.bannerContent}>
+        <span className={styles.bannerAccent}>✦</span>
+        <h1 className={styles.bannerText}>{bannerTitle}</h1>
+        <div className={styles.bannerDivider}>
+          <span className={styles.dividerLine} />
+          <span className={styles.dividerIcon}>◇</span>
+          <span className={styles.dividerLine} />
+        </div>
+        <Link href={`/${lang}/koltsa/1`} className={styles.bannerCta}>
+          Переглянути колекцію
+        </Link>
+      </div>
     </div>
   )
 }

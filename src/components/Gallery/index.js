@@ -21,15 +21,15 @@ export default async function Gallery({
   lang
 }) {
   const GalleryComponent = isMobile ? GalleryItemMobile : GalleryItem;
-  const spacing = isMobile ? 1 : 6;
-  const rowSpacing = isMobile ? 4 : 8;
+  const spacing = isMobile ? 1 : 3;
+  const rowSpacing = isMobile ? 2 : 4;
 
   return (
     <div className={styles.galleryCnt}>
       <Grid container spacing={spacing} rowSpacing={rowSpacing}>
         {items.map((item) => (
           item.image_path && (
-            <Grid item xs={12} sm={6} md={4} key={item.id || item.product_id}>
+            <Grid item xs={6} sm={6} md={4} key={item.id || item.product_id}>
               <GalleryComponent item={item} baseURL={itemBaseURL || baseURL} t={t} showSizes={showSizes} lang={lang} />
             </Grid>
           )

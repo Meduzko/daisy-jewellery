@@ -58,7 +58,7 @@ export default async function sitemap() {
     return allProducts;
   }
 
-  const limitPerPage = 15;
+  const limitPerPage = 16;
   const ringProducts = await fetchAllByCategory(process.env.RING_CATEGORY_ID, 100);
   const necklaceProducts = await fetchAllByCategory(process.env.NECKLACE_CATEGORY_ID, 100);
   const earringProducts = await fetchAllByCategory(process.env.EARING_CATEGORY_ID, 100);

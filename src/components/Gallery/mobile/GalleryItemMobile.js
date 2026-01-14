@@ -17,7 +17,8 @@ export default async function GalleryItemMobile({ item, baseURL = '/', t, showSi
   const priceSymbol = 'грн';
   const tk = t[code];
   const tkTitle = tk?.title || title;
-  const tkDescription = tk?.description || short_description;
+  const tkDescription = tk?.description || short_description || '';
+  const hasDescription = tkDescription && tkDescription.trim().length > 0;
 
   return (
       <div className={styles.itemWrapper}>
@@ -29,7 +30,6 @@ export default async function GalleryItemMobile({ item, baseURL = '/', t, showSi
                 src={imageUrl || image_path}
                 alt={tkTitle}
                 fill={true}
-                // loading="lazy"
                 className={`${styles.defaultImg} ${styles.itemImg}`}
               />
             </div>
@@ -38,7 +38,9 @@ export default async function GalleryItemMobile({ item, baseURL = '/', t, showSi
         <div className={styles.itemInfo}>
             <div className={styles.titleContainer}>
               <Link href={`${baseURL}/${code}`} className={styles.title}>{tkTitle}</Link>
-              <Link href={`${baseURL}/${code}`} className={styles.subTitle} dangerouslySetInnerHTML={{ __html: tkDescription }} />
+              {hasDescription && (
+                <span className={styles.subTitle} dangerouslySetInnerHTML={{ __html: tkDescription }} />
+              )}
             </div>
             <div className={styles.itemBottomCnt}>
               <div className={styles.price}>{`${price} ${priceSymbol}`}</div>

@@ -1,10 +1,43 @@
 .galleryCnt {
     padding: 48px;
+    background: linear-gradient(180deg, #fafafa 0%, #fff 100%);
 }
 
 /*
-** Gallery item
+** Gallery item - Modern Jewelry Design
 */
+.itemWrapper {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: #fff;
+    overflow: hidden;
+    height: 100%;
+    min-height: 100%;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.itemWrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+    pointer-events: none;
+    z-index: 10;
+    transition: box-shadow 0.4s ease;
+}
+
+.itemWrapper:hover::before {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+
+.itemWrapper:hover {
+    transform: translateY(-8px);
+}
+
 .itemLink:hover {
     cursor: default;
 }
@@ -12,13 +45,13 @@
 .galleryItem {
     text-align: center;
     position: relative;
-    /* min-height: 720px; */
-    aspect-ratio: 2 / 3;
+    aspect-ratio: 3 / 4;
     height: 100%;
+    overflow: hidden;
 }
 
 .itemBackground {
-    background-color: #eee;
+    background: linear-gradient(180deg, #f8f7f5 0%, #f2f1ef 100%);
     width: 100%;
     height: 100%;
     position: absolute;
@@ -33,6 +66,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 .imgContainer:hover {
@@ -41,6 +75,7 @@
 
 .imgContainer:hover .hoverImg {
     opacity: 1;
+    transform: scale(1.02);
 }
   
 .imgContainer:hover .defaultImg {
@@ -53,11 +88,11 @@
     left: 0;
     right: 0;
     margin: auto;
-
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 3 / 4;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease;
 }
 
 .placeholderImg {
@@ -65,13 +100,11 @@
 }
 
 .defaultImg {
-    transition: opacity 0.3s ease-in-out;
     z-index: 1;
 }
 
 .hoverImg {
     opacity: 0;
-    transition: opacity 0.3s ease-in-out;
     z-index: 2;
 }
 
@@ -80,48 +113,102 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 16px 0;
-    min-height: 186px;
+    padding: 20px 16px;
+    min-height: 160px;
     flex-direction: column;
+    background: #fff;
+    gap: 12px;
 }
 
 .titleContainer {
     display: flex;
     flex-direction: column;
-    padding-right: 24px;
+    gap: 6px;
+    width: 100%;
 }
 
 .title {
-    font-weight: 800;
-    font-size: 1.35rem;
-    letter-spacing: 0.18rem;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    color: #1a1a1a;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.title a:hover {
+    color: #8b7355;
 }
 
 .subTitle {
-    font-size: 1rem;
-    font-weight: 200;
-    padding: 8px 0;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: #666;
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .price {
-    font-weight: 800;
-    font-size: 1.35rem;
-    padding-top: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #1a1a1a;
+    letter-spacing: 0.02em;
 }
 
 .buyButton {
-    padding: 16px;
-    background-color: #000;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
     color: #fff;
-    border: 0;
+    border: none;
     text-transform: uppercase;
-    font-weight: 200;
-    font-size: 1rem;
-    letter-spacing: 0.18rem;
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+}
+
+.buyButton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #8b7355 0%, #a08060 100%);
+    transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 0;
+}
+
+.buyButton:hover::before {
+    left: 0;
 }
 
 .buyButton:hover {
-    cursor: pointer;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.buyButton span,
+.buyButton {
+    position: relative;
+    z-index: 1;
 }
 
 .itemBottomCnt {
@@ -129,10 +216,262 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Subtle shimmer effect on image hover */
+.imgContainer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.8s ease;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.imgContainer:hover::after {
+    left: 150%;
 }
 
 @media (max-width: 1024px) {
     .galleryCnt {
         padding: 12px;
+    }
+
+    .itemWrapper:hover {
+        transform: none;
+    }
+
+    .itemWrapper:hover::before {
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+    }
+
+    .itemInfo {
+        padding: 12px 10px;
+        min-height: 120px;
+        gap: 8px;
+    }
+
+    .titleContainer {
+        gap: 4px;
+    }
+
+    .title {
+        font-size: 0.85rem;
+    }
+
+    .subTitle {
+        font-size: 0.75rem;
+        -webkit-line-clamp: 1;
+    }
+
+    .price {
+        font-size: 0.9rem;
+    }
+
+    .buyButton {
+        padding: 8px 14px;
+        font-size: 0.65rem;
+    }
+}
+
+/*
+** Size Selector Dialog - Modern Jewelry Design
+*/
+.sizeDialog :global(.MuiDialog-paper) {
+    border-radius: 0 !important;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15) !important;
+    max-width: 420px !important;
+    width: 100% !important;
+    margin: 16px !important;
+    overflow: visible !important;
+}
+
+.dialogPaper {
+    background: linear-gradient(180deg, #ffffff 0%, #faf8f5 100%) !important;
+    position: relative;
+}
+
+.dialogPaper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #8b7355, #c9a86c);
+}
+
+.dialogHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 24px 24px 0;
+}
+
+.dialogTitleWrapper {
+    flex: 1;
+    text-align: center;
+    padding-right: 40px;
+}
+
+.dialogAccent {
+    color: #c9a86c;
+    font-size: 0.75rem;
+    display: block;
+    margin-bottom: 8px;
+    opacity: 0.8;
+}
+
+.dialogTitle {
+    font-size: 1.1rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #1a1a1a;
+    margin: 0 0 12px;
+}
+
+.dialogDivider {
+    display: flex;
+    justify-content: center;
+}
+
+.dividerLine {
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, #8b7355, #c9a86c);
+}
+
+.dialogClose {
+    position: absolute !important;
+    top: 12px;
+    right: 12px;
+    color: #666 !important;
+    transition: all 0.3s ease !important;
+}
+
+.dialogClose:hover {
+    color: #8b7355 !important;
+    background-color: rgba(139, 115, 85, 0.08) !important;
+    transform: rotate(90deg);
+}
+
+.dialogContent {
+    padding: 28px 24px 24px;
+    display: flex;
+    justify-content: center;
+}
+
+.dialogActions {
+    display: flex;
+    gap: 12px;
+    padding: 0 24px 24px;
+    border-top: 1px solid rgba(139, 115, 85, 0.1);
+    padding-top: 20px;
+    margin-top: 4px;
+}
+
+.dialogCancelBtn {
+    flex: 1;
+    padding: 14px 20px;
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    color: #666;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dialogCancelBtn:hover {
+    border-color: #8b7355;
+    color: #8b7355;
+    background: rgba(139, 115, 85, 0.04);
+}
+
+.dialogConfirmBtn {
+    flex: 2;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+    border: none;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dialogConfirmBtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #8b7355 0%, #c9a86c 100%);
+    transition: left 0.4s ease;
+    z-index: 0;
+}
+
+.dialogConfirmBtn:hover::before {
+    left: 0;
+}
+
+.dialogConfirmBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(139, 115, 85, 0.3);
+}
+
+.dialogConfirmBtn span {
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 480px) {
+    .sizeDialog :global(.MuiDialog-paper) {
+        margin: 12px !important;
+    }
+
+    .dialogHeader {
+        padding: 20px 20px 0;
+    }
+
+    .dialogTitle {
+        font-size: 1rem;
+    }
+
+    .dialogContent {
+        padding: 24px 20px 20px;
+    }
+
+    .dialogActions {
+        flex-direction: column;
+        padding: 0 20px 20px;
+        gap: 10px;
+    }
+
+    .dialogCancelBtn,
+    .dialogConfirmBtn {
+        flex: none;
+        width: 100%;
+        padding: 12px 16px;
     }
 }
