@@ -38,10 +38,23 @@ export default function Header({ lang }) {
   }, [isCompact]);
 
   useEffect(() => {
+    const MOBILE_BREAKPOINT = 768;
     const ENTER_COMPACT = 120; // scrollY at which header becomes compact
     const EXIT_COMPACT = 40;   // scrollY below which header expands
 
+    const isMobile = () => window.innerWidth <= MOBILE_BREAKPOINT;
+
     const updateOnScroll = () => {
+      // Skip compact logic on mobile
+      if (isMobile()) {
+        if (isCompactRef.current) {
+          isCompactRef.current = false;
+          setIsCompact(false);
+        }
+        tickingRef.current = false;
+        return;
+      }
+
       const currentY = window.scrollY || 0;
 
       const prevHeight = headerRef.current ? headerRef.current.offsetHeight : 0;
@@ -90,12 +103,22 @@ export default function Header({ lang }) {
       }
     };
 
+    const onResize = () => {
+      // Reset compact state when switching to mobile
+      if (isMobile() && isCompactRef.current) {
+        isCompactRef.current = false;
+        setIsCompact(false);
+      }
+    };
+
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize, { passive: true });
     // sync initial state on mount
     updateOnScroll();
 
     return () => {
       window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 

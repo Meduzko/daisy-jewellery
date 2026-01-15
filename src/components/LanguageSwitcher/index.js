@@ -104,21 +104,23 @@ const LanguageSwitcher = () => {
   };
 
   return (
-    <div className={styles.dropdown}>
+    <div className={`${styles.dropdown} ${dropdownOpen ? styles.dropdownOpen : ''}`}>
       <button
         className={styles.dropdownToggle}
         onClick={() => setDropdownOpen((prev) => !prev)}
+        aria-expanded={dropdownOpen}
+        aria-haspopup="listbox"
       >
         {currentLocaleLabel}
         <ArrowDropDownIcon />
       </button>
       {dropdownOpen && (
-        <ul className={styles.dropdownMenu}>
+        <ul className={styles.dropdownMenu} role="listbox">
           {availableLocales.map((locale) => (
-            <li key={locale.code} className={styles.dropdownItem}>
+            <li key={locale.code} className={styles.dropdownItem} role="option" aria-selected="false">
               <button
                 onClick={() => handleLanguageChange(locale.code)}
-                className={`${styles.button}`}
+                className={styles.button}
               >
                 {locale.label}
               </button>

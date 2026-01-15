@@ -12,26 +12,44 @@
 .nav[aria-label="Breadcrumb"] ol {
   list-style: none;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 4px;
   font-size: 0.85rem;
   color: #666;
+  overflow: hidden;
 }
 
 .nav[aria-label="Breadcrumb"] li {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.nav[aria-label="Breadcrumb"] li:last-child {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.nav[aria-label="Breadcrumb"] li:last-child span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
 }
   
 .nav[aria-label="Breadcrumb"] li + li:before {
   content: '/';
   padding: 0 10px;
   color: #ccc;
+  flex-shrink: 0;
 }
 
 .linkItem {
   color: #666;
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
 .linkItem:hover {
@@ -47,14 +65,10 @@
 @media (max-width: 768px) {
   .nav {
     padding: 12px 16px;
-    inset-block-start: 68px;
+    inset-block-start: 56px;
   }
 
   .nav[aria-label="Breadcrumb"] ol {
     font-size: 0.8rem;
-  }
-
-  :global(body.header-compact) .nav {
-    inset-block-start: 48px;
   }
 }

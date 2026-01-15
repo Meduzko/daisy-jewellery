@@ -144,33 +144,28 @@
 
 @media (max-width: 768px) {
     .header::after {
-        width: 80px;
+        opacity: 0;
     }
 
     .headerContainer {
-        height: 68px;
+        height: 56px;
         padding: 0 12px;
     }
 
     .logo {
-        width: 67px;
-        height: 46px;
+        width: 42px;
+        height: auto;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .logo:hover {
+        transform: translateY(-50%) scale(1.05);
     }
 
     .logoContainer {
-        min-width: 100px;
-        height: 86px;
-    }
-
-    .compact .headerContainer {
-        height: 52px;
-    }
-
-    .compact .logoContainer {
-        height: 52px;
-    }
-
-    .compact .logo {
-        width: 40px;
+        min-width: 60px;
+        height: 56px;
+        overflow: visible;
     }
 }
