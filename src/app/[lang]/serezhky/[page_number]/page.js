@@ -11,34 +11,30 @@ const allowedPages = [
 ];
 
 export async function generateStaticParams() {
-  const langs = ['uk', 'ru'];
+  // serezhky is the Ukrainian slug - only generate uk pages
   const pages = allowedPages.map(p => p.page_number);
-  return langs.flatMap(lang => pages.map(page_number => ({ lang, page_number })));
+  return pages.map(page_number => ({ lang: 'uk', page_number }));
 }
 
 export async function generateMetadata({ params }) {
-  const lang = params?.lang === 'ru' ? 'ru' : 'uk';
+  const lang = 'uk';
   const currentPage = +params.page_number;
   const is404 = is404Page(currentPage, allowedPages);
   if (is404) return generate404MetaData();
 
-  const title = lang === 'ru'
-    ? 'Серебряные серьги | Купить серебряные серьги Daisy Jewellery'
-    : 'Срібні сережки | Купити срібні сережки Daisy Jewellery';
-  const description = lang === 'ru'
-    ? 'Серебряные серьги от Daisy Jewellery. Быстрая доставка по всей Украине!'
-    : 'Срібні сережки від Daisy Jewellery. Швидка доставка по всій Україні!';
-  const categorySlug = lang === 'ru' ? 'sergi' : 'serezhky';
+  const title = 'Срібні сережки | Купити срібні сережки Daisy Jewellery';
+  const description = 'Срібні сережки від Daisy Jewellery. Швидка доставка по всій Україні!';
+  const categorySlug = 'serezhky';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
-  const keywords = lang === 'ru' ? 'Серебряные серьги, купить' : 'Срібні сережки, купити';
+  const keywords = 'Срібні сережки, купити';
   const lastPage = 3;
   return generateCategoryMetadata({ title, description, currentPage, lastPage, canonicalUrl, categorySlug, keywords, lang });
 }
 
 export default async function Page({ params }) {
-  const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const baseSlug = lang === 'ru' ? 'sergi' : 'serezhky';
-  const itemSlug = lang === 'ru' ? 'kupit-serebryanyye-sergi' : 'kupyty-serezhky-sribni';
+  const lang = 'uk';
+  const baseSlug = 'serezhky';
+  const itemSlug = 'kupyty-serezhky-sribni';
   const baseURL = `/${lang}/${baseSlug}`;
   const itemBaseURL = `${baseURL}/${itemSlug}`;
   const categoryId = process.env.EARING_CATEGORY_ID;
@@ -52,8 +48,8 @@ export default async function Page({ params }) {
 
   const logoJsonLd = getLogoJsonLd({ lang });
   const categoryJsonLd = getCategoryJsonLd({
-    categoryName: lang === 'ru' ? 'Серебряные серьги от Daisy Jewellery' : 'Срібні сережки від Daisy Jewellery',
-    categoryDescription: lang === 'ru' ? 'Серебряные серьги от Daisy Jewellery. Быстрая доставка по всей Украине!' : 'Срібні сережки від Daisy Jewellery. Швидка доставка по всій Україні!',
+    categoryName: 'Срібні сережки від Daisy Jewellery',
+    categoryDescription: 'Срібні сережки від Daisy Jewellery. Швидка доставка по всій Україні!',
     url: `${baseURL}/${params.page_number}`,
     lowPrice: 400,
     highPrice: 2200
@@ -61,7 +57,7 @@ export default async function Page({ params }) {
 
   return (
     <>
-      <h1 className="category-title">{lang === 'ru' ? 'Серебряные серьги' : 'Срібні сережки'}</h1>
+      <h1 className="category-title">Срібні сережки</h1>
       <Gallery
         items={products}
         hasMore={hasMore}

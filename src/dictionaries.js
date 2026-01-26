@@ -9,18 +9,19 @@ export const getTranslations = async (locale) => dictionaries[locale]();
 
 export const getCategoryTranslations = async ({ lang, categoryName }) => {
   const translations = await getTranslations(lang);
-  const tk = translations.products[categoryName];
+  const tk = translations?.products?.[categoryName];
 
   return tk;
 };
 
 export const getItemTranslations = async ({ lang, categoryName, code }) => {
-  if (!lang) {
+  if (!lang || !code) {
     return;
   }
 
   const tk = await getCategoryTranslations({ lang, categoryName });
-  const res = tk?.[code];
+  // Ensure code is a string for dictionary lookup
+  const res = tk?.[String(code)];
 
   return res;
 };

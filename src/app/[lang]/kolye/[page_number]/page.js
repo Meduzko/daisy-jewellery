@@ -3,6 +3,7 @@ import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd'
 import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
 import Gallery from '../../../../components/Gallery';
 import { notFound } from 'next/navigation';
+import { getCategoryTranslations } from '../../../../dictionaries';
 
 const allowedPages = [
   { page_number: '1' },
@@ -45,6 +46,7 @@ export default async function Page({ params }) {
   const { products, hasMore } = await fetchProduct({ offset, limit, categoryId, paginated });
   const device = getDeviceType();
   const isMobile = device !== 'desktop';
+  const tk = await getCategoryTranslations({ lang, categoryName: lang === 'ru' ? 'kolye' : '' }).catch(() => undefined);
 
   if (!products || !products.length) notFound();
 
@@ -68,6 +70,8 @@ export default async function Page({ params }) {
         itemBaseURL={itemBaseURL}
         withPagination={paginated}
         isMobile={isMobile}
+        t={tk}
+        lang={lang}
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryJsonLd) }} />

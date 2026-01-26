@@ -19,8 +19,10 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
   const priceSymbol = 'грн';
   const tk = t[code];
   const tkTitle = tk?.title || title;
-  const tkDescription = tk?.description || short_description || '';
-  const hasDescription = tkDescription && tkDescription.trim().length > 0;
+  const rawDescription = tk?.description || short_description || '';
+  // Strip outer <p> tags to avoid nested paragraphs and normalize content
+  const tkDescription = rawDescription.replace(/^<p>|<\/p>$/gi, '').trim();
+  const hasDescription = tkDescription.length > 0;
 
   return (
       <article className={styles.itemWrapper}>

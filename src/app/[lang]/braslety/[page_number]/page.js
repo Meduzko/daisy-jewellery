@@ -3,6 +3,7 @@ import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd'
 import { fetchProduct } from '../../../../actions/fetchProduct';
 import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
 import Gallery from '../../../../components/Gallery';
+import { getCategoryTranslations } from '../../../../dictionaries';
 
 const allowedPages = [
   { page_number: '1' },
@@ -51,6 +52,7 @@ export default async function CategoryPageNumber({ params }) {
   const { products, hasMore } = await fetchProduct({ offset, limit, categoryId: process.env.BRACER_CATEGORY_ID, paginated });
   const device = getDeviceType();
   const isMobile = device !== 'desktop';
+  const tk = await getCategoryTranslations({ lang, categoryName: lang === 'ru' ? 'braslety' : '' }).catch(() => undefined);
 
   if (!products || !products.length) {
     notFound();
@@ -78,6 +80,8 @@ export default async function CategoryPageNumber({ params }) {
         itemBaseURL={itemBaseURL}
         withPagination={paginated}
         isMobile={isMobile}
+        t={tk}
+        lang={lang}
       />
       <script
         type="application/ld+json"
