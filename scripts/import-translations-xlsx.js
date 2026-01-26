@@ -1,5 +1,10 @@
 /*
-  Import translations from an Excel (.xlsx) file and generate locale JSON files.
+  Import translations from an Excel (.xlsx) file and merge into existing locale JSON files.
+
+  MERGE BEHAVIOR:
+    - New keys from the xlsx are added to the existing JSON
+    - Existing keys are overwritten only if present in the xlsx
+    - Keys not in the xlsx are preserved (not deleted)
 
   Expected Excel structure (first row is headers):
     key | uk | ru
@@ -42,6 +47,37 @@ function setDeep(obj, dottedPath, value) {
 
 function normalizeHeader(h) {
   return String(h || '').trim().toLowerCase();
+}
+
+function deepMerge(target, source) {
+  for (const key of Object.keys(source)) {
+    if (
+      source[key] &&
+      typeof source[key] === 'object' &&
+      !Array.isArray(source[key]) &&
+      target[key] &&
+      typeof target[key] === 'object' &&
+      !Array.isArray(target[key])
+    ) {
+      deepMerge(target[key], source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  }
+  return target;
+}
+
+function loadExistingLocale(filePath) {
+  if (fs.existsSync(filePath)) {
+    try {
+      const content = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(content);
+    } catch (err) {
+      console.warn(`Warning: Could not parse existing file ${filePath}, starting fresh.`);
+      return {};
+    }
+  }
+  return {};
 }
 
 function main() {
@@ -117,13 +153,15 @@ function main() {
   }
 
   const pretty = (obj) => JSON.stringify(obj, null, 2) + '\n';
-  for (const [locale, data] of Object.entries(locales)) {
+  for (const [locale, newData] of Object.entries(locales)) {
     const outPath = path.join(dictDir, `${locale}.json`);
-    fs.writeFileSync(outPath, pretty(data), 'utf8');
-    console.log(`Wrote ${outPath}`);
+    const existingData = loadExistingLocale(outPath);
+    const mergedData = deepMerge(existingData, newData);
+    fs.writeFileSync(outPath, pretty(mergedData), 'utf8');
+    console.log(`Merged and wrote ${outPath}`);
   }
 
-  console.log('Import completed.');
+  console.log('Import completed (merge mode).');
 }
 
 try {
