@@ -42,13 +42,23 @@ const tralslatedCat = {
     ring: 'koltsa',
     earring: 'sergi',
     necklace: 'kolye',
-    bracer: 'braslety'
+    bracer: 'braslety',
+    // Also support URL slugs as keys
+    kabluchki: 'koltsa',
+    serezhky: 'sergi',
+    kolye: 'kolye',
+    braslety: 'braslety',
   },
   ru: {
     koltsa: 'ring',
     sergi: 'earring',
     kolye: 'necklace',
-    braslety: 'bracer'
+    braslety: 'bracer',
+    // Also support URL slugs as keys (maps to UK slugs)
+    koltsa: 'kabluchki',
+    sergi: 'serezhky',
+    kolye: 'kolye',
+    braslety: 'braslety',
   }
 };
 
@@ -98,16 +108,21 @@ const getItemMetaData = ({ categoryName, productTitle, code, short_description, 
   
   const keywords = {
     uk: {
-      ring: 'Срібло, Каблучки',
-      earring: 'Срібло, Сережки',
-      necklace: 'Срібло, Кольє',
-      bracer: 'Срібло, Браслети',
+      ring: 'срібні каблучки, каблучка срібло 925, купити каблучку срібну, жіночі каблучки, каблучки Україна',
+      earring: 'срібні сережки, сережки срібло 925, купити сережки срібні, жіночі сережки, сережки Україна',
+      necklace: 'срібне кольє, кольє срібло 925, купити кольє срібне, жіноче кольє, кольє Україна',
+      bracer: 'срібний браслет, браслет срібло 925, купити браслет срібний, жіночий браслет, браслети Україна',
+      // URL slugs
+      kabluchki: 'срібні каблучки, каблучка срібло 925, купити каблучку срібну, жіночі каблучки, каблучки Україна',
+      serezhky: 'срібні сережки, сережки срібло 925, купити сережки срібні, жіночі сережки, сережки Україна',
+      kolye: 'срібне кольє, кольє срібло 925, купити кольє срібне, жіноче кольє, кольє Україна',
+      braslety: 'срібний браслет, браслет срібло 925, купити браслет срібний, жіночий браслет, браслети Україна',
     },
     ru: {
-      koltsa: 'Серебро, Кольца',
-      sergi: 'Серебро, Серьги',
-      kolye: 'Серебро, Колье',
-      braslety: 'Серебро, Браслеты',
+      koltsa: 'серебряные кольца, кольцо серебро 925, купить кольцо серебряное, женские кольца, кольца Украина',
+      sergi: 'серебряные серьги, серьги серебро 925, купить серьги серебряные, женские серьги, серьги Украина',
+      kolye: 'серебряное колье, колье серебро 925, купить колье серебряное, женское колье, колье Украина',
+      braslety: 'серебряный браслет, браслет серебро 925, купить браслет серебряный, женский браслет, браслеты Украина',
     }
   };
 
@@ -117,6 +132,11 @@ const getItemMetaData = ({ categoryName, productTitle, code, short_description, 
       earring: 'Купити сережки срібні від Daisy Jewellery',
       necklace: 'Купити срібне кольє від Daisy Jewellery',
       bracer: 'Купити браслет зі срібла від Daisy Jewellery',
+      // URL slugs
+      kabluchki: 'Купити срібну каблучку від Daisy Jewellery',
+      serezhky: 'Купити сережки срібні від Daisy Jewellery',
+      kolye: 'Купити срібне кольє від Daisy Jewellery',
+      braslety: 'Купити браслет зі срібла від Daisy Jewellery',
     },
     ru: {
       koltsa: 'Купить серебряное кольцо от Daisy Jewellery',
@@ -126,19 +146,22 @@ const getItemMetaData = ({ categoryName, productTitle, code, short_description, 
     }
   };
 
-  const keywordsRes = `${keywords[lang][categoryName]}`;
+  const defaultKeywords = lang === 'uk' 
+    ? 'срібні прикраси, ювелірні вироби срібло 925, купити прикраси Україна, Daisy Jewellery'
+    : 'серебряные украшения, ювелирные изделия серебро 925, купить украшения Украина, Daisy Jewellery';
+  const keywordsRes = keywords[lang][categoryName] || defaultKeywords;
   
   const translatedSlugs = getTralslatedCategorySlugs({ lang, categoryName });
-  // translatedSlugs.uk is always the category type (ring, earring, necklace, bracer)
-  const categoryType = translatedSlugs.uk;
-  const ukSlug = PRODUCT_URL_SLUGS.uk[categoryType];
-  const ruSlug = PRODUCT_URL_SLUGS.ru[categoryType];
+  // Use the correct key for each locale's lookup
+  const ukSlug = PRODUCT_URL_SLUGS.uk[translatedSlugs.uk];
+  const ruSlug = PRODUCT_URL_SLUGS.ru[translatedSlugs.ru];
   
   const canonicalRes = `${siteUrl}/${lang}/${lang === 'uk' ? ukSlug : ruSlug}/${code}`;
   
   const shortDescription = short_description.replace(/<[^>]*>/g, '');
   const description = shortDescription.replace(/&[^;\s]+;/g, '');
-  const descriptionRes = `${description.trim()} ${descriptionMap[lang][categoryName]}`;
+  const descriptionSuffix = descriptionMap[lang][categoryName] || 'Купити від Daisy Jewellery';
+  const descriptionRes = `${description.trim()} ${descriptionSuffix}`;
   
   const languages = {
     'uk-UA': `${siteUrl}/uk/${ukSlug}/${code}`,

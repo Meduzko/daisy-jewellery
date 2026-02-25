@@ -161,6 +161,7 @@ export const CATEGORY_SLUGS = {
 
 /**
  * Product URL slugs (category + subcategory) by locale
+ * Supports both category types (ring, earring) and URL slugs (kabluchki, serezhky)
  */
 export const PRODUCT_URL_SLUGS = {
   uk: {
@@ -168,12 +169,22 @@ export const PRODUCT_URL_SLUGS = {
     earring: 'serezhky/kupyty-serezhky-sribni',
     necklace: 'kolye/kupyty-sribne-kolye',
     bracer: 'braslety/kupyty-sribnyy-braslet',
+    // Also support URL slugs as keys
+    kabluchki: 'kabluchki/kupyty-sribnu-kabluchku',
+    serezhky: 'serezhky/kupyty-serezhky-sribni',
+    kolye: 'kolye/kupyty-sribne-kolye',
+    braslety: 'braslety/kupyty-sribnyy-braslet',
   },
   ru: {
     ring: 'koltsa/kupit-serebryanoye-koltso',
     earring: 'sergi/kupit-serebryanyye-sergi',
     necklace: 'kolye/kupit-serebryanoye-kolye',
     bracer: 'braslety/kupit-serebryanyy-braslet',
+    // Also support URL slugs as keys
+    koltsa: 'koltsa/kupit-serebryanoye-koltso',
+    sergi: 'sergi/kupit-serebryanyye-sergi',
+    kolye: 'kolye/kupit-serebryanoye-kolye',
+    braslety: 'braslety/kupit-serebryanyy-braslet',
   }
 };
 
