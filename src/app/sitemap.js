@@ -1,9 +1,13 @@
 import { fetchProduct } from '../actions/fetchProduct';
 import { getAllHtmlPosts } from '../lib/posts';
 
+// Regenerate sitemap every 24 hours to pick up new products
+export const revalidate = 86400;
+
 export default async function sitemap() {
   const baseUrl = process.env.SITE_DOMAIN || process.env.NEXT_PUBLIC_BASE_URL || 'https://daisy-jewellery.com.ua';
   const locales = ['uk', 'ru'];
+  
   const localedCategoryItem = {
     uk: {
       ring: 'kabluchki/kupyty-sribnu-kabluchku',
@@ -32,144 +36,158 @@ export default async function sitemap() {
       necklace: 'kolye',
       bracer: 'braslety',
     }
-  }
+  };
 
-  // Fetch all products for a category by paging through the API
-  async function fetchAllByCategory(categoryId, pageLimit = 100) {
+  async function fetchAllByCategory(categoryId, categoryName, pageLimit = 100) {
+    if (!categoryId) {
+      console.warn(`[Sitemap] Missing category ID for ${categoryName}`);
+      return [];
+    }
+    
     const allProducts = [];
     let offset = 0;
     let hasMore = true;
+    let attempts = 0;
+    const maxAttempts = 3;
 
-    while (hasMore) {
-      const page = await fetchProduct({
-        categoryId,
-        limit: pageLimit,
-        offset,
-        paginated: true
-      });
+    while (hasMore && attempts < maxAttempts) {
+      try {
+        const page = await fetchProduct({
+          categoryId,
+          limit: pageLimit,
+          offset,
+          paginated: true
+        });
 
-      const products = page?.products || [];
-      allProducts.push(...products);
+        const products = page?.products || [];
+        allProducts.push(...products);
 
-      hasMore = Boolean(page?.hasMore) && products.length > 0;
-      offset += pageLimit;
+        hasMore = Boolean(page?.hasMore) && products.length > 0;
+        offset += pageLimit;
+        attempts = 0; // Reset on success
+      } catch (error) {
+        attempts++;
+        console.error(`[Sitemap] Error fetching ${categoryName} (attempt ${attempts}):`, error.message);
+        if (attempts >= maxAttempts) break;
+        await new Promise(r => setTimeout(r, 1000 * attempts));
+      }
     }
 
+    console.log(`[Sitemap] Fetched ${allProducts.length} products for ${categoryName}`);
     return allProducts;
   }
 
   const limitPerPage = 16;
-  const ringProducts = await fetchAllByCategory(process.env.RING_CATEGORY_ID, 100);
-  const necklaceProducts = await fetchAllByCategory(process.env.NECKLACE_CATEGORY_ID, 100);
-  const earringProducts = await fetchAllByCategory(process.env.EARING_CATEGORY_ID, 100);
-  const bracerProducts = await fetchAllByCategory(process.env.BRACER_CATEGORY_ID, 100);
+  
+  // Fetch all categories in parallel for better performance
+  const [ringProducts, necklaceProducts, earringProducts, bracerProducts] = await Promise.all([
+    fetchAllByCategory(process.env.RING_CATEGORY_ID, 'rings', 100),
+    fetchAllByCategory(process.env.NECKLACE_CATEGORY_ID, 'necklaces', 100),
+    fetchAllByCategory(process.env.EARING_CATEGORY_ID, 'earrings', 100),
+    fetchAllByCategory(process.env.BRACER_CATEGORY_ID, 'bracelets', 100),
+  ]);
 
   const ringPages = Math.ceil(ringProducts?.length / limitPerPage) || 6;
   const necklacePages = Math.ceil(necklaceProducts?.length / limitPerPage) || 3;
   const earringPages = Math.ceil(earringProducts?.length / limitPerPage) || 4;
   const bracerPages = Math.ceil(bracerProducts?.length / limitPerPage) || 3;
 
-  // These are your "base" routes for each locale
   const staticRoutes = ['', 'about', 'contact', 'delivery', 'oferta', 'returns', 'blog'];
 
-  // Blog posts
-  const dynamicBlogPostsRU = getAllHtmlPosts({ lang: 'ru' }).map(blogPost => ({
-    url: `${baseUrl}/ru/blog/${blogPost.slug}`,
-    lastModified: new Date().toISOString(),
-  }));
+  // Helper to create sitemap entries for BOTH locales with hreflang alternates
+  const createEntries = (ukPath, ruPath, priority = 0.8) => {
+    const alternates = {
+      languages: {
+        uk: `${baseUrl}/${ukPath}`,
+        ru: `${baseUrl}/${ruPath}`,
+      },
+    };
+    
+    return [
+      {
+        url: `${baseUrl}/${ukPath}`,
+        lastModified: new Date().toISOString(),
+        changeFrequency: 'weekly',
+        priority,
+        alternates,
+      },
+      {
+        url: `${baseUrl}/${ruPath}`,
+        lastModified: new Date().toISOString(),
+        changeFrequency: 'weekly',
+        priority,
+        alternates,
+      },
+    ];
+  };
 
-  const dynamicBlogPostsUK = getAllHtmlPosts({ lang: 'uk' }).map(blogPost => ({
-    url: `${baseUrl}/uk/blog/${blogPost.slug}`,
-    lastModified: new Date().toISOString(),
-  }));
+  // Static routes with hreflang (both /uk and /ru)
+  const localizedStaticRoutes = staticRoutes.flatMap((route) => {
+    const ukPath = route === '' ? 'uk' : `uk/${route}`;
+    const ruPath = route === '' ? 'ru' : `ru/${route}`;
+    const priority = route === '' ? 1.0 : 0.7;
+    return createEntries(ukPath, ruPath, priority);
+  });
 
-  // Helper to build localized static routes
-  const localizedStaticRoutes = locales.flatMap((locale) =>
-    staticRoutes.map((route) => ({
-      url:
-        route === ''
-          ? `${baseUrl}/${locale}` // Handle home route
-          : `${baseUrl}/${locale}/${route}`,
-      lastModified: new Date().toISOString(),
-    }))
-  );
+  // Blog posts with hreflang (both /uk and /ru)
+  const ukBlogPosts = getAllHtmlPosts({ lang: 'uk' });
+  const ruBlogPosts = getAllHtmlPosts({ lang: 'ru' });
+  
+  const blogPostRoutes = ukBlogPosts.flatMap(post => {
+    const ruPost = ruBlogPosts.find(rp => rp.slug === post.slug);
+    return createEntries(
+      `uk/blog/${post.slug}`,
+      `ru/blog/${ruPost?.slug || post.slug}`,
+      0.6
+    );
+  });
 
-  // Categories
-  const dynamicRingCategoryRoutes = Array.from({ length: ringPages }, (_, index) =>
-    locales.flatMap((locale) => ({
-      url: `${baseUrl}/${locale}/${localedCategory[locale].ring}/${index + 1}`,
-      lastModified: new Date().toISOString(),
-    }))
-  ).flat();
+  // Category pages with hreflang (both /uk and /ru)
+  const createCategoryRoutes = (pages, categoryType) => {
+    return Array.from({ length: pages }, (_, index) => {
+      const pageNum = index + 1;
+      return createEntries(
+        `uk/${localedCategory.uk[categoryType]}/${pageNum}`,
+        `ru/${localedCategory.ru[categoryType]}/${pageNum}`,
+        pageNum === 1 ? 0.9 : 0.7
+      );
+    }).flat();
+  };
 
-  const dynamicNecklaceCategoryRoutes = Array.from({ length: necklacePages }, (_, index) =>
-    locales.flatMap((locale) => ({
-      url: `${baseUrl}/${locale}/${localedCategory[locale].necklace}/${index + 1}`,
-      lastModified: new Date().toISOString(),
-    }))
-  ).flat();
+  const ringCategoryRoutes = createCategoryRoutes(ringPages, 'ring');
+  const necklaceCategoryRoutes = createCategoryRoutes(necklacePages, 'necklace');
+  const earringCategoryRoutes = createCategoryRoutes(earringPages, 'earring');
+  const bracerCategoryRoutes = createCategoryRoutes(bracerPages, 'bracer');
 
-  const dynamicEarringCategoryRoutes = Array.from({ length: earringPages }, (_, index) =>
-    locales.flatMap((locale) => ({
-      url: `${baseUrl}/${locale}/${localedCategory[locale].earring}/${index + 1}`,
-      lastModified: new Date().toISOString(),
-    }))
-  ).flat();
+  // Product pages with hreflang (both /uk and /ru)
+  const createProductRoutes = (products, categoryType) => {
+    return products.flatMap(product => createEntries(
+      `uk/${localedCategoryItem.uk[categoryType]}/${product.code}`,
+      `ru/${localedCategoryItem.ru[categoryType]}/${product.code}`,
+      0.8
+    ));
+  };
 
+  const ringProductRoutes = createProductRoutes(ringProducts, 'ring');
+  const necklaceProductRoutes = createProductRoutes(necklaceProducts, 'necklace');
+  const earringProductRoutes = createProductRoutes(earringProducts, 'earring');
+  const bracerProductRoutes = createProductRoutes(bracerProducts, 'bracer');
 
-  const dynamicBracerCategoryRoutes = Array.from({ length: bracerPages }, (_, index) =>
-    locales.flatMap((locale) => ({
-      url: `${baseUrl}/${locale}/${localedCategory[locale].bracer}/${index + 1}`,
-      lastModified: new Date().toISOString(),
-    }))
-  ).flat();
-
-  // For dynamic product routes, map each product per locale
-  const dynamicRingRoutes = ringProducts.flatMap((ring) =>
-    locales.map((locale) => ({
-      url: `${baseUrl}/${locale}/${localedCategoryItem[locale].ring}/${ring.code}`,
-      lastModified: new Date().toISOString(),
-    }))
-  );
-
-  const dynamicNecklaceRoutes = necklaceProducts.flatMap((necklace) =>
-    locales.map((locale) => ({
-      url: `${baseUrl}/${locale}/${localedCategoryItem[locale].necklace}/${necklace.code}`,
-      lastModified: new Date().toISOString(),
-    }))
-  );
-
-  const dynamicEarringRoutes = earringProducts.flatMap((earring) =>
-    locales.map((locale) => ({
-      url: `${baseUrl}/${locale}/${localedCategoryItem[locale].earring}/${earring.code}`,
-      lastModified: new Date().toISOString(),
-    }))
-  );
-
-  const dynamicBracerRoutes = bracerProducts.flatMap((bracer) =>
-    locales.map((locale) => ({
-      url: `${baseUrl}/${locale}/${localedCategoryItem[locale].bracer}/${bracer.code}`,
-      lastModified: new Date().toISOString(),
-    }))
-  );
-
-  // Combine them all into a single array
-  const routes = [
+  const allRoutes = [
     ...localizedStaticRoutes,
-    // Category pages
-    ...dynamicRingCategoryRoutes,
-    ...dynamicNecklaceCategoryRoutes,
-    ...dynamicEarringCategoryRoutes,
-    ...dynamicBracerCategoryRoutes,
-    // Products
-    ...dynamicRingRoutes,
-    ...dynamicNecklaceRoutes,
-    ...dynamicEarringRoutes,
-    ...dynamicBracerRoutes,
-    // Blog posts
-    ...dynamicBlogPostsRU,
-    ...dynamicBlogPostsUK
+    ...ringCategoryRoutes,
+    ...necklaceCategoryRoutes,
+    ...earringCategoryRoutes,
+    ...bracerCategoryRoutes,
+    ...ringProductRoutes,
+    ...necklaceProductRoutes,
+    ...earringProductRoutes,
+    ...bracerProductRoutes,
+    ...blogPostRoutes,
   ];
 
-  return routes;
+  const totalProducts = ringProducts.length + necklaceProducts.length + earringProducts.length + bracerProducts.length;
+  console.log(`[Sitemap] Generated ${allRoutes.length} total URLs (${totalProducts} products × 2 locales)`);
+
+  return allRoutes;
 }

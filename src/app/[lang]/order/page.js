@@ -1,13 +1,20 @@
-import { getDefaultMetaData } from '../../../helpers';
 import styles from './styles.module.css';
 import OrderForm from '../../../components/Form/Order/Order';
 
 export async function generateMetadata({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const title = lang === 'ru'
-    ? 'Магазин серебряных украшений - Daisy Jewellery | Оформление заказа'
-    : 'Магазин срібних прикрас - Daisy Jewellery | Оформлення замовлення';
-  return getDefaultMetaData({ pagePath: 'order', title, lang });
+    ? 'Оформление заказа | Daisy Jewellery'
+    : 'Оформлення замовлення | Daisy Jewellery';
+  
+  return {
+    title,
+    robots: {
+      index: false,
+      follow: false,
+      noarchive: true,
+    },
+  };
 }
 
 export default function OrderPage({ params }) {

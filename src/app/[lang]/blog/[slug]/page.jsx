@@ -3,6 +3,8 @@ import path from 'path';
 import { getHtmlPostMetadata, getBlogContent } from '../../../../lib/posts';
 import { notFound } from 'next/navigation';
 
+const siteUrl = process.env.SITE_DOMAIN || process.env.NEXT_PUBLIC_BASE_URL || 'https://daisy-jewellery.com.ua';
+
 export async function generateMetadata({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   if (params?.slug) {
@@ -12,12 +14,21 @@ export async function generateMetadata({ params }) {
         title: metadata.title,
         description: metadata.description,
         alternates: {
-          canonical:`${process.env.SITE_DOMAIN}/${lang}/blog/${params.slug}`
+          canonical: `${siteUrl}/${lang}/blog/${params.slug}`,
+          languages: {
+            'uk-UA': `${siteUrl}/uk/blog/${params.slug}`,
+            'ru-UA': `${siteUrl}/ru/blog/${params.slug}`,
+          },
         },
         openGraph: {
           title: metadata.title,
           description: metadata.description,
-          url: `https://daisy-jewellery.com.ua/${lang}/blog/${params.slug}`,
+          url: `${siteUrl}/${lang}/blog/${params.slug}`,
+          type: 'article',
+        },
+        robots: {
+          index: true,
+          follow: true,
         },
       };
     }
@@ -26,6 +37,10 @@ export async function generateMetadata({ params }) {
   return {
     title: 'Blog | Daisy Jewellery',
     description: 'Jewellery blog',
+    robots: {
+      index: false,
+      follow: true,
+    },
   };
 }
 

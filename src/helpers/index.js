@@ -1,5 +1,12 @@
 import { headers } from 'next/headers';
 import { getItemTranslations } from '../dictionaries';
+import { 
+  buildCanonicalUrl, 
+  buildHreflangAlternates,
+  getSiteUrl,
+  PRODUCT_URL_SLUGS,
+  CATEGORY_SLUGS,
+} from './seo';
 
 export function getDeviceType() {
   const userAgent = headers().get('user-agent') || '';
@@ -78,13 +85,17 @@ const getTralslatedCategorySlugs = ({ lang, categoryName, translatedMap }) => {
 };
 
 /**
- * 
- * @param {string} categoryName 
- * @param {string} productTitle 
- * @param {number} code 
- * @returns product canonical and keywords metadata
+ * Get product metadata including canonical URL, keywords and description
+ * @param {string} categoryName - Category identifier
+ * @param {string} productTitle - Product title  
+ * @param {number} code - Product code
+ * @param {string} short_description - Product short description with HTML
+ * @param {string} lang - Language code
+ * @returns {object} Product canonical and keywords metadata
  */
 const getItemMetaData = ({ categoryName, productTitle, code, short_description, lang }) => {
+  const siteUrl = getSiteUrl();
+  
   const keywords = {
     uk: {
       ring: 'Срібло, Каблучки',
@@ -97,21 +108,6 @@ const getItemMetaData = ({ categoryName, productTitle, code, short_description, 
       sergi: 'Серебро, Серьги',
       kolye: 'Серебро, Колье',
       braslety: 'Серебро, Браслеты',
-    }
-  };
-
-  const canonical = {
-    uk: {
-      ring: 'kabluchki/kupyty-sribnu-kabluchku',
-      earring: 'serezhky/kupyty-serezhky-sribni',
-      necklace: 'kolye/kupyty-sribne-kolye',
-      bracer: 'braslety/kupyty-sribnyy-braslet',
-    },
-    ru: {
-      koltsa: 'koltsa/kupit-serebryanoye-koltso',
-      sergi: 'sergi/kupit-serebryanyye-sergi',
-      kolye: 'kolye/kupit-serebryanoye-kolye',
-      braslety: 'braslety/kupit-serebryanyy-braslet',
     }
   };
 
@@ -131,15 +127,22 @@ const getItemMetaData = ({ categoryName, productTitle, code, short_description, 
   };
 
   const keywordsRes = `${keywords[lang][categoryName]}`;
-  const canonicalRes = `${process.env.SITE_DOMAIN}/${lang}/${canonical[lang][categoryName]}/${code}`;
+  
+  const translatedSlugs = getTralslatedCategorySlugs({ lang, categoryName });
+  // translatedSlugs.uk is always the category type (ring, earring, necklace, bracer)
+  const categoryType = translatedSlugs.uk;
+  const ukSlug = PRODUCT_URL_SLUGS.uk[categoryType];
+  const ruSlug = PRODUCT_URL_SLUGS.ru[categoryType];
+  
+  const canonicalRes = `${siteUrl}/${lang}/${lang === 'uk' ? ukSlug : ruSlug}/${code}`;
+  
   const shortDescription = short_description.replace(/<[^>]*>/g, '');
   const description = shortDescription.replace(/&[^;\s]+;/g, '');
   const descriptionRes = `${description.trim()} ${descriptionMap[lang][categoryName]}`;
-  // Canonical hreflang
-  const translatedSlugs = getTralslatedCategorySlugs({ lang, categoryName });
+  
   const languages = {
-    'uk-UA': `${process.env.SITE_DOMAIN || 'https://daisy-jewellery.com.ua'}/uk/${canonical.uk[translatedSlugs.uk]}/${code}`,
-    'ru-UA': `${process.env.SITE_DOMAIN || 'https://daisy-jewellery.com.ua'}/ru/${canonical.ru[translatedSlugs.ru]}/${code}`
+    'uk-UA': `${siteUrl}/uk/${ukSlug}/${code}`,
+    'ru-UA': `${siteUrl}/ru/${ruSlug}/${code}`
   };
 
   return {
@@ -194,9 +197,9 @@ export const getProductMetadata = async ({ product, categoryName, lang = 'uk' })
 };
 
 /**
- * Generate category page metadata
- * @param {*} param0 
- * @returns 
+ * Generate category page metadata with unique titles for pagination
+ * @param {object} options - Metadata options
+ * @returns {object} Next.js metadata object
  */
 export const generateCategoryMetadata = ({
   title,
@@ -210,35 +213,47 @@ export const generateCategoryMetadata = ({
 }) => {
   const siteName = 'Daisy Jewellery';
   const locale = lang === 'uk' ? 'uk_UA' : 'ru_UA';
+  const siteUrl = getSiteUrl();
 
   const translatedSlugs = getTralslatedCategorySlugs({ lang, categoryName: categorySlug, translatedMap: translatedCategorySlug });
 
+  // Make title unique for pagination pages
+  const pageIndicator = lang === 'uk' ? 'Сторінка' : 'Страница';
+  const uniqueTitle = currentPage > 1 
+    ? `${title} - ${pageIndicator} ${currentPage}` 
+    : title;
+  
+  // Make description unique for pagination
+  const uniqueDescription = currentPage > 1 
+    ? `${description} ${pageIndicator} ${currentPage} з ${lastPage}.`
+    : description;
+
   const baseMetaData = {
-    title,
-    description,
+    title: uniqueTitle,
+    description: uniqueDescription,
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'uk-UA': `${process.env.SITE_DOMAIN}/uk/${translatedSlugs.uk}/${currentPage}`,
-        'ru-UA': `${process.env.SITE_DOMAIN}/ru/${translatedSlugs.ru}/${currentPage}`
+        'uk-UA': `${siteUrl}/uk/${translatedSlugs.uk}/${currentPage}`,
+        'ru-UA': `${siteUrl}/ru/${translatedSlugs.ru}/${currentPage}`
       }
     },
-    // robots: {
-    //   index: true,
-    //   follow: true,
-    //   nocache: true,
-    // },
+    robots: {
+      index: true,
+      follow: true,
+      nocache: true,
+    },
     icons: {
       other: [
-        { rel: 'next', url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage + 1}` },
+        { rel: 'next', url: `${siteUrl}/${lang}/${categorySlug}/${currentPage + 1}` },
       ]
     },
     keywords,
-    url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/1`,
+    url: `${siteUrl}/${lang}/${categorySlug}/${currentPage}`,
     openGraph: {
-      title,
-      description,
-      url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/1`,
+      title: uniqueTitle,
+      description: uniqueDescription,
+      url: canonicalUrl,
       siteName,
       locale: locale,
       type: 'website',
@@ -250,8 +265,8 @@ export const generateCategoryMetadata = ({
       ...baseMetaData,
       icons: {
         other: [
-          { rel: 'prev', url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage - 1}` },
-          { rel: 'next', url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage + 1}` },
+          { rel: 'prev', url: `${siteUrl}/${lang}/${categorySlug}/${currentPage - 1}` },
+          { rel: 'next', url: `${siteUrl}/${lang}/${categorySlug}/${currentPage + 1}` },
         ]
       }
     }
@@ -262,7 +277,7 @@ export const generateCategoryMetadata = ({
       ...baseMetaData,
       icons: {
         other: [
-          { rel: 'prev', url: `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage - 1}` }
+          { rel: 'prev', url: `${siteUrl}/${lang}/${categorySlug}/${currentPage - 1}` }
         ]
       }
     }
@@ -440,24 +455,31 @@ export const defaultMetadata =  {
 };
 
 export const getDefaultMetaData = ({ pagePath, title, description, lang = 'uk' } = {}) => {
+  const siteUrl = getSiteUrl();
   const newTitle = title || 'Магазин срібних прикрас - Daisy Jewellery';
+  const newDescription = description || defaultMetadata[lang].description;
+  
   const result = {
     ...defaultMetadata[lang],
     title: newTitle,
+    description: newDescription,
     openGraph: {
       ...defaultMetadata[lang].openGraph,
-      title: newTitle
+      title: newTitle,
+      description: newDescription,
+      url: `${siteUrl}/${lang}/${pagePath}`,
     },
     twitter: {
       ...defaultMetadata[lang].twitter,
-      title: newTitle
+      title: newTitle,
+      description: newDescription,
     },
     alternates: {
       ...defaultMetadata[lang].alternates,
-      canonical: `https://daisy-jewellery.com.ua/${lang}/${pagePath}`,
+      canonical: `${siteUrl}/${lang}/${pagePath}`,
       languages: {
-        'uk-UA': `https://daisy-jewellery.com.ua/uk/${pagePath}`,
-        'ru-UA': `https://daisy-jewellery.com.ua/ru/${pagePath}`
+        'uk-UA': `${siteUrl}/uk/${pagePath}`,
+        'ru-UA': `${siteUrl}/ru/${pagePath}`
       },
     },
   };

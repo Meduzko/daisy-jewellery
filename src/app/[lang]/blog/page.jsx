@@ -2,13 +2,38 @@ import Link from 'next/link';
 import { getAllHtmlPosts } from '../../../lib/posts';
 import styles from '../../../styles/BlogPage.module.css';
 
+const siteUrl = process.env.SITE_DOMAIN || process.env.NEXT_PUBLIC_BASE_URL || 'https://daisy-jewellery.com.ua';
+
 export async function generateMetadata({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
+  const title = lang === 'ru' 
+    ? 'Блог о серебряных украшениях | Daisy Jewellery' 
+    : 'Блог про срібні прикраси | Daisy Jewellery';
+  const description = lang === 'ru'
+    ? 'Полезные статьи о серебряных украшениях, уходе за ними и последних трендах от Daisy Jewellery.'
+    : 'Корисні статті про срібні прикраси, догляд за ними та останні тренди від Daisy Jewellery.';
+    
   return {
+    title,
+    description,
     alternates: {
-      canonical: `${process.env.SITE_DOMAIN}/${lang}/blog`,
-    }
-  }
+      canonical: `${siteUrl}/${lang}/blog`,
+      languages: {
+        'uk-UA': `${siteUrl}/uk/blog`,
+        'ru-UA': `${siteUrl}/ru/blog`,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${siteUrl}/${lang}/blog`,
+      type: 'website',
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
 }
 
 export default function BlogPage({ params }) {

@@ -9,9 +9,12 @@ import styles from './styles.module.css';
 export async function generateMetadata({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const title = lang === 'ru'
-    ? 'Магазин серебряных украшений - Daisy Jewellery | Контакты'
-    : 'Магазин срібних прикрас - Daisy Jewellery | Контакти';
-  return getDefaultMetaData({ pagePath: 'contact', title, lang });
+    ? 'Контакты | Daisy Jewellery'
+    : 'Контакти | Daisy Jewellery';
+  const description = lang === 'ru'
+    ? 'Свяжитесь с Daisy Jewellery: email daisyjewellery.info@gmail.com, телефон +380935492986. Мы в Instagram, Telegram и Facebook.'
+    : 'Зв\'яжіться з Daisy Jewellery: email daisyjewellery.info@gmail.com, телефон +380935492986. Ми в Instagram, Telegram та Facebook.';
+  return getDefaultMetaData({ pagePath: 'contact', title, description, lang });
 }
 
 export default function AboutPage({ params }) {

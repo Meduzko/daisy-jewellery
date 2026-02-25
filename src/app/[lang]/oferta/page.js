@@ -4,9 +4,12 @@ import styles from './styles.module.css';
 export async function generateMetadata({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const title = lang === 'ru'
-    ? 'Магазин серебряных украшений - Daisy Jewellery | Оферта'
-    : 'Магазин срібних прикрас - Daisy Jewellery | Оферта';
-  return getDefaultMetaData({ pagePath: 'oferta', title, lang });
+    ? 'Публичный договор (оферта) | Daisy Jewellery'
+    : 'Публічний договір (оферта) | Daisy Jewellery';
+  const description = lang === 'ru'
+    ? 'Публичный договор купли-продажи товаров интернет-магазина Daisy Jewellery. Условия заказа, оплаты и доставки украшений.'
+    : 'Публічний договір купівлі-продажу товарів інтернет-магазину Daisy Jewellery. Умови замовлення, оплати та доставки прикрас.';
+  return getDefaultMetaData({ pagePath: 'oferta', title, description, lang });
 }
 
 export default function OfertaPage({ params }) {

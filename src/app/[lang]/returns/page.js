@@ -4,9 +4,12 @@ import styles from './styles.module.css';
 export async function generateMetadata({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const title = lang === 'ru'
-    ? 'Магазин серебряных украшений - Daisy Jewellery | Возврат'
-    : 'Магазин срібних прикрас - Daisy Jewellery | Повернення';
-  return getDefaultMetaData({ pagePath: 'returns', title, lang });
+    ? 'Возврат и обмен | Daisy Jewellery'
+    : 'Повернення та обмін | Daisy Jewellery';
+  const description = lang === 'ru'
+    ? 'Условия возврата и обмена ювелирных изделий Daisy Jewellery. Обмен в течение 14 дней при сохранении бирки и товарного вида.'
+    : 'Умови повернення та обміну ювелірних виробів Daisy Jewellery. Обмін протягом 14 днів за умови збереження бірки та товарного вигляду.';
+  return getDefaultMetaData({ pagePath: 'returns', title, description, lang });
 }
 
 export default function ReturnsPage({ params }) {

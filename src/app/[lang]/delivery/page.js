@@ -5,9 +5,12 @@ import Image from 'next/image';
 export async function generateMetadata({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const title = lang === 'ru'
-    ? 'Магазин серебряных украшений - Daisy Jewellery | Доставка'
-    : 'Магазин срібних прикрас - Daisy Jewellery | Доставка';
-  return getDefaultMetaData({ pagePath: 'delivery', title, lang });
+    ? 'Доставка и оплата | Daisy Jewellery'
+    : 'Доставка та оплата | Daisy Jewellery';
+  const description = lang === 'ru'
+    ? 'Бесплатная доставка при заказе от 2500 грн. Доставка Новой Почтой на отделение или курьером. Оплата при получении или на счет.'
+    : 'Безкоштовна доставка при замовленні від 2500 грн. Доставка Новою Поштою на відділення або кур\'єром. Оплата при отриманні або на рахунок.';
+  return getDefaultMetaData({ pagePath: 'delivery', title, description, lang });
 }
 
 export default function DeliveryPage({ params }) {
