@@ -1,29 +1,32 @@
 import { notFound } from 'next/navigation';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
 import { fetchProduct } from '../../../../actions/fetchProduct';
-import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
+import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
+import { getPaginationData, getDeviceType, generateCategoryMetadata, generate404MetaData } from '../../../../helpers';
 import Gallery from '../../../../components/Gallery';
 import { getCategoryTranslations } from '../../../../dictionaries';
 
-const allowedPages = [
-  { page_number: '1' },
-  { page_number: '2' },
-  { page_number: '3' },
-];
+const ITEMS_PER_PAGE = 16;
+
+async function getTotalPages() {
+  const products = await fetchAllProducts({ categoryId: process.env.BRACER_CATEGORY_ID });
+  if (!products || !products.length) return 1;
+  return Math.ceil(products.length / ITEMS_PER_PAGE);
+}
 
 export async function generateStaticParams() {
+  const totalPages = await getTotalPages();
   const langs = ['uk', 'ru'];
-  const pages = allowedPages.map(p => p.page_number);
-
+  const pages = Array.from({ length: totalPages }, (_, i) => (i + 1).toString());
   return langs.flatMap(lang => pages.map(page_number => ({ lang, page_number })));
 }
 
 export async function generateMetadata({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const currentPage = +params.page_number;
-  const is404 = is404Page(currentPage, allowedPages);
+  const totalPages = await getTotalPages();
 
-  if (is404) {
+  if (isNaN(currentPage) || currentPage < 1 || currentPage > totalPages) {
     return generate404MetaData();
   }
 
@@ -35,7 +38,7 @@ export async function generateMetadata({ params }) {
     ? 'Серебряные браслеты от Daisy Jewellery. Доставка по всей Украине. Купить серебряный браслет от производителя по лучшей цене'
     : 'Срібні браслети від Daisy Jewellery. Доставка в будь який куточок України. Купити срібний браслет від виробника за найкращою ціною';
 
-  const lastPage = 3;
+  const lastPage = totalPages;
   const categorySlug = 'braslety';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = lang === 'ru' ? 'Серебряные браслеты, купить' : 'Срібні браслети, купити';

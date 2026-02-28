@@ -1,31 +1,32 @@
 import { fetchProduct } from '../../../../actions/fetchProduct';
+import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
 import { getCategoryTranslations } from '../../../../dictionaries';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
 import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
 import Gallery from '../../../../components/Gallery';
 import { notFound } from 'next/navigation';
 
-const allowedPages = [
-  { page_number: '1' },
-  { page_number: '2' },
-  { page_number: '3' },
-  { page_number: '4' },
-  { page_number: '5' },
-  { page_number: '6' },
-];
+const ITEMS_PER_PAGE = 16;
+
+async function getTotalPages() {
+  const products = await fetchAllProducts({ categoryId: process.env.RING_CATEGORY_ID });
+  if (!products || !products.length) return 1;
+  return Math.ceil(products.length / ITEMS_PER_PAGE);
+}
 
 export async function generateStaticParams() {
+  const totalPages = await getTotalPages();
   const langs = ['uk', 'ru'];
-  const pages = allowedPages.map(p => p.page_number);
+  const pages = Array.from({ length: totalPages }, (_, i) => (i + 1).toString());
   return langs.flatMap(lang => pages.map(page_number => ({ lang, page_number })));
 }
 
 export async function generateMetadata({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const currentPage = +params.page_number;
-  const is404 = is404Page(currentPage, allowedPages);
+  const totalPages = await getTotalPages();
 
-  if (is404) {
+  if (isNaN(currentPage) || currentPage < 1 || currentPage > totalPages) {
     return generate404MetaData();
   }
 
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }) {
     ? 'Изысканные серебряные кольца от Daisy Jewellery. Быстрая доставка по всей Украине! Серебряные кольца по лучшей цене от производителя'
     : 'Вишукані срібні каблучки від Daisy Jewellery. Швидка доставка по всій Україні! Срібні кільця за найкращою ціною від виробника';
 
-  const lastPage = 6;
+  const lastPage = totalPages;
   const categorySlug = lang === 'ru' ? 'koltsa' : 'kabluchki';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = lang === 'ru' ? 'Серебряные кольца, купить' : 'Срібні каблучки, купити';

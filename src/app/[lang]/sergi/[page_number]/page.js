@@ -1,34 +1,40 @@
 import { fetchProduct } from '../../../../actions/fetchProduct';
+import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
-import { getPaginationData, getDeviceType, generateCategoryMetadata, is404Page, generate404MetaData } from '../../../../helpers';
+import { getPaginationData, getDeviceType, generateCategoryMetadata, generate404MetaData } from '../../../../helpers';
 import Gallery from '../../../../components/Gallery';
 import { notFound } from 'next/navigation';
 import { getCategoryTranslations } from '../../../../dictionaries';
 
-const allowedPages = [
-  { page_number: '1' },
-  { page_number: '2' },
-  { page_number: '3' },
-];
+const ITEMS_PER_PAGE = 16;
+
+async function getTotalPages() {
+  const products = await fetchAllProducts({ categoryId: process.env.EARING_CATEGORY_ID });
+  if (!products || !products.length) return 1;
+  return Math.ceil(products.length / ITEMS_PER_PAGE);
+}
 
 export async function generateStaticParams() {
-  // sergi is the Russian slug - only generate ru pages
-  const pages = allowedPages.map(p => p.page_number);
+  const totalPages = await getTotalPages();
+  const pages = Array.from({ length: totalPages }, (_, i) => (i + 1).toString());
   return pages.map(page_number => ({ lang: 'ru', page_number }));
 }
 
 export async function generateMetadata({ params }) {
   const lang = 'ru';
   const currentPage = +params.page_number;
-  const is404 = is404Page(currentPage, allowedPages);
-  if (is404) return generate404MetaData();
+  const totalPages = await getTotalPages();
+
+  if (isNaN(currentPage) || currentPage < 1 || currentPage > totalPages) {
+    return generate404MetaData();
+  }
 
   const title = 'Серебряные серьги | Купить серебряные серьги Daisy Jewellery';
   const description = 'Серебряные серьги от Daisy Jewellery. Быстрая доставка по всей Украине!';
   const categorySlug = 'sergi';
   const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}/${currentPage}`;
   const keywords = 'Серебряные серьги, купить';
-  const lastPage = 3;
+  const lastPage = totalPages;
   return generateCategoryMetadata({ title, description, currentPage, lastPage, canonicalUrl, categorySlug, keywords, lang });
 }
 
