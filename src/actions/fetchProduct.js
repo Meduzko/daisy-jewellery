@@ -7,41 +7,44 @@ export async function fetchProduct({
   sku,
   title,
   website_synch = 1,
-  revalidate
+  revalidate,
+  throwOnError = false
 }) {
-  try {
-    const ROOT_URI = process.env.API_ROOT_URI;
-    const API_KEY = process.env.API_KEY;
-    const baseURL = `${ROOT_URI}/products/list?`;
-  
-    const params = new URLSearchParams({
-      category_id: categoryId,
-      limit,
-      offset
-    });
+  const ROOT_URI = process.env.API_ROOT_URI;
+  const API_KEY = process.env.API_KEY;
+  const baseURL = `${ROOT_URI}/products/list?`;
 
-    if (website_synch) {
-      params.set('website_synch', website_synch);
-    }
+  const params = new URLSearchParams({
+    category_id: categoryId,
+    limit,
+    offset
+  });
 
-    if (code) {
-      params.set('code', Number(code));
-    }
+  if (website_synch) {
+    params.set('website_synch', website_synch);
+  }
 
-    if (title) {
-      params.set('title', title);
-    }
+  if (code) {
+    params.set('code', Number(code));
+  }
 
-    if (sku) {
-      params.set('sku', sku);
-    }
+  if (title) {
+    params.set('title', title);
+  }
 
-    const url = `${baseURL}${params.toString()}`;
+  if (sku) {
+    params.set('sku', sku);
+  }
 
-    let response;
-    let attempt = 0;
-    const maxAttempts = 3;
-    while (attempt < maxAttempts) {
+  const url = `${baseURL}${params.toString()}`;
+
+  let response;
+  let attempt = 0;
+  const maxAttempts = 5;
+  let lastError = null;
+
+  while (attempt < maxAttempts) {
+    try {
       response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -60,17 +63,31 @@ export async function fetchProduct({
         return [];
       }
 
-      const backoffMs = 300 * Math.pow(2, attempt); // 300, 600, 1200
-      await new Promise((r) => setTimeout(r, backoffMs));
-      attempt += 1;
+      lastError = new Error(`API returned ${response.status}`);
+    } catch (error) {
+      lastError = error;
+      console.error(`Fetch attempt ${attempt + 1} failed:`, error.message);
     }
 
-    if (!response || !response.ok) {
-      console.error('Failed to fetch products after retries', { url });
-      if (paginated) return { products: [], hasMore: false };
-      return [];
-    }
+    const backoffMs = 500 * Math.pow(2, attempt); // 500, 1000, 2000, 4000, 8000
+    console.log(`Retrying in ${backoffMs}ms (attempt ${attempt + 1}/${maxAttempts})`);
+    await new Promise((r) => setTimeout(r, backoffMs));
+    attempt += 1;
+  }
 
+  if (!response || !response.ok) {
+    const errorMsg = `Failed to fetch products after ${maxAttempts} retries: ${url}`;
+    console.error(errorMsg);
+    
+    if (throwOnError) {
+      throw new Error(errorMsg);
+    }
+    
+    if (paginated) return { products: [], hasMore: false };
+    return [];
+  }
+
+  try {
     const data = await response.json();
   
     if (paginated) {
@@ -78,10 +95,12 @@ export async function fetchProduct({
       return { products: data?.products || [], hasMore };
     }
 
-    return data.products;
+    return data.products || [];
   } catch (error) {
-    console.error(error);
-    // Ensure consistent return shape to prevent build-time crashes
+    console.error('Failed to parse response:', error);
+    if (throwOnError) {
+      throw error;
+    }
     if (paginated) {
       return { products: [], hasMore: false };
     }

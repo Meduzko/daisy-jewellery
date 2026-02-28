@@ -10,16 +10,15 @@ import { getItemTranslations } from '../../../../../dictionaries';
 
 export async function generateMetadata({ params }) {
   if (!params?.item) return notFound();
-  try {
-    const response = await fetchProduct({ code: params.item, categoryId: process.env.RING_CATEGORY_ID });
-    if (!response || response?.length === 0) return notFound();
-    const [product] = response;
-    const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-    return getProductMetadata({ product, categoryName: lang === 'ru' ? 'koltsa' : 'ring', lang });
-  } catch (e) {
-    console.error('Error generating ring metadata:', e);
-    return notFound();
-  }
+  const response = await fetchProduct({ 
+    code: params.item, 
+    categoryId: process.env.RING_CATEGORY_ID,
+    throwOnError: true
+  });
+  if (!response || response?.length === 0) return notFound();
+  const [product] = response;
+  const lang = params?.lang === 'ru' ? 'ru' : 'uk';
+  return getProductMetadata({ product, categoryName: lang === 'ru' ? 'koltsa' : 'ring', lang });
 }
 
 export async function generateStaticParams() {
@@ -35,7 +34,12 @@ export async function generateStaticParams() {
 
 export default async function RingItem({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const [product] = await fetchProduct({ code: params.item, categoryId: process.env.RING_CATEGORY_ID });
+  const products = await fetchProduct({ 
+    code: params.item, 
+    categoryId: process.env.RING_CATEGORY_ID,
+    throwOnError: true
+  });
+  const [product] = products;
   if (!product) return notFound();
 
   const productSizes = await getServerProductSizes(product.sku, process.env.RING_CATEGORY_ID);

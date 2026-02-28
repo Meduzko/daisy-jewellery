@@ -9,6 +9,8 @@ export default async function Banner({ lang = 'uk' } = {}) {
   const isMobile = device !== 'desktop';
   const bannerTk = await getTranslation({ lang, key: 'banner' });
   const bannerTitle = bannerTk?.title || 'Срібні прикраси Daisy Jewellery — ваш улюблений інтернет-магазин';
+  const bannerLink = lang === 'uk' ? '/uk/kabluchki/1' : '/ru/koltsa/1';
+  const bannerLinkText = lang === 'uk' ? 'Переглянути колекцію' : 'Просмотреть колекцию';
 
   return (
     <div className={styles.bannerContainer}>
@@ -31,8 +33,8 @@ export default async function Banner({ lang = 'uk' } = {}) {
           <span className={styles.dividerIcon}>◇</span>
           <span className={styles.dividerLine} />
         </div>
-        <Link href={`/${lang}/koltsa/1`} className={styles.bannerCta}>
-          Переглянути колекцію
+        <Link href={bannerLink} className={styles.bannerCta}>
+          {bannerLinkText}
         </Link>
       </div>
     </div>

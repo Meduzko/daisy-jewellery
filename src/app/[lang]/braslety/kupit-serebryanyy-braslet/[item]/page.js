@@ -13,23 +13,19 @@ export async function generateMetadata({ params }) {
     return notFound();
   }
 
-  try {
-    const response = await fetchProduct({
-      code: params.item,
-      categoryId: process.env.BRACER_CATEGORY_ID,
-    });
+  const response = await fetchProduct({
+    code: params.item,
+    categoryId: process.env.BRACER_CATEGORY_ID,
+    throwOnError: true
+  });
 
-    if (!response || response?.length === 0) {
-      return notFound();
-    }
-
-    const [product] = response;
-    const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-    return getProductMetadata({ product, categoryName: 'braslety', lang });
-  } catch (error) {
-    console.error('Error generating baslety metadata:', error);
+  if (!response || response?.length === 0) {
     return notFound();
   }
+
+  const [product] = response;
+  const lang = params?.lang === 'ru' ? 'ru' : 'uk';
+  return getProductMetadata({ product, categoryName: 'braslety', lang });
 }
 
 export async function generateStaticParams() {
@@ -45,7 +41,12 @@ export async function generateStaticParams() {
 
 export default async function BracerItem({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const [product] = await fetchProduct({ code: params.item, categoryId: process.env.BRACER_CATEGORY_ID });
+  const products = await fetchProduct({ 
+    code: params.item, 
+    categoryId: process.env.BRACER_CATEGORY_ID,
+    throwOnError: true
+  });
+  const [product] = products;
 
   if (!product) {
     return notFound();

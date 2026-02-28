@@ -10,16 +10,15 @@ import { getItemTranslations } from '../../../../../dictionaries';
 
 export async function generateMetadata({ params }) {
   if (!params?.item) return notFound();
-  try {
-    const response = await fetchProduct({ code: params.item, categoryId: process.env.EARING_CATEGORY_ID });
-    if (!response || response?.length === 0) return notFound();
-    const [product] = response;
-    const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-    return getProductMetadata({ product, categoryName: lang === 'ru' ? 'sergi' : 'serezhky', lang });
-  } catch (e) {
-    console.error('Error generating earring metadata:', e);
-    return notFound();
-  }
+  const response = await fetchProduct({ 
+    code: params.item, 
+    categoryId: process.env.EARING_CATEGORY_ID,
+    throwOnError: true
+  });
+  if (!response || response?.length === 0) return notFound();
+  const [product] = response;
+  const lang = params?.lang === 'ru' ? 'ru' : 'uk';
+  return getProductMetadata({ product, categoryName: lang === 'ru' ? 'sergi' : 'serezhky', lang });
 }
 
 export async function generateStaticParams() {
@@ -35,7 +34,12 @@ export async function generateStaticParams() {
 
 export default async function EarringsItem({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const [product] = await fetchProduct({ code: params.item, categoryId: process.env.EARING_CATEGORY_ID });
+  const products = await fetchProduct({ 
+    code: params.item, 
+    categoryId: process.env.EARING_CATEGORY_ID,
+    throwOnError: true
+  });
+  const [product] = products;
   if (!product) return notFound();
 
   const productJsonLd = await getProductJsonLd(product, lang === 'ru' ? 'sergi/kupit-serebryanyye-sergi' : 'serezhky/kupyty-serezhky-sribni', { categoryName: lang === 'ru' ? 'sergi' : 'serezhky', lang });
