@@ -1,20 +1,14 @@
-import { fetchProduct } from '../../../../actions/fetchProduct';
-import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
 import { getPaginationData, getDeviceType, generateCategoryMetadata, generate404MetaData } from '../../../../helpers';
+import { getCachedTotalPages, getCachedProducts } from '../../../../lib/dataCache';
 import Gallery from '../../../../components/Gallery';
 import { notFound } from 'next/navigation';
 
 const ITEMS_PER_PAGE = 16;
-
-async function getTotalPages() {
-  const products = await fetchAllProducts({ categoryId: process.env.EARING_CATEGORY_ID });
-  if (!products || !products.length) return 1;
-  return Math.ceil(products.length / ITEMS_PER_PAGE);
-}
+const CATEGORY_ID = process.env.EARING_CATEGORY_ID;
 
 export async function generateStaticParams() {
-  const totalPages = await getTotalPages();
+  const totalPages = await getCachedTotalPages(CATEGORY_ID, ITEMS_PER_PAGE);
   const pages = Array.from({ length: totalPages }, (_, i) => (i + 1).toString());
   return pages.map(page_number => ({ lang: 'uk', page_number }));
 }
@@ -22,7 +16,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const lang = 'uk';
   const currentPage = +params.page_number;
-  const totalPages = await getTotalPages();
+  const totalPages = await getCachedTotalPages(CATEGORY_ID, ITEMS_PER_PAGE);
 
   if (isNaN(currentPage) || currentPage < 1 || currentPage > totalPages) {
     return generate404MetaData();
@@ -43,10 +37,8 @@ export default async function Page({ params }) {
   const itemSlug = 'kupyty-serezhky-sribni';
   const baseURL = `/${lang}/${baseSlug}`;
   const itemBaseURL = `${baseURL}/${itemSlug}`;
-  const categoryId = process.env.EARING_CATEGORY_ID;
   const { currentPage, limit, offset } = getPaginationData(params.page_number);
-  const paginated = true;
-  const { products, hasMore } = await fetchProduct({ offset, limit, categoryId, paginated });
+  const { products, hasMore } = await getCachedProducts({ categoryId: CATEGORY_ID, offset, limit });
   const device = getDeviceType();
   const isMobile = device !== 'desktop';
 
@@ -70,7 +62,7 @@ export default async function Page({ params }) {
         currentPage={currentPage}
         baseURL={baseURL}
         itemBaseURL={itemBaseURL}
-        withPagination={paginated}
+        withPagination={true}
         isMobile={isMobile}
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }} />

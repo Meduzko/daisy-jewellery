@@ -1,21 +1,15 @@
 import { notFound } from 'next/navigation';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
-import { fetchProduct } from '../../../../actions/fetchProduct';
-import { fetchAllProducts } from '../../../../actions/fetchAllProducts';
 import { getPaginationData, getDeviceType, generateCategoryMetadata, generate404MetaData } from '../../../../helpers';
+import { getCachedTotalPages, getCachedProducts } from '../../../../lib/dataCache';
 import Gallery from '../../../../components/Gallery';
 import { getCategoryTranslations } from '../../../../dictionaries';
 
 const ITEMS_PER_PAGE = 16;
-
-async function getTotalPages() {
-  const products = await fetchAllProducts({ categoryId: process.env.BRACER_CATEGORY_ID });
-  if (!products || !products.length) return 1;
-  return Math.ceil(products.length / ITEMS_PER_PAGE);
-}
+const CATEGORY_ID = process.env.BRACER_CATEGORY_ID;
 
 export async function generateStaticParams() {
-  const totalPages = await getTotalPages();
+  const totalPages = await getCachedTotalPages(CATEGORY_ID, ITEMS_PER_PAGE);
   const langs = ['uk', 'ru'];
   const pages = Array.from({ length: totalPages }, (_, i) => (i + 1).toString());
   return langs.flatMap(lang => pages.map(page_number => ({ lang, page_number })));
@@ -24,7 +18,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const currentPage = +params.page_number;
-  const totalPages = await getTotalPages();
+  const totalPages = await getCachedTotalPages(CATEGORY_ID, ITEMS_PER_PAGE);
 
   if (isNaN(currentPage) || currentPage < 1 || currentPage > totalPages) {
     return generate404MetaData();
@@ -50,9 +44,8 @@ export default async function CategoryPageNumber({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const baseURL = `/${lang}/braslety`;
   const itemBaseURL = `${baseURL}/${lang === 'ru' ? 'kupit-serebryanyy-braslet' : 'kupyty-sribnyy-braslet'}`;
-  const paginated = true;
   const { currentPage, limit, offset } = getPaginationData(params.page_number);
-  const { products, hasMore } = await fetchProduct({ offset, limit, categoryId: process.env.BRACER_CATEGORY_ID, paginated });
+  const { products, hasMore } = await getCachedProducts({ categoryId: CATEGORY_ID, offset, limit });
   const device = getDeviceType();
   const isMobile = device !== 'desktop';
   const tk = await getCategoryTranslations({ lang, categoryName: lang === 'ru' ? 'braslety' : '' }).catch(() => undefined);
@@ -81,7 +74,7 @@ export default async function CategoryPageNumber({ params }) {
         currentPage={currentPage}
         baseURL={baseURL}
         itemBaseURL={itemBaseURL}
-        withPagination={paginated}
+        withPagination={true}
         isMobile={isMobile}
         t={tk}
         lang={lang}
