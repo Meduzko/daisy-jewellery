@@ -1,10 +1,8 @@
-export default async function handler(req, res) {
-  const { cityName, search } = req.query;
+import { NextResponse } from 'next/server';
 
-  if (!cityName) {
-    return res.status(400).json({ error: 'City name is required' });
-  }
-
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const search = searchParams.get('search');
   const API_KEY = process.env.NOVA_POSHTA_API_KEY;
 
   try {
@@ -16,14 +14,12 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         apiKey: API_KEY,
         modelName: 'AddressGeneral',
-        calledMethod: 'getWarehouses',
+        calledMethod: 'getSettlements',
         methodProperties: {
-          FindByString : search,
-          CityName : cityName,
-          Page : 1,
-          Limit : 50,
-          Language : 'UA',
-        }
+          FindByString: search,
+          Page: 1,
+          Limit: 50,
+        },
       }),
     });
 
@@ -32,9 +28,9 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
-    const departments = data.data; // Extract departments
-    res.status(200).json(departments);
+    const departments = data.data;
+    return NextResponse.json(departments);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

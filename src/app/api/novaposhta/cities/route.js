@@ -1,6 +1,8 @@
-export default async function handler(req, res) {
-  const { cityName } = req.query;
+import { NextResponse } from 'next/server';
 
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const cityName = searchParams.get('cityName');
   const API_KEY = process.env.NOVA_POSHTA_API_KEY;
 
   try {
@@ -14,11 +16,11 @@ export default async function handler(req, res) {
         modelName: 'AddressGeneral',
         calledMethod: 'getSettlements',
         methodProperties: {
-          FindByString : cityName,
+          FindByString: cityName,
           Warehouse: 1,
-          Page : 1,
-          Limit : 50,
-        }
+          Page: 1,
+          Limit: 50,
+        },
       }),
     });
 
@@ -27,9 +29,9 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
-    const departments = data.data; // Extract departments
-    res.status(200).json(departments);
+    const departments = data.data;
+    return NextResponse.json(departments);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

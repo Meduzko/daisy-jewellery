@@ -1,13 +1,14 @@
 import crypto from 'crypto';
+import { NextResponse } from 'next/server';
 
-export default async function handler(req, res) {
+export async function POST(request) {
   try {
-    const { amount, userData, orderID } = req.body;
+    const { amount, userData, orderID } = await request.json();
     const { email, firstName, lastName, cityName, department } = userData;
 
     const public_key = process.env.LIQPAY_PUBLIC_KEY;
     const private_key = process.env.LIQPAY_PRIVATE_KEY;
-  
+
     const paymentDescription = `Daisy Jewellery, ${firstName} ${lastName} ${department} ${cityName} ${email}`;
 
     const liqpayParams = {
@@ -15,30 +16,26 @@ export default async function handler(req, res) {
       version: '3',
       action: 'pay',
       amount,
-      currency: 'UAH', // Replace with your currency if different
+      currency: 'UAH',
       description: paymentDescription || 'Payment for services',
       order_id: orderID,
-      // Include user data if necessary
       email: email,
-      // Callback URLs
       result_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment-success?order_id=${orderID}`,
-      server_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/liqpay-callback`,
-      // Additional parameters...
-      sandbox: '1'
+      server_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment-callback`,
+      sandbox: '1',
     };
-  
+
     const data = Buffer.from(JSON.stringify(liqpayParams)).toString('base64');
-  
+
     const signature = crypto
       .createHash('sha1')
       .update(private_key + data + private_key)
       .digest('base64');
-  
-    // Generate checkout URL
+
     const paymentUrl = `https://www.liqpay.ua/api/3/checkout?data=${encodeURIComponent(data)}&signature=${encodeURIComponent(signature)}`;
-  
-    res.status(200).json({ paymentUrl });
+
+    return NextResponse.json({ paymentUrl });
   } catch (error) {
-    res.status(400).json({ error });
+    return NextResponse.json({ error }, { status: 400 });
   }
-};
+}

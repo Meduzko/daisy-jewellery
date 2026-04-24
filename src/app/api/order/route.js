@@ -1,9 +1,10 @@
+import { NextResponse } from 'next/server';
 
 const formatDate = (date) => {
   const pad = (number) => (number < 10 ? '0' + number : number);
 
   const year = date.getFullYear();
-  const month = pad(date.getMonth() + 1); // Months are zero-based
+  const month = pad(date.getMonth() + 1);
   const day = pad(date.getDate());
   const hours = pad(date.getHours());
   const minutes = pad(date.getMinutes());
@@ -11,7 +12,6 @@ const formatDate = (date) => {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
-
 
 const getOrderData = (orderData, orderID) => {
   const { formData, cartItems, totalPrice } = orderData;
@@ -22,38 +22,34 @@ const getOrderData = (orderData, orderID) => {
     product_id,
     store_id: pices[0].store_id,
     price,
-    quantity: 1
-  }))
+    quantity: 1,
+  }));
 
   return {
     id: orderID,
     number: 0,
     date: orderDate,
     status: 0,
-    channel: "string",
+    channel: 'string',
     cart: items,
     personal_info: {
-      client_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      client_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
       name: firstName,
-      street: "string",
-      building: "string",
+      street: 'string',
+      building: 'string',
       city: cityName,
-      phone: "string",
-      comment: "string",
+      phone: 'string',
+      comment: 'string',
       card_or_cash: 0,
     },
   };
 };
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(request) {
   try {
-    const { orderData, orderID } = req.body;
+    const { orderData, orderID } = await request.json();
     if (!orderData || !orderID) {
-      return res.status(400).json({ error: 'Missing orderData or orderID' });
+      return NextResponse.json({ error: 'Missing orderData or orderID' }, { status: 400 });
     }
 
     const ROOT_URI = process.env.API_ROOT_URI;
@@ -65,7 +61,7 @@ export default async function handler(req, res) {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'ApiKey': API_KEY,
+        ApiKey: API_KEY,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
@@ -73,13 +69,13 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const errorResponse = await response.json();
-      return res.status(response.status).json(errorResponse);
+      return NextResponse.json(errorResponse, { status: response.status });
     }
 
     const result = await response.json();
-    return res.status(200).json(result);
+    return NextResponse.json(result);
   } catch (error) {
-    console.error('Error in /api/orders:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error in /api/order:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
