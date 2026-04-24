@@ -46,8 +46,12 @@ export default function PaymentForm({ amount, description, email, handleSubmit }
           };
           document.body.appendChild(script);
         } else {
-          console.error('Error fetching payment data:', result.error);
-          alert('Сталась помилка ініціалізації платежу: ' + result.error);
+          const detail =
+            Array.isArray(result.errors) && result.errors.length
+              ? result.errors.join('; ')
+              : result.error || result.message;
+          console.error('Error fetching payment data:', detail);
+          alert('Сталась помилка ініціалізації платежу: ' + detail);
         }
       } catch (error) {
         console.error('Error initiating payment:', error);

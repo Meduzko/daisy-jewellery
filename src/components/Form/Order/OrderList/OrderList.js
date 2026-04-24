@@ -8,6 +8,37 @@ import { trackFacebookEvent } from '../../../../helpers/fbpixel';
 
 import styles from './styles.module.css';
 
+const LIQPAY_CHECKOUT_SRC = 'https://static.liqpay.ua/libjs/checkout.js';
+
+/** One script tag; avoids duplicate checkout.js loads that can trigger LiqPay rate limits. */
+function loadLiqPayCheckoutScript() {
+  return new Promise((resolve, reject) => {
+    if (typeof window !== 'undefined' && window.LiqPayCheckout) {
+      resolve();
+      return;
+    }
+    const existing = document.querySelector(`script[src="${LIQPAY_CHECKOUT_SRC}"]`);
+    if (existing) {
+      const done = () =>
+        window.LiqPayCheckout ? resolve() : reject(new Error('LiqPay checkout unavailable'));
+      if (window.LiqPayCheckout) {
+        resolve();
+        return;
+      }
+      existing.addEventListener('load', done);
+      existing.addEventListener('error', () => reject(new Error('LiqPay script failed to load')));
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = LIQPAY_CHECKOUT_SRC;
+    script.async = true;
+    script.onload = () =>
+      window.LiqPayCheckout ? resolve() : reject(new Error('LiqPay checkout unavailable'));
+    script.onerror = () => reject(new Error('LiqPay script failed to load'));
+    document.body.appendChild(script);
+  });
+}
+
 const OrderList = ({
   handleSubmit,
   formData,
@@ -76,11 +107,10 @@ const OrderList = ({
   };
 
   const handlePaymentRender = async () => {
+    if (widgetRef.current) return;
+    widgetRef.current = true;
+
     try {
-      if (widgetRef.current) return;
-
-      widgetRef.current = true;
-
       const orderedItemsInfo = cartItems.map(item => `Назва: ${item.title}, код: ${item.code}, розмір: ${item.size || ''}, ціна: ${item.price}`);
       const orderData = getOrderData();
   
@@ -101,38 +131,31 @@ const OrderList = ({
 
       const result = await response.json();
 
-      if (response.ok) {
-        const { data, signature } = result;
-
-        // Load the LiqPay checkout script
-        const script = document.createElement('script');
-        script.src = 'https://static.liqpay.ua/libjs/checkout.js';
-        script.async = true;
-        script.onload = () => {
-          window.LiqPayCheckout.init({
-            data,
-            signature,
-            embedTo: '#liqpay_checkout',
-            // mode: 'embed', // Use 'popup' for popup mode
-            mode: 'popup', // Use 'popup' for popup mode
-            language: 'ua'
-          })
-            .on('liqpay.callback', function (data) {
-              handleOrderSuccess();
-            });
-            // .on('liqpay.ready', function (data) {
-            //   // Widget is ready
-            // })
-            // .on('liqpay.close', function (data) {
-            //   // Widget is closed
-            // });
-        };
-        document.body.appendChild(script);
-      } else {
-        console.error('Error fetching payment data:', result.error);
-        alert('Error initiating payment: ' + result.error);
+      if (!response.ok) {
+        widgetRef.current = false;
+        const detail =
+          Array.isArray(result.errors) && result.errors.length
+            ? result.errors.join('; ')
+            : result.error || result.message || response.status;
+        console.error('Error fetching payment data:', detail);
+        alert('Error initiating payment: ' + detail);
+        return;
       }
+
+      const { data, signature } = result;
+      await loadLiqPayCheckoutScript();
+
+      window.LiqPayCheckout.init({
+        data,
+        signature,
+        embedTo: '#liqpay_checkout',
+        mode: 'popup',
+        language: 'ua'
+      }).on('liqpay.callback', function () {
+        handleOrderSuccess();
+      });
     } catch (error) {
+      widgetRef.current = false;
       console.error('Error initiating payment:', error);
       alert('Error initiating payment. Please try again.');
     }
