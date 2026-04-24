@@ -2,18 +2,18 @@
 
 import React, { useEffect, useRef } from 'react';
 
-export default function PaymentForm({ amount, description, email, handleSubmit }) {
+/** orderData: full { formData, cartItems, totalPrice } — required by /api/create-payment for Redis + email after pay. */
+export default function PaymentForm({ amount, description, email, handleSubmit, orderData }) {
   const widgetRef = useRef();
 
   useEffect(() => {
     const init = async () => {
       try {
         widgetRef.current = true;
-        // Request data and signature from the API
         const response = await fetch('/api/create-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount, description, email })
+          body: JSON.stringify({ amount, description, email, orderData })
         });
   
         const result = await response.json();
@@ -46,8 +46,8 @@ export default function PaymentForm({ amount, description, email, handleSubmit }
           };
           document.body.appendChild(script);
         } else {
-          console.error('Error fetching payment data:', result.error);
-          alert('Сталась помилка ініціалізації платежу: ' + result.error);
+          console.error('Error fetching payment data:', result);
+          alert('Сталась помилка ініціалізації платежу: ' + (result.message || result.error || 'unknown'));
         }
       } catch (error) {
         console.error('Error initiating payment:', error);
@@ -55,10 +55,10 @@ export default function PaymentForm({ amount, description, email, handleSubmit }
       }
     };
 
-    if (!widgetRef?.current && (amount && description && email)) {
+    if (!widgetRef?.current && amount && description && email && orderData) {
       init();
     }
-  }, [amount, description, email]);
+  }, [amount, description, email, orderData]);
 
   return (
     <div style={{ zIndex: 200, position: 'relative' }}>

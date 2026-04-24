@@ -40,6 +40,15 @@ function parseLiqPayInfo(info) {
   }
 }
 
+/** True if LiqPay `info` still carries cart/form (legacy); correlator-only `{ o }` is not enough for email. */
+function canFulfillFromLiqPayInfo(info) {
+  if (!info || typeof info !== 'object') return false;
+  if (Array.isArray(info.cartItems) && info.cartItems.length > 0) return true;
+  const fd = info.formData;
+  if (fd && typeof fd === 'object' && (fd.email || fd.phone)) return true;
+  return false;
+}
+
 export const config = {
   api: {
     bodyParser: false
@@ -89,12 +98,20 @@ export default async function handler(req, res) {
       if (decodedData?.status === 'success') {
         const decodedDataInfo = parseLiqPayInfo(decodedData.info);
         const storedOrder = await getPendingOrder(decodedData.order_id);
-        const orderForFulfillment = storedOrder || decodedDataInfo;
+        const orderForFulfillment =
+          storedOrder || (canFulfillFromLiqPayInfo(decodedDataInfo) ? decodedDataInfo : null);
         if (!orderForFulfillment) {
           console.error('payment-callback: missing stored order and invalid LiqPay info; email/CAPI skipped', {
-            order_id: decodedData.order_id
+            order_id: decodedData.order_id,
+            redis_url_configured: Boolean(process.env.REDIS_URL),
+            info_length: typeof decodedData.info === 'string' ? decodedData.info.length : 0
           });
         } else {
+          if (!storedOrder && decodedDataInfo) {
+            console.warn('payment-callback: Redis miss — using LiqPay info only (ensure REDIS_URL and same process for create-payment + callback)', {
+              order_id: decodedData.order_id
+            });
+          }
           console.log('orderData', { fromStore: Boolean(storedOrder), liqPayInfo: decodedDataInfo });
 
           await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-email`, {

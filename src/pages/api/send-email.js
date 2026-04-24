@@ -33,6 +33,16 @@ export default async function handler(req, res) {
       department,
     } = formData;
 
+    const safeCart = Array.isArray(cartItems) ? cartItems : [];
+    if (!email || !String(email).trim()) {
+      console.error('send-email: missing recipient email');
+      return res.status(400).json({ message: 'Missing email' });
+    }
+    if (safeCart.length === 0) {
+      console.error('send-email: missing cart items');
+      return res.status(400).json({ message: 'Missing cart items' });
+    }
+
     // Set up the Nodemailer transporter using Gmail SMTP
     const transporter = nodemailer.createTransport({
       // service: 'gmail',
@@ -45,7 +55,7 @@ export default async function handler(req, res) {
       },
     });
 
-    const itemsDetails = cartItems
+    const itemsDetails = safeCart
     .map(
       (item, index) => `
         <tr style="border-bottom: 1px solid #ddd;">
@@ -103,7 +113,7 @@ export default async function handler(req, res) {
       <p>З найкращими побажаннями,</p>
       <p>Команда Daisy Jewellery</p>
     `,
-    attachments: cartItems.map((item, index) => ({
+    attachments: safeCart.map((item, index) => ({
       filename: `${item.sku}${item.image_path}`, // Adjust the extension as necessary
       path: item.image_path, // Use the actual path to your image
       cid: `product_image_${index}`, // Must match the `cid` in the HTML

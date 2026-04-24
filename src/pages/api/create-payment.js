@@ -1,62 +1,62 @@
 import crypto from 'crypto';
 import { savePendingOrder } from '../../lib/pendingOrderStore';
 
-/** Keep LiqPay `info` small — long JSON may be truncated on callback and break JSON.parse. */
-function orderDataForLiqPayInfo(orderData) {
-  if (!orderData) return {};
-  const cap = (s, n) => (typeof s === 'string' && s.length > n ? `${s.slice(0, n)}...` : s);
-  const { formData, cartItems, totalPrice } = orderData;
-  const slimCart = Array.isArray(cartItems)
-    ? cartItems.map((item) => ({
-        code: item.code,
-        sku: item.sku,
-        //title: cap(item.title, 400),
-        // short_description: cap(item.short_description, 500),
-        price: item.price,
-        // image_path: item.image_path,
-        size: item.size
-      }))
-    : [];
-  return { formData, cartItems: slimCart, totalPrice };
+/**
+ * LiqPay: amount, currency, description, order_id, urls, payer email/phone go in signed `params`.
+ * Do not put cart/form in `info` — LiqPay truncates ~1600 chars and breaks JSON.
+ * Full cart + formData for /api/send-email live in Redis via savePendingOrder (same order_id).
+ */
+function liqPayInfoField(orderId) {
+  return JSON.stringify({ o: orderId });
 }
 
 export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
       const { amount, description, orderData } = req.body;
-      // const paymentDescription = `Daisy Jewellery, ${firstName} ${lastName} ${department} ${cityName} ${email}`;
 
-      // Validate the amount
       if (!amount || isNaN(amount) || Number(amount) <= 0) {
         return res.status(400).json({ message: 'Invalid amount' });
       }
 
-      const orderId = Math.floor(100000 + Math.random() * 900000);
-      if (orderData) {
-        await savePendingOrder(orderId, orderData);
+      if (!orderData || typeof orderData !== 'object') {
+        return res.status(400).json({ message: 'orderData is required' });
       }
-      // NEXT_PUBLIC_BASE_URL
-      // Payment parameters
+      const { formData, cartItems } = orderData;
+      if (!formData || typeof formData !== 'object' || !String(formData.email || '').trim()) {
+        return res.status(400).json({ message: 'orderData.formData with email is required' });
+      }
+      if (!Array.isArray(cartItems) || cartItems.length === 0) {
+        return res.status(400).json({ message: 'orderData.cartItems must be a non-empty array' });
+      }
+
+      const orderId = Math.floor(100000 + Math.random() * 900000);
+      await savePendingOrder(orderId, orderData);
+
       const params = {
         public_key: process.env.LIQPAY_PUBLIC_KEY,
         version: '3',
         action: 'pay',
-        amount: amount.toString(), // Ensure amount is a string
+        amount: amount.toString(),
         currency: 'UAH',
         description: description || 'Payment Description',
         order_id: orderId,
+        info: liqPayInfoField(orderId, orderData),
         result_url: `${process.env.SITE_DOMAIN}/`,
         server_url: `${process.env.SITE_DOMAIN}/api/payment-callback`,
-        // localhost
+        email: String(formData.email).trim(),
+        info: liqPayInfoField(orderId),
+        paytypes: 'apay,gpay,card,privat24,invoice,qr',
+        // localhost sandbox
         // result_url: `${process.env.NEXT_PUBLIC_BASE_URL}/`,
         // server_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment-callback`,
-        // Additional custom parameters
-        // info: JSON.stringify({ email }),
-        info: JSON.stringify(orderDataForLiqPayInfo(orderData)),
-        paytypes: 'apay,gpay,card,privat24,invoice,qr',
-        // Uncomment the following line for sandbox mode
         // sandbox: '1'
       };
+
+      const phone = formData.phone != null ? String(formData.phone).trim() : '';
+      if (phone) {
+        params.phone = phone;
+      }
 
       // Generate data and signature - old worked way
       const jsonString = JSON.stringify(params);
