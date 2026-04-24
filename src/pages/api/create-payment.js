@@ -1,5 +1,24 @@
 import crypto from 'crypto';
 
+/** Keep LiqPay `info` small — long JSON may be truncated on callback and break JSON.parse. */
+function orderDataForLiqPayInfo(orderData) {
+  if (!orderData) return {};
+  const cap = (s, n) => (typeof s === 'string' && s.length > n ? `${s.slice(0, n)}...` : s);
+  const { formData, cartItems, totalPrice } = orderData;
+  const slimCart = Array.isArray(cartItems)
+    ? cartItems.map((item) => ({
+        code: item.code,
+        sku: item.sku,
+        //title: cap(item.title, 400),
+        // short_description: cap(item.short_description, 500),
+        price: item.price,
+        // image_path: item.image_path,
+        size: item.size
+      }))
+    : [];
+  return { formData, cartItems: slimCart, totalPrice };
+}
+
 export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
@@ -29,7 +48,7 @@ export default async function handler(req, res) {
         // server_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment-callback`,
         // Additional custom parameters
         // info: JSON.stringify({ email }),
-        info: JSON.stringify(orderData),
+        info: JSON.stringify(orderDataForLiqPayInfo(orderData)),
         paytypes: 'apay,gpay,card,privat24,invoice,qr',
         // Uncomment the following line for sandbox mode
         // sandbox: '1'
