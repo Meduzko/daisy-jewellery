@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { savePendingOrder } from '../../lib/pendingOrderStore';
 
 /** Keep LiqPay `info` small — long JSON may be truncated on callback and break JSON.parse. */
 function orderDataForLiqPayInfo(orderData) {
@@ -31,6 +32,9 @@ export default async function handler(req, res) {
       }
 
       const orderId = Math.floor(100000 + Math.random() * 900000);
+      if (orderData) {
+        await savePendingOrder(orderId, orderData);
+      }
       // NEXT_PUBLIC_BASE_URL
       // Payment parameters
       const params = {

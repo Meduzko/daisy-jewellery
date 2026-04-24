@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { sendFacebookEvent } from '../../lib/facebookCapi';
+import { getPendingOrder } from '../../lib/pendingOrderStore';
 
 /** LiqPay posts x-www-form-urlencoded. Using querystring/URLSearchParams turns '+' into spaces and breaks base64 in `data`. */
 function parseFormUrlEncoded(raw) {
@@ -87,23 +88,28 @@ export default async function handler(req, res) {
 
       if (decodedData?.status === 'success') {
         const decodedDataInfo = parseLiqPayInfo(decodedData.info);
-        if (!decodedDataInfo) {
-          console.error('payment-callback: missing or invalid info; email/CAPI skipped', {
+        const storedOrder = await getPendingOrder(decodedData.order_id);
+        const orderForFulfillment = storedOrder || decodedDataInfo;
+        if (!orderForFulfillment) {
+          console.error('payment-callback: missing stored order and invalid LiqPay info; email/CAPI skipped', {
             order_id: decodedData.order_id
           });
         } else {
-          console.log('orderData', decodedDataInfo);
+          console.log('orderData', { fromStore: Boolean(storedOrder), liqPayInfo: decodedDataInfo });
 
           await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-email`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ ...decodedDataInfo, paidInfo: { order_id: decodedData.order_id } }),
+            body: JSON.stringify({
+              ...orderForFulfillment,
+              paidInfo: { order_id: decodedData.order_id }
+            }),
           });
 
           try {
-            const { formData, cartItems, totalPrice } = decodedDataInfo || {};
+            const { formData, cartItems, totalPrice } = orderForFulfillment || {};
             const contents = Array.isArray(cartItems) ? cartItems.map((it) => ({
               id: it?.sku || it?.code || '',
               quantity: 1,
