@@ -1,8 +1,8 @@
 export const revalidate = 900;
 import Breadcrumbs from '../../../../../components/Breadcrumbs';
 import ProductPageNew from '../../../../../components/ProductPage';
-import { fetchProduct, getServerProductSizes } from '../../../../../actions/fetchProduct';
-import { fetchAllProducts } from '../../../../../actions/fetchAllProducts';
+import { getServerProductSizes } from '../../../../../actions/fetchProduct';
+import { getCachedAllProducts, getCachedProductByCode } from '../../../../../lib/dataCache';
 import { getProductMetadata } from '../../../../../helpers';
 import { getProductJsonLd, getLogoJsonLd } from '../../../../../helpers/getJsonLd';
 import { notFound } from 'next/navigation';
@@ -10,20 +10,15 @@ import { getItemTranslations } from '../../../../../dictionaries';
 
 export async function generateMetadata({ params }) {
   if (!params?.item) return notFound();
-  const response = await fetchProduct({ 
-    code: params.item, 
-    categoryId: process.env.RING_CATEGORY_ID,
-    throwOnError: true
-  });
-  if (!response || response?.length === 0) return notFound();
-  const [product] = response;
+  const product = await getCachedProductByCode(process.env.RING_CATEGORY_ID, params.item);
+  if (!product) return notFound();
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   return getProductMetadata({ product, categoryName: lang === 'ru' ? 'koltsa' : 'ring', lang });
 }
 
 export async function generateStaticParams() {
   try {
-    const products = await fetchAllProducts({ categoryId: process.env.RING_CATEGORY_ID });
+    const products = await getCachedAllProducts(process.env.RING_CATEGORY_ID);
     if (!products || !products?.length) return [];
     return products.map(product => ({ lang: 'ru', item: product.code.toString() }));
   } catch (e) {
@@ -34,12 +29,7 @@ export async function generateStaticParams() {
 
 export default async function RingItem({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const products = await fetchProduct({ 
-    code: params.item, 
-    categoryId: process.env.RING_CATEGORY_ID,
-    throwOnError: true
-  });
-  const [product] = products;
+  const product = await getCachedProductByCode(process.env.RING_CATEGORY_ID, params.item);
   if (!product) return notFound();
 
   const productSizes = await getServerProductSizes(product.sku, process.env.RING_CATEGORY_ID);

@@ -1,12 +1,7 @@
-// import dynamic from 'next/dynamic';
 import { Grid } from '@mui/material';
 import PaginationComponent from '../Pagination/index';
 import GalleryItem from './GalleryItem';
-import GalleryItemMobile from './mobile/GalleryItemMobile';
 import styles from './styles.module.css';
-
-// const GalleryItem = dynamic(() => import('./GalleryItem'), { ssr: false });
-// const GalleryItemMobile = dynamic(() => import('./mobile/GalleryItemMobile'), { ssr: false });
 
 export default async function Gallery({
   items,
@@ -15,22 +10,17 @@ export default async function Gallery({
   withPagination,
   baseURL,
   itemBaseURL,
-  isMobile,
   t = {},
   showSizes,
   lang
 }) {
-  const GalleryComponent = isMobile ? GalleryItemMobile : GalleryItem;
-  const spacing = isMobile ? 1 : 3;
-  const rowSpacing = isMobile ? 2 : 4;
-
   return (
     <div className={styles.galleryCnt}>
-      <Grid container spacing={spacing} rowSpacing={rowSpacing}>
+      <Grid container spacing={{ xs: 1, md: 3 }} rowSpacing={{ xs: 2, md: 4 }}>
         {items.map((item) => (
           item.image_path && (
             <Grid item xs={6} sm={6} md={4} key={item.id || item.product_id}>
-              <GalleryComponent item={item} baseURL={itemBaseURL || baseURL} t={t} showSizes={showSizes} lang={lang} />
+              <GalleryItem item={item} baseURL={itemBaseURL || baseURL} t={t} showSizes={showSizes} lang={lang} />
             </Grid>
           )
         ))}

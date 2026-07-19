@@ -73,15 +73,6 @@
     cursor: pointer;
 }
 
-.imgContainer:hover .hoverImg {
-    opacity: 1;
-    transform: scale(1.02);
-}
-  
-.imgContainer:hover .defaultImg {
-    opacity: 0;
-}
-
 .itemImg {
     position: absolute;
     top: 0;
@@ -101,11 +92,6 @@
 
 .defaultImg {
     z-index: 1;
-}
-
-.hoverImg {
-    opacity: 0;
-    z-index: 2;
 }
 
 .itemInfo {
@@ -196,6 +182,7 @@
     margin-top: auto;
     padding-top: 12px;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
+    gap: 4px;
 }
 
 /* Subtle shimmer effect on image hover */
@@ -254,7 +241,7 @@
     }
 
     .price {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
 
     .buyButton {

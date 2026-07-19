@@ -1,9 +1,11 @@
 import { notFound } from 'next/navigation';
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
-import { getPaginationData, getDeviceType, generateCategoryMetadata, generate404MetaData } from '../../../../helpers';
+import { getPaginationData, generateCategoryMetadata, generate404MetaData } from '../../../../helpers';
 import { getCachedTotalPages, getCachedProducts } from '../../../../lib/dataCache';
 import Gallery from '../../../../components/Gallery';
 import { getCategoryTranslations } from '../../../../dictionaries';
+
+export const revalidate = 900;
 
 const ITEMS_PER_PAGE = 16;
 const CATEGORY_ID = process.env.BRACER_CATEGORY_ID;
@@ -46,8 +48,6 @@ export default async function CategoryPageNumber({ params }) {
   const itemBaseURL = `${baseURL}/${lang === 'ru' ? 'kupit-serebryanyy-braslet' : 'kupyty-sribnyy-braslet'}`;
   const { currentPage, limit, offset } = getPaginationData(params.page_number);
   const { products, hasMore } = await getCachedProducts({ categoryId: CATEGORY_ID, offset, limit });
-  const device = getDeviceType();
-  const isMobile = device !== 'desktop';
   const tk = await getCategoryTranslations({ lang, categoryName: lang === 'ru' ? 'braslety' : '' }).catch(() => undefined);
 
   if (!products || !products.length) {
@@ -75,7 +75,6 @@ export default async function CategoryPageNumber({ params }) {
         baseURL={baseURL}
         itemBaseURL={itemBaseURL}
         withPagination={true}
-        isMobile={isMobile}
         t={tk}
         lang={lang}
       />
