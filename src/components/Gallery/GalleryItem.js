@@ -13,8 +13,7 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
     title,
     short_description,
     price,
-    image_path = '/',
-    images
+    image_path = '/'
   } = item;
   const priceSymbol = 'грн';
   const tk = t[code];
@@ -37,16 +36,6 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
                   width={600}
                   height={800}
                   className={`${styles.defaultImg} ${styles.itemImg}`}
-                  style={{ objectFit: 'cover', objectPosition: 'center' }}
-                />
-              )}
-              {images?.[1] && (
-                <Image
-                  src={images[1]}
-                  alt={`Зображення ${tkTitle} при наведенні`}
-                  width={600}
-                  height={800}
-                  className={`${styles.hoverImg} ${styles.itemImg}`}
                   style={{ objectFit: 'cover', objectPosition: 'center' }}
                 />
               )}

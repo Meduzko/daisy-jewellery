@@ -1,9 +1,11 @@
 import { getLogoJsonLd, getCategoryJsonLd } from '../../../../helpers/getJsonLd';
-import { getPaginationData, getDeviceType, generateCategoryMetadata, generate404MetaData } from '../../../../helpers';
+import { getPaginationData, generateCategoryMetadata, generate404MetaData } from '../../../../helpers';
 import { getCachedTotalPages, getCachedProducts } from '../../../../lib/dataCache';
 import Gallery from '../../../../components/Gallery';
 import { notFound } from 'next/navigation';
 import { getCategoryTranslations } from '../../../../dictionaries';
+
+export const revalidate = 900;
 
 const ITEMS_PER_PAGE = 16;
 const CATEGORY_ID = process.env.EARING_CATEGORY_ID;
@@ -40,8 +42,6 @@ export default async function Page({ params }) {
   const itemBaseURL = `${baseURL}/${itemSlug}`;
   const { currentPage, limit, offset } = getPaginationData(params.page_number);
   const { products, hasMore } = await getCachedProducts({ categoryId: CATEGORY_ID, offset, limit });
-  const device = getDeviceType();
-  const isMobile = device !== 'desktop';
   const tk = await getCategoryTranslations({ lang, categoryName: 'sergi' }).catch(() => undefined);
 
   if (!products || !products.length) notFound();
@@ -65,7 +65,6 @@ export default async function Page({ params }) {
         baseURL={baseURL}
         itemBaseURL={itemBaseURL}
         withPagination={true}
-        isMobile={isMobile}
         t={tk}
         lang={lang}
       />

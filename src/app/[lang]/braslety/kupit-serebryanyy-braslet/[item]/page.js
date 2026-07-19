@@ -1,8 +1,7 @@
 export const revalidate = 900;
 import Breadcrumbs from '../../../../../components/Breadcrumbs';
 import ProductPageNew from '../../../../../components/ProductPage';
-import { fetchProduct } from '../../../../../actions/fetchProduct';
-import { fetchAllProducts } from '../../../../../actions/fetchAllProducts';
+import { getCachedAllProducts, getCachedProductByCode } from '../../../../../lib/dataCache';
 import { getProductMetadata } from '../../../../../helpers';
 import { getProductJsonLd, getLogoJsonLd } from '../../../../../helpers/getJsonLd';
 import { notFound } from 'next/navigation';
@@ -13,24 +12,19 @@ export async function generateMetadata({ params }) {
     return notFound();
   }
 
-  const response = await fetchProduct({
-    code: params.item,
-    categoryId: process.env.BRACER_CATEGORY_ID,
-    throwOnError: true
-  });
+  const product = await getCachedProductByCode(process.env.BRACER_CATEGORY_ID, params.item);
 
-  if (!response || response?.length === 0) {
+  if (!product) {
     return notFound();
   }
 
-  const [product] = response;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   return getProductMetadata({ product, categoryName: 'braslety', lang });
 }
 
 export async function generateStaticParams() {
   try {
-    const products = await fetchAllProducts({ categoryId: process.env.BRACER_CATEGORY_ID });
+    const products = await getCachedAllProducts(process.env.BRACER_CATEGORY_ID);
     if (!products || !products?.length) return [];
     return products.map(product => ({ lang: 'ru', item: product.code.toString() }));
   } catch (error) {
@@ -41,12 +35,7 @@ export async function generateStaticParams() {
 
 export default async function BracerItem({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const products = await fetchProduct({ 
-    code: params.item, 
-    categoryId: process.env.BRACER_CATEGORY_ID,
-    throwOnError: true
-  });
-  const [product] = products;
+  const product = await getCachedProductByCode(process.env.BRACER_CATEGORY_ID, params.item);
 
   if (!product) {
     return notFound();

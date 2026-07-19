@@ -78,6 +78,16 @@ Sentry.init({
     // User-triggered navigation
     'AbortError',
     'ResizeObserver loop',
+    // In-app browser (Instagram/Facebook/TikTok on iOS) inject scripts that
+    // reference native WKWebView bridges which don't exist in normal Safari.
+    // These are third-party noise, not bugs in our code.
+    /webkit\.messageHandlers/,
+    /_AutofillCallbackHandler/,
+    /instantSearchSDKJSBridge/,
+    // Android WebView in-app browsers inject native JS bridges that get garbage
+    // collected when the WebView is destroyed. Also third-party noise.
+    /Java object is gone/,
+    /enableButtonsClickedMetaDataLogging/,
   ],
 
   // Add request URL to errors

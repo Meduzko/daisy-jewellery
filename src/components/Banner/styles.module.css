@@ -203,6 +203,7 @@
     letter-spacing: 0.08em;
     line-height: 1.5;
     max-width: 320px;
+    font-weight: 700;
   }
 
   .bannerDivider {
