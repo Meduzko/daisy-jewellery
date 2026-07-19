@@ -5,6 +5,7 @@ import { List, ListItem, Divider } from '@mui/material';
 import { CartContext } from '../../../../context/CartContext';
 import ProductBuyButton from '../../../Buttons/ProductBuy/ProductBuy';
 import { trackFacebookEvent } from '../../../../helpers/fbpixel';
+import RulesPopup from '../../../Popups/RulesPopup/RulesPopup';
 
 import styles from './styles.module.css';
 
@@ -26,6 +27,12 @@ const OrderList = ({
   const widgetRef = useRef();
 
   const [showBuyButton, setShowBuyButton] = useState(true);
+  const [showRulesPopup, setShowRulesPopup] = useState(false);
+
+  const handleOpenRules = (e) => {
+    e.preventDefault();
+    setShowRulesPopup(true);
+  };
 
   const getOrderData = () => {
     const totalPrice = getTotalPrice();
@@ -230,7 +237,11 @@ const OrderList = ({
         <p className={styles.totalSumPrice}>{`${fixedPrice} грн`}</p>
       </div>
 
-      {showBuyButton && <ProductBuyButton type="submit" width='100%' onClick={handleSubmitClick} />}
+      {showBuyButton && <ProductBuyButton type="submit" width='100%' onClick={handleSubmitClick} text="Оформити замовлення" />}
+
+      <p className={styles.rulesText}>Натискаючи кнопку «Оформити замовлення», я погоджуюся з <button type="button" className={styles.rulesLink} onClick={handleOpenRules}>правилами сайту</button></p>
+
+      <RulesPopup open={showRulesPopup} onClose={() => setShowRulesPopup(false)} />
 
       <div style={{ zIndex: 200, position: 'relative' }}>
         <div id="liqpay_checkout"></div>

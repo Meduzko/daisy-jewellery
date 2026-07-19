@@ -11,7 +11,9 @@ import {
   MenuItem,
   FormControl,
   CircularProgress,
-  FormHelperText
+  FormHelperText,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
 import Select from '@mui/material/Select'
 import { CartContext } from '../../../context/CartContext';
@@ -30,7 +32,12 @@ const OrderForm = () => {
     cityName: '',
     department: '',
     contact: '',
-    payment: ''
+    payment: '',
+    isGift: false,
+    giftFirstName: '',
+    giftLastName: '',
+    giftEmail: '',
+    giftPhone: ''
   });
 
   const [statusMessage, setStatusMessage] = useState('');
@@ -68,6 +75,26 @@ const OrderForm = () => {
       }
       return updatedErrors;
     });
+  };
+
+  const handleGiftToggle = (e) => {
+    const { checked } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      isGift: checked,
+    }));
+
+    if (!checked) {
+      setFormErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors.giftFirstName;
+        delete updatedErrors.giftLastName;
+        delete updatedErrors.giftEmail;
+        delete updatedErrors.giftPhone;
+        return updatedErrors;
+      });
+    }
   };
 
   const getOrderData = () => {
@@ -115,6 +142,22 @@ const OrderForm = () => {
     if (!contact) errors.contact = 'Спосіб зв\'язку є обов\'язковим полем';
   
     if (!payment) errors.payment = 'Метод оплати є обов\'язковим полем';
+
+    if (formData.isGift) {
+      const { giftFirstName, giftLastName, giftEmail, giftPhone } = formData;
+      const rawGiftPhone = (giftPhone || '').replace(/\D/g, '');
+
+      if (!giftFirstName) errors.giftFirstName = 'Ім\'я одержувача є обов\'язковим полем';
+      if (!giftLastName) errors.giftLastName = 'Прізвище одержувача є обов\'язковим полем';
+      if (!rawGiftPhone) {
+        errors.giftPhone = 'Телефон одержувача є обов\'язковим полем';
+      } else if (!/^[0-9]{12}$/.test(rawGiftPhone)) {
+        errors.giftPhone = 'Введіть валідний номер телефону у форматі: 380 (##)-##-###-## (12 цифр)';
+      }
+      if (giftEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(giftEmail)) {
+        errors.giftEmail = 'Введіть валідну Email адресу';
+      }
+    }
 
     setFormErrors(errors);
 
@@ -197,7 +240,7 @@ const OrderForm = () => {
           <CircularProgress />
         </div>
       )}
-      <div className={`${styles.defaultBlured}${loading ? styles.blurred : ''}`} />
+      {loading && <div className={`${styles.defaultBlured} ${styles.blurred}`} />}
       <Box component="form">
         <Grid container spacing={2} className={styles.formGrid}>
           <Grid item xs={12}>
@@ -275,6 +318,83 @@ const OrderForm = () => {
                 helperText={formErrors.phone}
               />
           </Grid>
+        </Grid>
+
+        <Grid container spacing={2} className={styles.formGrid}>
+          <Grid item xs={12}>
+            <FormControlLabel
+              sx={{ userSelect: 'none' }}
+              control={
+                <Checkbox
+                  checked={formData.isGift}
+                  onChange={handleGiftToggle}
+                  name="isGift"
+                />
+              }
+              label="Оформити замовлення в подарунок"
+            />
+          </Grid>
+
+          {formData.isGift && (
+            <>
+              <Grid item xs={12}>
+                <Typography className={styles.formTitle} variant="h4">Дані одержувача подарунка</Typography>
+              </Grid>
+
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Ім'я"
+                  name="giftFirstName"
+                  value={formData.giftFirstName}
+                  onChange={handleChange}
+                  required
+                  error={!!formErrors.giftFirstName}
+                  helperText={formErrors.giftFirstName}
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Прізвище"
+                  name="giftLastName"
+                  value={formData.giftLastName}
+                  onChange={handleChange}
+                  required
+                  error={!!formErrors.giftLastName}
+                  helperText={formErrors.giftLastName}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Email"
+                  name="giftEmail"
+                  type="email"
+                  value={formData.giftEmail}
+                  onChange={handleChange}
+                  error={!!formErrors.giftEmail}
+                  helperText={formErrors.giftEmail}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Телефон"
+                  name="giftPhone"
+                  type="tel"
+                  value={formData.giftPhone}
+                  onChange={handleChange}
+                  required
+                  error={!!formErrors.giftPhone}
+                  helperText={formErrors.giftPhone}
+                />
+              </Grid>
+            </>
+          )}
         </Grid>
 
         <Grid container spacing={2} className={styles.formGrid}>

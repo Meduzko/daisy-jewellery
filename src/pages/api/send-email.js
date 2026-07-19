@@ -31,6 +31,11 @@ export default async function handler(req, res) {
       comments,
       cityName,
       department,
+      isGift,
+      giftFirstName,
+      giftLastName,
+      giftEmail,
+      giftPhone,
     } = formData;
 
     const safeCart = Array.isArray(cartItems) ? cartItems : [];
@@ -71,6 +76,18 @@ export default async function handler(req, res) {
     )
     .join('');
 
+    const giftBlock = isGift
+      ? `
+      <h3 style="margin-bottom: 4px;">🎁 Замовлення в подарунок — дані одержувача</h3>
+      <ul>
+        <li>Ім'я: ${giftFirstName || ''}</li>
+        <li>Прізвище: ${giftLastName || ''}</li>
+        ${giftEmail ? `<li>Email: ${giftEmail}</li>` : ''}
+        <li>Телефон: ${giftPhone || ''}</li>
+      </ul>
+    `
+      : '';
+
     const orderNumber = generateOrderNumber();
     const paidText = paidInfo?.order_id ? `<strong>Ми отримали оплату, очікуйте доставку, номер замовлення - ${paidInfo.order_id} </strong>` : `Наш менеджер зв'яжеться з вами найближчим часом, щоб підтвердити деталі замовлення`;
     const mailTitle = paidInfo?.order_id ? `Замовлення #${paidInfo.order_id} успішно оплачено` : `Замовлення #${orderNumber} прийнято`;
@@ -110,6 +127,7 @@ export default async function handler(req, res) {
         <li>Телефон: ${phone}</li>
         ${comments ? `<li>Коментар: ${comments}</li>` : ''}
       </ul>
+      ${giftBlock}
       <p>З найкращими побажаннями,</p>
       <p>Команда Daisy Jewellery</p>
     `,
