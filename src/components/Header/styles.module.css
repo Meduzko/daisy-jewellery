@@ -136,7 +136,6 @@
         overflow: visible;
     }
 
-    .searchButton,
     .favoritesButton {
         display: none !important;
     }

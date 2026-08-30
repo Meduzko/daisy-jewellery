@@ -4,10 +4,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navigation from '../Navigation/page';
 import CartDrawler from '../Cart/Cart';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { IconButton } from '@mui/material';
+import Search from './Search/Search';
 import { useEffect, useRef, useState } from 'react';
 
 import MobileMenu from '../Menu/MobileMenu';
@@ -138,12 +138,10 @@ export default function Header({ lang }) {
           />
         </Link>
         <div className={styles.headerActions}>
-          <IconButton className={styles.searchButton} aria-label="Search button">
-            <SearchOutlinedIcon className={styles.searchIcon} />
-          </IconButton>
-          <IconButton className={styles.favoritesButton} aria-label="Favorites button">
+          <Search lang={lang} />
+          {/* <IconButton className={styles.favoritesButton} aria-label="Favorites button">
             <FavoriteBorderOutlinedIcon className={styles.favoritesIcon} />
-          </IconButton>
+          </IconButton> */}
           <CartDrawler />
           <LanguageSwitcher />
         </div>

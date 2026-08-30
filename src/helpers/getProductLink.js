@@ -1,5 +1,9 @@
+import { resolveProductCategory } from './resolveProductCategory';
+
 export const getProductLink = (product, lang) => {
-  const { category, code } = product;
+  const { code } = product;
+  const category = product.category || resolveProductCategory(product);
+  const locale = lang === 'ru' ? 'ru' : 'uk';
   const categoryMap = {
     uk: {
       ring: 'kabluchki/kupyty-sribnu-kabluchku',
@@ -13,9 +17,12 @@ export const getProductLink = (product, lang) => {
       necklace: 'kolye/kupit-serebryanoye-kolye',
       bracer: 'braslety/kupit-serebryanyy-braslet',
     }
-  }
-  const cat = categoryMap[lang][category];
-  const productLink = `/${lang}/${cat}/${code}`;
+  };
+  const cat = categoryMap[locale][category];
 
-  return productLink;
-}
+  if (!cat || code == null) {
+    return `/${locale}`;
+  }
+
+  return `/${locale}/${cat}/${code}`;
+};

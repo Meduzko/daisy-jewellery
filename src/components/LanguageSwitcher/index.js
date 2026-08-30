@@ -92,12 +92,14 @@ const LanguageSwitcher = () => {
 
       // Construct the new path
       const newPath = `/${translatedSegments.join('/')}`;
+      const search = typeof window !== 'undefined' ? window.location.search : '';
 
       // Navigate to the new path
-      router.push(newPath);
+      router.push(`${newPath}${search}`);
     } else {
       // If the path doesn't contain slugs, just switch the locale
-      router.push(`/${newLocale}`);
+      const search = typeof window !== 'undefined' ? window.location.search : '';
+      router.push(`/${newLocale}${search}`);
     }
 
     setDropdownOpen(false);

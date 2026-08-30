@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import Link from "next/link"
 import BuyButton from './BuyButton';
+import { getProductLink } from '../../helpers/getProductLink';
 import styles from './styles.module.css';
 
 // const LazyImage = dynamic(() => import('next/image'), { ssr: false });
@@ -16,7 +17,10 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
     image_path = '/'
   } = item;
   const priceSymbol = 'грн';
-  const tk = t[code];
+  const href = item.category && lang
+    ? getProductLink(item, lang)
+    : `${baseURL}/${code}`;
+  const tk = t?.[code];
   const tkTitle = tk?.title || title;
   const rawDescription = tk?.description || short_description || '';
   // Strip outer <p> tags to avoid nested paragraphs and normalize content
@@ -25,7 +29,7 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
 
   return (
       <article className={styles.itemWrapper}>
-        <Link href={`${baseURL}/${code}`} aria-label={`Переглянути ${tkTitle}`}>
+        <Link href={href} aria-label={`Переглянути ${tkTitle}`}>
           <div className={styles.galleryItem}>
             <div className={styles.itemBackground} />
             <div className={styles.imgContainer}>
@@ -45,7 +49,7 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
         <div className={styles.itemInfo}>
           <header className={styles.titleContainer}>
             <h2 className={styles.title}>
-              <Link href={`${baseURL}/${code}`}>{tkTitle}</Link>
+              <Link href={href}>{tkTitle}</Link>
             </h2>
             {hasDescription && (
               <p className={styles.subTitle} dangerouslySetInnerHTML={{ __html: tkDescription }} />

@@ -1,0 +1,10 @@
+.page {
+    min-height: 40vh;
+}
+
+.empty {
+    text-align: center;
+    color: #8a8178;
+    padding: 24px 16px 64px;
+    margin: 0;
+}
