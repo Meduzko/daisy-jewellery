@@ -258,7 +258,7 @@ const OrderForm = () => {
       <Box component="form">
         <Grid container spacing={2} className={styles.formGrid}>
           <Grid item xs={12}>
-            <Typography className={styles.formTitle} variant="h4">Персональні данні</Typography>
+            <Typography className={styles.formTitle} variant="h4">Персональні дані</Typography>
           </Grid>
 
           <Grid item xs={6}>
