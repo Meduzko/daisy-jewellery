@@ -100,16 +100,17 @@ const OrderForm = () => {
   const getOrderData = () => {
     const totalPrice = getTotalPrice();
     const cartItemsWithSize = cartItems.map(item => {
+      const { prices, ...itemWithoutPrices } = item;
       const size = getItemSize(item);
 
       if (size) {
         return {
-          ...item,
+          ...itemWithoutPrices,
           size
         }
       }
 
-      return item;
+      return itemWithoutPrices;
     });
 
     return {
@@ -168,28 +169,41 @@ const OrderForm = () => {
     return true;
   };
 
-  const sendOrderEmail = async (paidInfo) => {
+  const submitOrder = async (paidInfo) => {
     try {
       setLoading(true);
 
       const orderData = getOrderData();
-      const res = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...orderData, paidInfo }),
-      });
+      const body = JSON.stringify({ ...orderData, paidInfo });
+      const headers = { 'Content-Type': 'application/json' };
 
-      const result = await res.json();
-      if (res.status === 200) {
+      const [orderRes, emailRes] = await Promise.all([
+        fetch('/api/order', {
+          method: 'POST',
+          headers,
+          body
+        }),
+        fetch('/api/send-email', {
+          method: 'POST',
+          headers,
+          body
+        })
+      ]);
+
+      if (orderRes.ok || emailRes.ok) {
         handleOrderSuccess();
+        if (!orderRes.ok) {
+          console.error('Failed to create DNTrade order', await orderRes.json().catch(() => ({})));
+        }
+        if (!emailRes.ok) {
+          console.error('Failed to send order email', await emailRes.json().catch(() => ({})));
+        }
       } else {
-        setStatusMessage('Error' );
+        setStatusMessage('Не вдалося оформити замовлення. Спробуйте ще раз.');
       }
     } catch (error) {
-      console.error('Error sending email:', error);
-      setStatusMessage('Failed to submit order.');
+      console.error('Error submitting order:', error);
+      setStatusMessage('Не вдалося оформити замовлення. Спробуйте ще раз.');
     } finally {
       setLoading(false);
     }
@@ -212,7 +226,7 @@ const OrderForm = () => {
       return;
     }
 
-    sendOrderEmail(paidInfo);
+    submitOrder(paidInfo);
   };
 
   const triggerValidation = (e) => {

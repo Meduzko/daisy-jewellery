@@ -37,7 +37,17 @@ const OrderList = ({
   const getOrderData = () => {
     const totalPrice = getTotalPrice();
     const cartItemsWithSize = cartItems.map(item => {
-      const { code, sku, title, short_description, price, image_path } = item;
+      const {
+        code,
+        sku,
+        title,
+        short_description,
+        price,
+        image_path,
+        product_id,
+        quantity,
+        store_id
+      } = item;
       const size = getItemSize(item);
       const baseItem = {
         code,
@@ -45,14 +55,17 @@ const OrderList = ({
         title,
         short_description,
         price,
-        image_path
-      }
+        image_path,
+        product_id,
+        quantity,
+        store_id
+      };
 
       if (size) {
         return {
           ...baseItem,
           size
-        }
+        };
       }
 
       return baseItem;
