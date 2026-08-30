@@ -9,7 +9,7 @@ import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { CartContext } from '../../context/CartContext';
-import ProductCounter from '../ProductPage/counter/productCounter';
+//import ProductCounter from '../ProductPage/counter/productCounter';
 import ProductBuyButton from '../Buttons/ProductBuy/ProductBuy';
 import RemainingPriceProgressBar from '../Form/Order/RemainingProgressBar/RemainingProgressBar';
 
@@ -116,9 +116,11 @@ const CartDrawler = () => {
                               alt={item.title}
                               className={styles.basketImage} />
                           </picture>
+                          {/*
                           <div className={styles.counterWrapper}>
                             <ProductCounter initialCount={item.quantity} maxCount={10} cartItem={item} />
                           </div>
+                          */}
                         </div>
                         <div className={styles.itemDetails}>
                             <h4 className={styles.itemTitle}>{item.title}</h4>

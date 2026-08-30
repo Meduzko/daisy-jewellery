@@ -3,6 +3,7 @@
 import React, { useContext, useState } from 'react';
 import { Dialog, IconButton } from '@mui/material';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import { CartContext } from '../../context/CartContext';
 import { getProductSizes } from '../../actions/fetchProduct';
 import SizeSelector from '../ProductPage/sizeSelector/sizeSelector';
@@ -60,10 +61,12 @@ export default function BuyButton({ item, showSizes, lang }) {
   return (
     <>
       <button
+        type="button"
         onClick={handleBtnClick}
         className={styles.buyButton}
       >
-        {buyButtonLabel}
+        <LocalMallOutlinedIcon className={styles.buyButtonIcon} />
+        <span>{buyButtonLabel}</span>
       </button>
 
       <Dialog

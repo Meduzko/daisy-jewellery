@@ -51,9 +51,10 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
             <h2 className={styles.title}>
               <Link href={href}>{tkTitle}</Link>
             </h2>
-            {hasDescription && (
-              <p className={styles.subTitle} dangerouslySetInnerHTML={{ __html: tkDescription }} />
-            )}
+            <p
+              className={styles.subTitle}
+              dangerouslySetInnerHTML={{ __html: hasDescription ? tkDescription : '&nbsp;' }}
+            />
           </header>
           <div className={styles.itemBottomCnt}>
             <span className={styles.price}>{`${price} ${priceSymbol}`}</span>

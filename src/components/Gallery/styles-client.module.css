@@ -222,6 +222,14 @@
   }
 
   .price {
-    font-size: 0.95rem;
+    line-height: 14px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-size: 14px;
+  }
+
+  .itemBottomCnt {
+    flex-direction: column;
+    gap: 8px;
   }
 }

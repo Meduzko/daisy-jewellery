@@ -1,32 +1,18 @@
 "use client";
 
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode, Navigation } from 'swiper/modules';
+import { FreeMode, Pagination } from 'swiper/modules';
 import ProductItem from '../ProductItem/productItem';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/free-mode';
-import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import './styles.css';
 
 export default function SwiperCarousel({ data, lang }) {
-  const pagination = {
-    clickable: true,
-    renderBullet: function (index, className) {
-      return '<span class="' + className + '">' + (index + 1) + '</span>';
-    },
-  };
-
   return (
     <Swiper
-      // spaceBetween={50}
-      // slidesPerView={3}
-      // onSlideChange={() => console.log('slide change')}
-      // onSwiper={(swiper) => console.log(swiper)}
-      // className="manualCarousel"
-      // new
-      // slidesPerView={4}
       slidesPerView="auto"
       spaceBetween={16}
       freeMode={{
@@ -34,9 +20,9 @@ export default function SwiperCarousel({ data, lang }) {
         sticky: true,
       }}
       centerInsufficientSlides={true}
-      navigation={true}
+      pagination={{ clickable: true }}
       slidesPerGroup={1}
-      modules={[FreeMode, Navigation]}
+      modules={[FreeMode, Pagination]}
       className="manualCarousel"
     >
       {data?.map(item => (
