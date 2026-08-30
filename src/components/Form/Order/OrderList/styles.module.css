@@ -175,6 +175,31 @@
     padding-top: 16px;
 }
 
+.validationErrors {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: rgba(183, 28, 28, 0.04);
+    border: 1px solid rgba(183, 28, 28, 0.18);
+}
+
+.validationTitle {
+    margin: 0 0 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #b71c1c;
+}
+
+.validationList {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #b71c1c;
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
 .rulesText {
     font-size: 0.85rem;
     margin-top: 8px;

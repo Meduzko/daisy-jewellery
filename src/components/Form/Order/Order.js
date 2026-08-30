@@ -516,6 +516,7 @@ const OrderForm = () => {
         triggerValidation={triggerValidation}
         validateForm={validateForm}
         formData={formData}
+        formErrors={formErrors}
       />
     </>
   );

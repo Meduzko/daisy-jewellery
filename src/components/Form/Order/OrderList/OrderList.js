@@ -9,9 +9,25 @@ import RulesPopup from '../../../Popups/RulesPopup/RulesPopup';
 
 import styles from './styles.module.css';
 
+const FIELD_LABELS = {
+  firstName: 'Ім\'я',
+  lastName: 'Прізвище',
+  email: 'Email',
+  phone: 'Телефон',
+  cityName: 'Населений пункт',
+  department: 'Відділення Нової Пошти',
+  contact: 'Спосіб зв\'язку',
+  payment: 'Оплата',
+  giftFirstName: 'Ім\'я одержувача',
+  giftLastName: 'Прізвище одержувача',
+  giftEmail: 'Email одержувача',
+  giftPhone: 'Телефон одержувача'
+};
+
 const OrderList = ({
   handleSubmit,
   formData,
+  formErrors = {},
   orderDescription,
   triggerValidation,
   validateForm
@@ -251,6 +267,20 @@ const OrderList = ({
       </div>
 
       {showBuyButton && <ProductBuyButton type="submit" width='100%' onClick={handleSubmitClick} text="Оформити замовлення" />}
+
+      {Object.keys(formErrors).length > 0 && (
+        <div className={styles.validationErrors} role="alert">
+          <p className={styles.validationTitle}>Перевірте поля форми:</p>
+          <ul className={styles.validationList}>
+            {Object.entries(formErrors).map(([field, message]) => (
+              <li key={field}>
+                <strong>{FIELD_LABELS[field] || field}</strong>
+                {message ? ` — ${message}` : ''}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <p className={styles.rulesText}>Натискаючи кнопку «Оформити замовлення», я погоджуюся з <button type="button" className={styles.rulesLink} onClick={handleOpenRules}>правилами сайту</button></p>
 
