@@ -6,6 +6,7 @@ import { CartContext } from '../../../../context/CartContext';
 import ProductBuyButton from '../../../Buttons/ProductBuy/ProductBuy';
 import { trackFacebookEvent } from '../../../../helpers/fbpixel';
 import RulesPopup from '../../../Popups/RulesPopup/RulesPopup';
+import { getLinePrices } from '../../../../helpers/productPricing';
 
 import styles from './styles.module.css';
 
@@ -103,13 +104,7 @@ const OrderList = ({
     }
   }, [paymentByCard]);
 
-  const getItemPrice = (item) => {
-    if (item?.quantity > 1) {
-      return parseFloat((Number(item.price) * item.quantity).toFixed(2));
-    }
-
-    return item.price;
-  };
+  const getItemPrice = (item) => getLinePrices(item);
 
   const handlePaymentRender = async () => {
     try {
@@ -216,7 +211,7 @@ const OrderList = ({
     <div className={styles.orderListContainer}>
       <List className={styles.orderList}>
         {cartItems.map((item, index) => {
-          const price = getItemPrice(item);
+          const { price, originalPrice, hasDiscount } = getItemPrice(item);
           const size = getItemSize(item);
 
           return (
@@ -234,7 +229,16 @@ const OrderList = ({
                 <div className={styles.itemDetails}>
                   {/* <Link href={`/category/ring/${item.id}`}></Link> */}
                   <h4 className={styles.itemTitle}>{item.title}</h4>
-                  <div className={styles.price}>{`${price} грн`}</div>
+                  <div className={styles.price}>
+                    {hasDiscount ? (
+                      <>
+                        <span className={styles.oldPrice}>{`${originalPrice} грн`}</span>
+                        <span className={styles.salePrice}>{`${price} грн`}</span>
+                      </>
+                    ) : (
+                      `${price} грн`
+                    )}
+                  </div>
                   {size && (
                     <div>{`Розмір: ${size}`}</div>
                   )}

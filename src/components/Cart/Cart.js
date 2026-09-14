@@ -12,6 +12,7 @@ import { CartContext } from '../../context/CartContext';
 //import ProductCounter from '../ProductPage/counter/productCounter';
 import ProductBuyButton from '../Buttons/ProductBuy/ProductBuy';
 import RemainingPriceProgressBar from '../Form/Order/RemainingProgressBar/RemainingProgressBar';
+import { getLinePrices } from '../../helpers/productPricing';
 
 import styles from './styles.module.css';
 
@@ -57,13 +58,7 @@ const CartDrawler = () => {
   const PRICE_FOR_FREE_DELIVERY = 2500;
   const isFreeDelivery = totalPrice >= PRICE_FOR_FREE_DELIVERY;
 
-  const getItemPrice = (item) => {
-    if (item?.quantity > 1) {
-      return parseFloat((Number(item.price) * item.quantity).toFixed(2));
-    }
-
-    return item.price;
-  };
+  const getItemPrice = (item) => getLinePrices(item);
 
   const closeCart = () => setCartOpen(false);
 
@@ -104,7 +99,7 @@ const CartDrawler = () => {
               <List className={styles.cartList}>
                 {cartItems.map((item, index) => {
                   const itemSize = getItemSize(item);
-                  const itemPrice = getItemPrice(item);
+                  const { price: itemPrice, originalPrice, hasDiscount } = getItemPrice(item);
 
                   return (
                     <ListItem key={index} className={styles.cartListItem} divider>
@@ -129,7 +124,16 @@ const CartDrawler = () => {
                               <span>Розмір: {itemSize}</span>
                             </div>
                           )}
-                          <div className={styles.price}>{`${itemPrice} грн`}</div>
+                          <div className={styles.price}>
+                            {hasDiscount ? (
+                              <>
+                                <span className={styles.oldPrice}>{`${originalPrice} грн`}</span>
+                                <span className={styles.salePrice}>{`${itemPrice} грн`}</span>
+                              </>
+                            ) : (
+                              `${itemPrice} грн`
+                            )}
+                          </div>
                         </div>
                         <div className={styles.deleteContainer}>
                           <IconButton

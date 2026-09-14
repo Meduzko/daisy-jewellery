@@ -1,4 +1,5 @@
 import { getItemTranslations } from '../dictionaries';
+import { getDisplayPrices } from './productPricing';
 
 export const getCategoryJsonLd = ({ categoryName, categoryDescription, url, lowPrice, highPrice }) => {
   const jsonLd = {
@@ -28,9 +29,9 @@ export const getProductJsonLd = async (product, categoryUrl, options = {}) => {
     title,
     short_description: description,
     images,
-    price,
     code
   } = product;
+  const { price } = getDisplayPrices(product);
 
   const plainTextDescription = description.replace(/<[^>]*>/g, "");
 

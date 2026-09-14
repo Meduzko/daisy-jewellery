@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useEffect, useState } from 'react';
+import { applyProductDiscount } from '../helpers/productPricing';
 
 export const CartContext = createContext();
 
@@ -27,7 +28,8 @@ export const CartProvider = ({ children }) => {
       const storedItemSizes = sessionStorage.getItem('itemSize');
 
       if (storedCartItems) {
-        setCartItems(JSON.parse(storedCartItems));
+        const parsedItems = JSON.parse(storedCartItems);
+        setCartItems(Array.isArray(parsedItems) ? parsedItems.map(applyProductDiscount) : []);
       }
       if (storedItemSizes) {
         setItemSize(JSON.parse(storedItemSizes));
@@ -60,7 +62,7 @@ export const CartProvider = ({ children }) => {
   };
 
   const addToCart = (product, quantity = 1) => {
-    const { pices, ...restOfProduct } = product;
+    const { pices, ...restOfProduct } = applyProductDiscount(product);
     const store_id = getProductStoreId(product);
 
     setCartItems((prevItems) => {
@@ -110,7 +112,7 @@ export const CartProvider = ({ children }) => {
             : item
         );
       } else {
-        const { pices, ...restOfProduct } = product;
+        const { pices, ...restOfProduct } = applyProductDiscount(product);
         return [...prevItems, { ...restOfProduct, quantity, store_id: getProductStoreId(product) }];
       }
     });
@@ -133,7 +135,8 @@ export const CartProvider = ({ children }) => {
 
   const getTotalPrice = () => {
     return cartItems.reduce((acc, item) => {
-      return acc + Number(item.price) * item.quantity;
+      const { price } = applyProductDiscount(item);
+      return acc + Number(price) * item.quantity;
     }, 0);
   };
 

@@ -1,3 +1,5 @@
+import { applyProductDiscounts } from '../helpers/productPricing';
+
 export async function fetchProducts({ offset, limit, categoryId }) {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.SITE_DOMAIN || '';
@@ -20,8 +22,8 @@ export async function fetchProducts({ offset, limit, categoryId }) {
   
     const data = await res.json();
   
-    const products = data?.products || [];
-    const hasMore = products.length === limit;
+    const products = applyProductDiscounts(data?.products || []);
+    const hasMore = (data?.products?.length || 0) === limit;
   
     return { products, hasMore };
   } catch (error) {
@@ -89,7 +91,7 @@ export async function fetchAllProducts({ categoryId }) {
       }
 
       const data = await res.json();
-      const products = data?.products || [];
+      const products = applyProductDiscounts(data?.products || []);
       
       allProducts.push(...products);
       

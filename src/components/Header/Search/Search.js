@@ -8,6 +8,7 @@ import { CircularProgress, IconButton } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { getProductLink } from '../../../helpers/getProductLink';
+import { getDisplayPrices } from '../../../helpers/productPricing';
 
 import styles from './styles.module.css';
 
@@ -170,6 +171,7 @@ const Search = ({ lang = 'uk' }) => {
                 )}
                 {results.map((product) => {
                   const href = getProductLink(product, locale);
+                  const { price, originalPrice, hasDiscount } = getDisplayPrices(product);
                   return (
                     <Link
                       key={product.product_id || product.code}
@@ -189,8 +191,17 @@ const Search = ({ lang = 'uk' }) => {
                       </span>
                       <span className={styles.resultInfo}>
                         <span className={styles.resultTitle}>{product.title}</span>
-                        {product.price != null && (
-                          <span className={styles.resultPrice}>{product.price} грн</span>
+                        {price != null && (
+                          <span className={styles.resultPrice}>
+                            {hasDiscount ? (
+                              <>
+                                <span className={styles.oldPrice}>{originalPrice} грн</span>
+                                <span>{price} грн</span>
+                              </>
+                            ) : (
+                              `${price} грн`
+                            )}
+                          </span>
                         )}
                       </span>
                     </Link>

@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { applyProductDiscount } from '../../helpers/productPricing';
 // import { RateLimiterRedis } from 'rate-limiter-flexible';
 // import Redis from 'ioredis';
 
@@ -62,7 +63,9 @@ export default async function handler(req, res) {
 
     const itemsDetails = safeCart
     .map(
-      (item, index) => `
+      (item, index) => {
+        const pricedItem = applyProductDiscount(item);
+        return `
         <tr style="border-bottom: 1px solid #ddd;">
           <td style="padding: 8px;"><img src="cid:product_image_${index}" alt="${item.title}" style="width: 50px; height: auto;" /></td>
           <td style="padding: 8px;">${item.code}</td>
@@ -70,9 +73,10 @@ export default async function handler(req, res) {
           <td style="padding: 8px;">${item.title}</td>
           <td style="padding: 8px;">${item.short_description}</td>
           <td style="padding: 8px;">${item.size || ''}</td>
-          <td style="padding: 8px;">${item.price} грн</td>
+          <td style="padding: 8px;">${pricedItem.price} грн</td>
         </tr>
-      `
+      `;
+      }
     )
     .join('');
 

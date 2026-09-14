@@ -132,6 +132,24 @@
     background: linear-gradient(90deg, #8b7355, #c9a86c);
 }
 
+.priceValues {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.oldPrice {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #999;
+    text-decoration: line-through;
+    letter-spacing: 0.04em;
+}
+
+.salePrice {
+    color: #EF4444;
+}
+
 .bottomGradient {
     position: absolute;
     width: 100%;

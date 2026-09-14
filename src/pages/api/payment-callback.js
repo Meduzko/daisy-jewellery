@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { sendFacebookEvent } from '../../lib/facebookCapi';
 import { getPendingOrder } from '../../lib/pendingOrderStore';
 import { uploadOrderToDntrade } from '../../lib/dntradeOrder';
+import { applyProductDiscount } from '../../helpers/productPricing';
 
 /** LiqPay posts x-www-form-urlencoded. Using querystring/URLSearchParams turns '+' into spaces and breaks base64 in `data`. */
 function parseFormUrlEncoded(raw) {
@@ -139,11 +140,14 @@ export default async function handler(req, res) {
 
           try {
             const { formData, cartItems, totalPrice } = orderForFulfillment || {};
-            const contents = Array.isArray(cartItems) ? cartItems.map((it) => ({
-              id: it?.sku || it?.code || '',
-              quantity: 1,
-              item_price: Number(it?.price) || 0
-            })) : [];
+            const contents = Array.isArray(cartItems) ? cartItems.map((it) => {
+              const pricedItem = applyProductDiscount(it);
+              return {
+                id: it?.sku || it?.code || '',
+                quantity: 1,
+                item_price: Number(pricedItem?.price) || 0
+              };
+            }) : [];
 
             await sendFacebookEvent({
               eventName: 'Purchase',

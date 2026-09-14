@@ -161,6 +161,21 @@
     color: #1a1a1a;
     text-align: left;
     margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.oldPrice {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #999;
+    text-decoration: line-through;
+}
+
+.salePrice {
+    color: #EF4444;
 }
 
 /* Delete Button */

@@ -71,7 +71,7 @@
   color: #1a1a1a;
   letter-spacing: 0.02em;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
 }
 
@@ -82,6 +82,24 @@
   height: 1px;
   background: linear-gradient(90deg, #8b7355, #c9a86c);
   margin-right: 4px;
+}
+
+.productPriceValues {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.oldPrice {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #999;
+  text-decoration: line-through;
+  letter-spacing: 0.02em;
+}
+
+.salePrice {
+  color: #EF4444;
 }
 
 /* Product Info Container (Size, Quantity labels) */

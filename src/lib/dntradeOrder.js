@@ -1,5 +1,7 @@
 import { randomUUID } from 'crypto';
 
+import { applyProductDiscount } from '../helpers/productPricing';
+
 const NEW_ORDER_STATUS = 5;
 const CHANNEL = 'Сайт';
 
@@ -87,7 +89,7 @@ export const buildDntradeOrderPayload = ({
   const cart = cartItems
     .filter((item) => item?.product_id)
     .map((item) => {
-      const { prices, ...itemWithoutPrices } = item;
+      const { prices, ...itemWithoutPrices } = applyProductDiscount(item);
       const row = {
         product_id: itemWithoutPrices.product_id,
         store_id: getProductStoreId(itemWithoutPrices),

@@ -125,6 +125,15 @@
 .resultPrice {
     font-size: 0.8rem;
     color: #8b7355;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.oldPrice {
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
 }
 
 .empty {

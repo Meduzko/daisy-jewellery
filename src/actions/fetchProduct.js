@@ -1,3 +1,5 @@
+import { applyProductDiscounts } from '../helpers/productPricing';
+
 export async function fetchProduct({
   code,
   categoryId,
@@ -89,13 +91,14 @@ export async function fetchProduct({
 
   try {
     const data = await response.json();
+    const products = applyProductDiscounts(data?.products || []);
   
     if (paginated) {
-      const hasMore = data?.products?.length === limit;
-      return { products: data?.products || [], hasMore };
+      const hasMore = (data?.products?.length || 0) === limit;
+      return { products, hasMore };
     }
 
-    return data.products || [];
+    return products;
   } catch (error) {
     console.error('Failed to parse response:', error);
     if (throwOnError) {

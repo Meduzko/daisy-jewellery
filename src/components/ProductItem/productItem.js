@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 // import { getItemTranslations } from '../../dictionaries';
 import { getProductLink } from '../../helpers/getProductLink';
+import { getDisplayPrices } from '../../helpers/productPricing';
 
 import styles from './styles.module.css';
 
@@ -79,12 +80,13 @@ const translations = {
 };
 
 export default function ProductItem({ product, lang }) {
-  const { product_id, title, short_description, price, code, image_path, category } = product;
+  const { product_id, title, short_description, code, image_path, category } = product;
   // const cat = categoryMap[category];
   // const productLink = `/${cat}/${code}`;
   const productLink = getProductLink(product, lang);
   const tk = translations?.[lang]?.[code];
   const tkTitle = tk?.title || title;
+  const { price, originalPrice, hasDiscount } = getDisplayPrices(product);
 
   return (
     <div className={styles.item} key={product_id}>
@@ -110,7 +112,14 @@ export default function ProductItem({ product, lang }) {
           {/* <p className={styles.itemDescription} dangerouslySetInnerHTML={{ __html: short_description }} /> */}
         </div>
         <div className={styles.priceCnt}>
-          <span>{price} грн</span>
+          {hasDiscount ? (
+            <span className={styles.priceValues}>
+              <span className={styles.oldPrice}>{originalPrice} грн</span>
+              <span className={styles.salePrice}>{price} грн</span>
+            </span>
+          ) : (
+            <span>{price} грн</span>
+          )}
         </div>
       </div>
     </div>

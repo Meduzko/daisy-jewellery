@@ -1,16 +1,25 @@
 import { resolveProductCategory } from '../helpers/resolveProductCategory';
+import { applyProductDiscount } from '../helpers/productPricing';
 
-const toSearchResult = (product) => ({
-  product_id: product.product_id,
-  title: product.title,
-  price: product.price,
-  code: product.code,
-  sku: product.sku,
-  image_path: product.image_path,
-  images: product.images,
-  short_description: product.short_description,
-  category: resolveProductCategory(product)
-});
+const toSearchResult = (product) => {
+  const discounted = applyProductDiscount(product);
+
+  return {
+    product_id: discounted.product_id,
+    title: discounted.title,
+    price: discounted.price,
+    originalPrice: discounted.originalPrice,
+    salePrice: discounted.salePrice,
+    code: discounted.code,
+    sku: discounted.sku,
+    image_path: discounted.image_path,
+    images: discounted.images,
+    short_description: discounted.short_description,
+    category: resolveProductCategory(product),
+    tags: discounted.tags,
+    badges: discounted.badges
+  };
+};
 
 export const searchProductsByTitle = async ({
   title,

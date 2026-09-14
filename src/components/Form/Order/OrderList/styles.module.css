@@ -80,6 +80,20 @@
     font-size: 1rem;
     font-weight: 600;
     color: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.oldPrice {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #999;
+    text-decoration: line-through;
+}
+
+.salePrice {
+    color: #EF4444;
 }
 
 .itemDetails > div {

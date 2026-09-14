@@ -3,18 +3,22 @@ import Image from 'next/image';
 import Link from "next/link"
 import BuyButton from './BuyButton';
 import { getProductLink } from '../../helpers/getProductLink';
+import {
+  BADGE_CLASS,
+  applyProductDiscount,
+  getBadgeLabel,
+  getDisplayPrices,
+} from '../../helpers/productPricing';
 import styles from './styles.module.css';
 
 // const LazyImage = dynamic(() => import('next/image'), { ssr: false });
 
 export default async function GalleryItem({ item, baseURL = '/', t, showSizes, lang }) {
   const {
-    product_id,
     code,
     title,
     short_description,
-    price,
-    image_path = '/'
+    image_path = '/',
   } = item;
   const priceSymbol = 'грн';
   const href = item.category && lang
@@ -26,6 +30,8 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
   // Strip outer <p> tags to avoid nested paragraphs and normalize content
   const tkDescription = rawDescription.replace(/^<p>|<\/p>$/gi, '').trim();
   const hasDescription = tkDescription.length > 0;
+  const discountedItem = applyProductDiscount(item);
+  const { price, originalPrice, hasDiscount, badges } = getDisplayPrices(discountedItem);
 
   return (
       <article className={styles.itemWrapper}>
@@ -43,6 +49,19 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
                   style={{ objectFit: 'cover', objectPosition: 'center' }}
                 />
               )}
+              {badges.length > 0 && (
+                <ul className={styles.badges}>
+                  {badges.map((badge) => (
+                    <li
+                      key={badge.id}
+                      className={`${styles.badge} ${styles[BADGE_CLASS[badge.type]]}`}
+                      style={badge.color ? { background: badge.color } : undefined}
+                    >
+                      {getBadgeLabel(badge, lang)}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         </Link>
@@ -57,8 +76,17 @@ export default async function GalleryItem({ item, baseURL = '/', t, showSizes, l
             />
           </header>
           <div className={styles.itemBottomCnt}>
-            <span className={styles.price}>{`${price} ${priceSymbol}`}</span>
-            <BuyButton item={item} showSizes={showSizes} lang={lang} />
+            <div className={styles.priceCnt}>
+              {hasDiscount ? (
+                <>
+                  <span className={styles.oldPrice}>{`${originalPrice} ${priceSymbol}`}</span>
+                  <span className={`${styles.price} ${styles.salePrice}`}>{`${price} ${priceSymbol}`}</span>
+                </>
+              ) : (
+                <span className={styles.price}>{`${price} ${priceSymbol}`}</span>
+              )}
+            </div>
+            <BuyButton item={discountedItem} showSizes={showSizes} lang={lang} />
           </div>
         </div>
       </article>

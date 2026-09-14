@@ -4,6 +4,7 @@ import React, { useContext } from 'react';
 import { CartContext } from '../../../context/CartContext';
 import ProductBuyButton from '../../Buttons/ProductBuy/ProductBuy';
 import { trackFacebookEvent } from '../../../helpers/fbpixel';
+import { applyProductDiscount } from '../../../helpers/productPricing';
 
 const CounterWithSubmit = ({ product }) => {
   const { cartItems, addToCart, setCartOpen } = useContext(CartContext);
@@ -13,13 +14,14 @@ const CounterWithSubmit = ({ product }) => {
     setCartOpen(true);
 
     if (!cartItem) {
-      addToCart(product, 1);
+      const pricedProduct = applyProductDiscount(product);
+      addToCart(pricedProduct, 1);
       try {
         trackFacebookEvent('AddToCart', {
-          content_ids: [product.sku || product.code || product.product_id].filter(Boolean),
+          content_ids: [pricedProduct.sku || pricedProduct.code || pricedProduct.product_id].filter(Boolean),
           content_type: 'product',
-          content_name: product.title,
-          value: Number(product.price) || 0,
+          content_name: pricedProduct.title,
+          value: Number(pricedProduct.price) || 0,
           currency: 'UAH'
         });
       } catch (e) {}
