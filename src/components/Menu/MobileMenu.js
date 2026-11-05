@@ -1,22 +1,29 @@
 "use client";
 import React, { useState, Fragment } from 'react';
-import { Drawer, List, ListItem, IconButton, Divider, useMediaQuery } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
+import { Drawer, List, ListItem, IconButton } from '@mui/material';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getMenuItems } from '../../helpers/menuItems';
+import LanguageSwitcher from '../LanguageSwitcher';
+import { getHomeCopy, SOCIAL } from '../Home/copy';
 
 import styles from './styles.module.css';
 
-const MobileMenu = () => {
+const HOME_LABEL = { uk: 'Головна', ru: 'Главная' };
+const TAGLINE = { uk: 'Вишукані срібні прикраси', ru: 'Изысканные серебряные украшения' };
+
+// Visibility is controlled by the header CSS (hidden from 1024px).
+const MobileMenu = ({ lang = 'uk' } = {}) => {
+  const locale = lang === 'ru' ? 'ru' : 'uk';
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const menuItems = getMenuItems();
+  const copy = getHomeCopy(locale);
+  const menuItems = [
+    ...getMenuItems(locale),
+    { title: copy.nav.about, link: `/${locale}/about` },
+  ];
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -29,20 +36,18 @@ const MobileMenu = () => {
     setIsDrawerOpen(false);
   };
 
-  if (!isMobile) {
-    return null;
-  }
-
   return (
     <div>
       <IconButton
-        edge="start"
         color="inherit"
-        aria-label="menu"
+        aria-label={copy.header.menu}
+        aria-expanded={isDrawerOpen}
         onClick={toggleDrawer(true)}
         className={styles.menuButton}
       >
-        <MenuOutlinedIcon className={styles.menuIcon} />
+        <svg className={styles.menuIcon} width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
+          <path d="M3 7h18M3 12h18M3 17h18" />
+        </svg>
       </IconButton>
       <Drawer
         anchor="left"
@@ -53,7 +58,7 @@ const MobileMenu = () => {
         <div className={styles.drawerContent}>
           {/* Header with logo */}
           <div className={styles.menuHeader}>
-            <Link href="/" onClick={handleMenuItemClick} className={styles.menuLogo}>
+            <Link href={`/${locale}`} onClick={handleMenuItemClick} className={styles.menuLogo}>
               <Image
                 src="/logo_black.png"
                 alt="Daisy Jewellery"
@@ -61,7 +66,7 @@ const MobileMenu = () => {
                 height={41}
               />
             </Link>
-            <IconButton className={styles.mobileMenuClose} onClick={toggleDrawer(false)}>
+            <IconButton className={styles.mobileMenuClose} onClick={toggleDrawer(false)} aria-label={copy.header.closeMenu}>
               <CloseRoundedIcon className={styles.closeIcon} />
             </IconButton>
           </div>
@@ -78,11 +83,11 @@ const MobileMenu = () => {
             <ListItem className={styles.mobileMenuListItem}>
               <Link
                 className={styles.menuItemText}
-                href="/"
+                href={`/${locale}`}
                 onClick={handleMenuItemClick}
               >
                 <span className={styles.menuItemIcon}>✦</span>
-                Головна
+                {HOME_LABEL[locale]}
               </Link>
             </ListItem>
             {menuItems.map((item, index) => (
@@ -104,14 +109,17 @@ const MobileMenu = () => {
           {/* Footer with socials */}
           <div className={styles.menuFooter}>
             <div className={styles.socialLinks}>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+              <a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Instagram">
                 <InstagramIcon />
               </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+              <a href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Facebook">
                 <FacebookIcon />
               </a>
             </div>
-            <p className={styles.menuTagline}>Вишукані срібні прикраси</p>
+            <div className={styles.menuLang}>
+              <LanguageSwitcher />
+            </div>
+            <p className={styles.menuTagline}>{TAGLINE[locale]}</p>
           </div>
         </div>
       </Drawer>

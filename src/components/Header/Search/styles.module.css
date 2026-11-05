@@ -5,19 +5,34 @@
 }
 
 .searchButton {
-    color: #2a2a2a !important;
-    transition: all 0.3s ease !important;
-    border-radius: 50% !important;
+    color: var(--dj-graphite, #2a2a2a) !important;
+    transition: color 0.2s ease !important;
 }
 
 .searchButton:hover {
-    color: #8b7355 !important;
-    background-color: rgba(139, 115, 85, 0.08) !important;
-    transform: scale(1.05);
+    color: var(--dj-text-2, #6B655D) !important;
+    background-color: transparent !important;
 }
 
 .searchIcon {
-    font-size: 1.5rem !important;
+    width: 19px;
+    height: 19px;
+    flex: none;
+}
+
+/* Below the desktop header the trigger sits on the left: open the panel
+   across the header bar instead of anchoring it to the icon. */
+@media (max-width: 1023.98px) {
+    .search {
+        position: static;
+    }
+
+    .panel {
+        top: 100%;
+        left: 8px;
+        right: 8px;
+        width: auto;
+    }
 }
 
 .backdrop {

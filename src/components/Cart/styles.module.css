@@ -1,34 +1,73 @@
 /* Modern Cart for Jewelry Store */
 
-/* Cart Icon Button */
+/* Cart trigger (header) */
 .cartButton {
-    transition: transform 0.3s ease !important;
-    overflow: visible !important;
-    padding: 8px !important;
+    position: relative;
+    height: 44px;
+    min-width: 44px;
+    padding: 0 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: none;
+    border: 0;
+    color: var(--dj-graphite, #2A2927);
+    font-family: var(--dj-sans, inherit);
+    cursor: pointer;
+    transition: color 0.2s ease;
 }
 
 .cartButton:hover {
-    transform: scale(1.05);
+    color: var(--dj-text-2, #6B655D);
+}
+
+.cartButton:focus-visible {
+    outline: 2px solid var(--dj-graphite, #2A2927);
+    outline-offset: 2px;
 }
 
 .cartIcon {
-    font-size: 1.5rem !important;
-    color: #1a1a1a;
+    width: 19px;
+    height: 19px;
+    flex: none;
 }
 
-.badge {
-    overflow: visible !important;
+/* Mobile: small counter bubble only when the cart has items */
+.cartCount {
+    display: none;
+    position: absolute;
+    top: 6px;
+    right: 4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: var(--dj-graphite, #2A2927);
+    color: var(--dj-ivory, #F6F2EB);
+    font-size: 10px;
+    line-height: 16px;
+    text-align: center;
 }
 
-.badge :global(.MuiBadge-badge) {
-    background-color: #8b7355 !important;
-    color: #fff !important;
-    font-size: 0.65rem !important;
-    min-width: 16px !important;
-    height: 16px !important;
-    padding: 0 4px !important;
-    right: 4px !important;
-    top: 0 !important;
+.cartCountActive {
+    display: block;
+}
+
+/* Desktop: plain number next to the bag, as in the design */
+@media (min-width: 1024px) {
+    .cartCount {
+        display: inline;
+        position: static;
+        min-width: 0;
+        height: auto;
+        padding: 0;
+        border-radius: 0;
+        background: none;
+        color: inherit;
+        font-size: 12px;
+        line-height: 1;
+    }
 }
 
 /* Drawer */
@@ -283,22 +322,6 @@
 }
 
 @media (max-width: 1024px) {
-    .cartButton {
-        padding: 6px !important;
-    }
-
-    .cartIcon {
-        font-size: 1.4rem !important;
-    }
-
-    .badge :global(.MuiBadge-badge) {
-        font-size: 0.6rem !important;
-        min-width: 14px !important;
-        height: 14px !important;
-        right: 4px !important;
-        top: 1px !important;
-    }
-
     .drawerEl :global(.MuiDrawer-paper) {
         width: 100vw;
     }

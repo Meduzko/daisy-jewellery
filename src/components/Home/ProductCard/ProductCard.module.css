@@ -1,0 +1,92 @@
+.card {
+  min-width: 0;
+}
+
+.link {
+  display: block;
+  color: var(--dj-graphite);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--dj-graphite);
+  outline-offset: 3px;
+}
+
+.media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.image {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.link:hover .image {
+  transform: scale(1.03);
+}
+
+/* Packshot on the cream tile: 170×167 @390, 310×310 @1440 */
+.tile .media {
+  background: var(--dj-cream);
+  aspect-ratio: 1 / 1;
+}
+
+.tile .image {
+  object-fit: contain;
+}
+
+/* Lifestyle photo: 170×210 @390, 300×320 @1440 */
+.photo .media {
+  background: var(--dj-cream);
+  aspect-ratio: 170 / 210;
+}
+
+.photo .image {
+  object-fit: cover;
+}
+
+.name {
+  margin: 12px 0 4px;
+  font-family: var(--dj-sans);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--dj-graphite);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.price {
+  margin: 0;
+  font-family: var(--dj-sans);
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--dj-text-2);
+}
+
+.oldPrice {
+  color: var(--dj-silver);
+  margin-right: 6px;
+}
+
+@media (min-width: 768px) {
+  .name {
+    margin: 18px 0 6px;
+    font-size: 14px;
+    line-height: 21px;
+  }
+
+  .price {
+    font-size: 14px;
+    line-height: 21px;
+  }
+}
+
+@media (min-width: 900px) {
+  .photo .media {
+    aspect-ratio: 39 / 40;
+  }
+}

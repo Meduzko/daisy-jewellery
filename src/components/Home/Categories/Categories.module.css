@@ -1,0 +1,122 @@
+.section {
+  background: var(--dj-ivory);
+  padding: var(--dj-section-y) var(--dj-gutter);
+  scroll-margin-top: var(--dj-header-h, 94px);
+}
+
+.heading {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+/* the mobile mockup has no eyebrow above «Категорії» */
+.heading .eyebrow {
+  display: none;
+}
+
+.grid {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: var(--dj-max);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  row-gap: 28px;
+  column-gap: 8px;
+  justify-items: center;
+}
+
+.item {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: var(--ring, 100px);
+  color: var(--dj-graphite);
+}
+
+.ring {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  padding: 4px;
+  border: 1px solid #CFC6BA;
+  transition: border-color 0.3s ease;
+}
+
+.circle {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.link:hover .ring {
+  border-color: var(--dj-graphite);
+}
+
+.link:hover .image {
+  transform: scale(1.06);
+}
+
+.link:focus-visible {
+  outline: none;
+}
+
+.link:focus-visible .ring {
+  outline: 2px solid var(--dj-graphite);
+  outline-offset: 3px;
+}
+
+.label {
+  font-family: var(--dj-serif);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .heading {
+    margin-bottom: 56px;
+  }
+
+  .heading .eyebrow {
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: clamp(12px, 1.667vw, 24px);
+  }
+
+  .link {
+    --ring: 176px;
+    gap: 20px;
+  }
+
+  .ring {
+    padding: 6px;
+  }
+
+  .label {
+    font-size: clamp(19px, calc(0.74vw + 13.3px), 24px);
+  }
+}
