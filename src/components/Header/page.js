@@ -2,151 +2,89 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import Navigation from '../Navigation/page';
+import { usePathname } from 'next/navigation';
 import CartDrawler from '../Cart/Cart';
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import LanguageSwitcher from '../LanguageSwitcher';
-import { IconButton } from '@mui/material';
 import Search from './Search/Search';
-import { useEffect, useRef, useState } from 'react';
-
 import MobileMenu from '../Menu/MobileMenu';
+import { getMenuItems } from '../../helpers/menuItems';
+import { getHomeCopy } from '../Home/copy';
 
 import styles from './styles.module.css';
 
 export default function Header({ lang }) {
-  const [isCompact, setIsCompact] = useState(false);
-  const isCompactRef = useRef(isCompact);
-  const lastScrollYRef = useRef(0);
-  const tickingRef = useRef(false);
-  const suppressScrollRef = useRef(false);
-  const headerRef = useRef(null);
-
-  useEffect(() => {
-    isCompactRef.current = isCompact;
-  }, [isCompact]);
-
-  useEffect(() => {
-    try {
-      document.body.classList.toggle('header-compact', isCompact);
-    } catch {}
-    return () => {
-      try {
-        document.body.classList.remove('header-compact');
-      } catch {}
-    };
-  }, [isCompact]);
-
-  useEffect(() => {
-    const MOBILE_BREAKPOINT = 768;
-    const ENTER_COMPACT = 120; // scrollY at which header becomes compact
-    const EXIT_COMPACT = 40;   // scrollY below which header expands
-
-    const isMobile = () => window.innerWidth <= MOBILE_BREAKPOINT;
-
-    const updateOnScroll = () => {
-      // Skip compact logic on mobile
-      if (isMobile()) {
-        if (isCompactRef.current) {
-          isCompactRef.current = false;
-          setIsCompact(false);
-        }
-        tickingRef.current = false;
-        return;
-      }
-
-      const currentY = window.scrollY || 0;
-
-      const prevHeight = headerRef.current ? headerRef.current.offsetHeight : 0;
-
-      if (!isCompactRef.current && currentY > ENTER_COMPACT) {
-        isCompactRef.current = true;
-        setIsCompact(true);
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            const newHeight = headerRef.current ? headerRef.current.offsetHeight : prevHeight;
-            const delta = prevHeight - newHeight;
-            if (delta !== 0) {
-              suppressScrollRef.current = true;
-              window.scrollBy(0, delta);
-              requestAnimationFrame(() => { suppressScrollRef.current = false; });
-            }
-          });
-        });
-      } else if (isCompactRef.current && currentY < EXIT_COMPACT) {
-        isCompactRef.current = false;
-        setIsCompact(false);
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            const newHeight = headerRef.current ? headerRef.current.offsetHeight : prevHeight;
-            const delta = prevHeight - newHeight;
-            if (delta !== 0) {
-              suppressScrollRef.current = true;
-              window.scrollBy(0, delta);
-              requestAnimationFrame(() => { suppressScrollRef.current = false; });
-            }
-          });
-        });
-      }
-
-      lastScrollYRef.current = currentY;
-      tickingRef.current = false;
-    };
-
-    const onScroll = () => {
-      if (suppressScrollRef.current) {
-        return;
-      }
-      if (!tickingRef.current) {
-        tickingRef.current = true;
-        requestAnimationFrame(updateOnScroll);
-      }
-    };
-
-    const onResize = () => {
-      // Reset compact state when switching to mobile
-      if (isMobile() && isCompactRef.current) {
-        isCompactRef.current = false;
-        setIsCompact(false);
-      }
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize, { passive: true });
-    // sync initial state on mount
-    updateOnScroll();
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
-    };
-  }, []);
+  const locale = lang === 'ru' ? 'ru' : 'uk';
+  const pathname = usePathname();
+  const copy = getHomeCopy(locale);
+  const menuItems = getMenuItems(locale);
+  const navItems = [
+    ...menuItems,
+    { title: copy.nav.about, link: `/${locale}/about`, muted: true },
+  ];
 
   return (
-    <header ref={headerRef} className={`${styles.header} ${isCompact ? styles.compact : ''}`}>
-      <div className={styles.headerContainer}>
-        <div>
-          <MobileMenu />
-        </div>
-        <Link href={`/${lang}`} className={styles.logoContainer}>
-          <Image
-            src="/logo_black.png"
-            alt="logo"
-            width={95}
-            height={65}
-            className={styles.logo}
-          />
-        </Link>
-        <div className={styles.headerActions}>
-          <Search lang={lang} />
-          {/* <IconButton className={styles.favoritesButton} aria-label="Favorites button">
-            <FavoriteBorderOutlinedIcon className={styles.favoritesIcon} />
-          </IconButton> */}
-          <CartDrawler />
-          <LanguageSwitcher />
+    <>
+      <div className={styles.topBar}>
+        {/* Outer moves by bar width, inner by its own width: text enters fully from the left and exits fully right. */}
+        <div className={styles.marquee}>
+          <p className={styles.marqueeItem}>
+            <span>{copy.topBar[0]}</span>
+            <span className={styles.topBarDot} aria-hidden="true" />
+            <span>{copy.topBar[1]}</span>
+          </p>
         </div>
       </div>
-      <Navigation lang={lang} isCompact={isCompact} />
-    </header>
+
+      <header className={styles.header}>
+        <div className={styles.bar}>
+          <div className={styles.menu}>
+            <MobileMenu lang={locale} />
+          </div>
+
+          <Link href={`/${locale}`} className={styles.logo} aria-label={copy.header.home}>
+            <Image
+              src="/logo_wordmark.png"
+              alt="Daisy Jewellery"
+              width={900}
+              height={350}
+              priority
+              className={styles.logoImg}
+            />
+          </Link>
+
+          <nav className={styles.nav} aria-label={copy.header.mainNav}>
+            <ul className={styles.navList}>
+              {navItems.map((item) => {
+                const section = item.link.split('/')[2];
+                const isActive = section && pathname?.split('/')[2] === section;
+                return (
+                  <li key={item.link}>
+                    <Link
+                      href={item.link}
+                      className={`${styles.navLink} ${item.muted ? styles.navLinkMuted : ''} ${isActive ? styles.navLinkActive : ''}`}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      {item.title}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <div className={styles.search}>
+            <Search lang={locale} />
+          </div>
+
+          <div className={styles.cart}>
+            <CartDrawler lang={locale} />
+          </div>
+
+          <div className={styles.lang}>
+            <LanguageSwitcher />
+          </div>
+        </div>
+      </header>
+    </>
   );
 }

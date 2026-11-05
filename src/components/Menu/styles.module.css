@@ -1,16 +1,24 @@
 /* Menu button */
 .menuButton {
-    color: #2a2a2a !important;
-    transition: all 0.3s ease !important;
+    color: var(--dj-graphite, #2a2a2a) !important;
+    transition: color 0.2s ease !important;
 }
 
 .menuButton:hover {
-    color: #8b7355 !important;
-    background-color: rgba(139, 115, 85, 0.08) !important;
+    color: var(--dj-text-2, #6B655D) !important;
+    background-color: transparent !important;
 }
 
 .menuIcon {
-    font-size: 1.75rem !important;
+    width: 22px;
+    height: 22px;
+    flex: none;
+}
+
+.menuLang {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
 }
 
 /* Drawer */

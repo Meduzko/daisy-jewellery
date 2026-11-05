@@ -1,0 +1,162 @@
+.section {
+  background: var(--dj-white);
+  padding: var(--dj-section-y) var(--dj-gutter);
+  scroll-margin-top: var(--dj-header-h, 94px);
+}
+
+.head,
+.grid,
+.more {
+  max-width: var(--dj-max);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heading h2 {
+  margin-top: 12px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0 24px;
+}
+
+.chip {
+  height: 36px;
+  min-height: 36px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--dj-sans);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--dj-graphite);
+  background: transparent;
+  border: 1px solid var(--dj-hairline);
+  border-radius: 0;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+  /* expand the touch target without changing the drawn chip */
+  position: relative;
+}
+
+.chip::after {
+  content: '';
+  position: absolute;
+  inset: -4px 0;
+}
+
+.chip:hover {
+  border-color: var(--dj-graphite);
+}
+
+.chipActive,
+.chipActive:hover {
+  background: var(--dj-graphite);
+  border-color: var(--dj-graphite);
+  color: var(--dj-ivory);
+}
+
+.chip:focus-visible,
+.more .moreBtn:focus-visible {
+  outline: 2px solid var(--dj-graphite);
+  outline-offset: 3px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 10px;
+  row-gap: 28px;
+}
+
+/* Mobile mockup shows 4 products */
+.item:nth-child(n + 5) {
+  display: none;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  font-family: var(--dj-sans);
+  font-size: 14px;
+  color: var(--dj-text-2);
+}
+
+.more {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.more .moreBtn {
+  display: flex;
+  width: 100%;
+  padding: 0 20px;
+}
+
+@media (min-width: 768px) {
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    margin-bottom: 48px;
+  }
+
+  .heading h2 {
+    margin-top: 16px;
+  }
+
+  .chips {
+    margin: 0;
+    flex-wrap: nowrap;
+  }
+
+  .chip {
+    height: 40px;
+    padding: 0 22px;
+    font-size: 11px;
+  }
+
+  .chip::after {
+    inset: -2px 0;
+  }
+
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 24px;
+    row-gap: 56px;
+  }
+
+  .item:nth-child(n + 5) {
+    display: block;
+  }
+
+  .item:nth-child(n + 7) {
+    display: none;
+  }
+
+  .more {
+    margin-top: 64px;
+  }
+
+  .more .moreBtn {
+    display: inline-flex;
+    width: auto;
+    padding: 0 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .item:nth-child(n + 7) {
+    display: block;
+  }
+}

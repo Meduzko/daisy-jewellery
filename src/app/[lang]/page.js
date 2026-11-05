@@ -1,15 +1,15 @@
-import { headers } from 'next/headers';
-import Banner from '../../components/Banner/page';
-import RingsSlider from '../../components/RingsSlider/index';
-import Categories from '../../components/Categories/categories';
-import HowToOreder from '../../components/HowToOrder/page';
-import WhyWe from '../../components/WhyWe/WhyWe';
+import Hero from '../../components/Home/Hero/Hero';
+import NewArrivals from '../../components/Home/NewArrivals/NewArrivals';
+import Categories from '../../components/Home/Categories/Categories';
+import CollectionSet from '../../components/Home/CollectionSet/CollectionSet';
+import WhyDaisy from '../../components/Home/WhyDaisy/WhyDaisy';
+import Instagram from '../../components/Home/Instagram/Instagram';
 import { getLogoJsonLd, getBussinesJsonLd, getWebSiteJsonLd } from '../../helpers/getJsonLd';
+
+export const revalidate = 900;
 
 export default async function Home({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const deviceType = headers().get('x-device-type');
-  const isMobile = deviceType === 'mobile';
   const logoJsonLd = getLogoJsonLd({ lang });
   const structuredDataBussines = getBussinesJsonLd();
   const structuredDataWebSite = getWebSiteJsonLd({ lang });
@@ -17,11 +17,12 @@ export default async function Home({ params }) {
   return (
     <>
       <main className="main">
-        <Banner lang={lang} />
-        <RingsSlider lang={lang} />
+        <Hero lang={lang} />
+        <NewArrivals lang={lang} />
         <Categories lang={lang} />
-        <WhyWe lang={lang} />
-        <HowToOreder isMobile={isMobile} lang={lang} />
+        <CollectionSet lang={lang} />
+        <WhyDaisy lang={lang} />
+        <Instagram lang={lang} />
       </main>
       <script
         type="application/ld+json"
@@ -38,5 +39,3 @@ export default async function Home({ params }) {
     </>
   );
 }
-
-

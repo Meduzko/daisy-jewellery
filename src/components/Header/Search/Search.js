@@ -140,7 +140,10 @@ const Search = ({ lang = 'uk' }) => {
         aria-expanded={open}
         onClick={() => (open ? close() : setOpen(true))}
       >
-        <SearchOutlinedIcon className={styles.searchIcon} />
+        <svg className={styles.searchIcon} width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-4-4" />
+        </svg>
       </IconButton>
 
       {open && (

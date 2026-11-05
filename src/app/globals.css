@@ -1,4 +1,25 @@
 :root {
+  /* Daisy design system (homepage redesign) */
+  --dj-ivory: #F6F2EB;
+  --dj-white: #FBFAF7;
+  --dj-beige: #E9E1D5;
+  --dj-cream: #F1EEE9;
+  --dj-hairline: #D8CFC3;
+  --dj-hairline-soft: #E2DAD0;
+  --dj-text-2: #6B655D;
+  --dj-text-3: #5E5850;
+  --dj-graphite: #2A2927;
+  --dj-silver: #A9ACB0;
+  --dj-serif: var(--font-serif, 'Cormorant Garamond'), 'Cormorant Garamond', Georgia, serif;
+  --dj-sans: var(--font-sans, 'Manrope'), 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* 20px @390 → 64px @1440 */
+  --dj-gutter: clamp(20px, calc(4.19vw + 3.66px), 64px);
+  /* 64px @390 → 112px @1440 */
+  --dj-section-y: clamp(64px, calc(4.57vw + 46.2px), 112px);
+  --dj-max: 1792px;
+  --dj-header-h: 94px;  /* announcement bar + header */
+  --dj-sticky-h: 60px;  /* sticky header only */
+
   --font-size: 14px;
   --letter-spacing: 0.18rem;
   --border-radius: 12px;
@@ -112,6 +133,13 @@ input, textarea, select {
 
 .container {
   padding: 60px 0;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --dj-header-h: 124px;
+    --dj-sticky-h: 84px;
+  }
 }
 
 /* Homepage section spacing */

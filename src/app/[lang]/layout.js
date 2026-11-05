@@ -1,5 +1,5 @@
 import Script from 'next/script';
-import { Montserrat } from "next/font/google";
+import { Montserrat, Cormorant_Garamond, Manrope } from "next/font/google";
 import '../globals.css';
 import Header from '../../components/Header/page';
 import Footer from '../../components/Footer/page';
@@ -8,6 +8,22 @@ import { CartProvider } from '../../context/CartContext';
 import PopupManager from '../../components/Popups/PopupManager';
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
+
+// Typefaces of the homepage redesign, exposed as CSS variables and consumed
+// by the redesigned header, footer and homepage sections.
+const serif = Cormorant_Garamond({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['300', '400', '500'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+});
+const sans = Manrope({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600'],
+  variable: '--font-sans',
+  display: 'swap',
+});
 
 export async function generateMetadata({ params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
@@ -155,7 +171,7 @@ export default async function RootLayout({ children, params }) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
 
   return (
-    <html lang={lang}>
+    <html lang={lang} className={`${serif.variable} ${sans.variable}`}>
       <head>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=G-CGM54TDF2N`}

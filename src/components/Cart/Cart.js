@@ -3,9 +3,6 @@ import { useContext  } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 import { Drawer, List, ListItem, IconButton, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import Badge from '@mui/material/Badge';
-import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { CartContext } from '../../context/CartContext';
@@ -16,32 +13,10 @@ import { getLinePrices } from '../../helpers/productPricing';
 
 import styles from './styles.module.css';
 
-const StyledBadge = styled(Badge)(() => ({
-  overflow: 'visible',
-  '& .MuiBadge-badge': {
-    right: 2,
-    top: 2,
-    backgroundColor: '#8b7355',
-    color: '#fff',
-    fontSize: '0.65rem',
-    minWidth: '16px',
-    height: '16px',
-    padding: '0 4px',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-  },
-  '@media (max-width: 768px)': {
-    '& .MuiBadge-badge': {
-      right: 0,
-      top: 0,
-      fontSize: '0.55rem',
-      minWidth: '14px',
-      height: '14px',
-      padding: '0 3px',
-    },
-  },
-}));
+const CART_LABEL = { uk: 'Кошик', ru: 'Корзина' };
 
-const CartDrawler = () => {
+const CartDrawler = ({ lang = 'uk' } = {}) => {
+  const cartLabel = CART_LABEL[lang] || CART_LABEL.uk;
   const router = useRouter();
   const {
     cartItems,
@@ -73,20 +48,21 @@ const CartDrawler = () => {
 
   return (
     <>
-      <IconButton
-        aria-label="cart"
+      <button
+        type="button"
+        aria-label={`${cartLabel}, ${itemsLength}`}
+        aria-haspopup="dialog"
         onClick={() => setCartOpen(true)}
         className={styles.cartButton}
       >
-        <StyledBadge
-          badgeContent={itemsLength}
-          color="primary"
-          invisible={Boolean(!itemsLength)}
-          className={styles.badge}
-        >
-          <LocalMallOutlinedIcon className={styles.cartIcon} />
-        </StyledBadge>
-      </IconButton>
+        <svg className={styles.cartIcon} width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
+          <path d="M5 8h14l-1 12H6L5 8z" />
+          <path d="M9 8V6a3 3 0 016 0v2" />
+        </svg>
+        <span className={`${styles.cartCount} ${itemsLength ? styles.cartCountActive : ''}`} aria-hidden="true">
+          {itemsLength}
+        </span>
+      </button>
       <Drawer anchor="right" open={cartOpen} onClose={closeCart} className={styles.drawerEl}>
           <>
             <div className={styles.cartTitleContainer}>
