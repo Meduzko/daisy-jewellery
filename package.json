@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@emotion/cache": "^11.13.1",
@@ -14,19 +14,20 @@
     "@emotion/styled": "^11.13.0",
     "@fontsource/cormorant-garamond": "^5.3.0",
     "@fontsource/manrope": "^5.3.0",
-    "@mui/icons-material": "^5.16.7",
-    "@mui/material-nextjs": "^5.16.6",
+    "@mui/icons-material": "^5.18.0",
+    "@mui/material": "^5.18.0",
+    "@mui/material-nextjs": "^7.3.10",
     "@sentry/nextjs": "^10.40.0",
     "cheerio": "^1.0.0",
     "crypto-js": "^4.2.0",
     "googleapis": "^144.0.0",
     "html-entities": "^2.5.2",
     "ioredis": "^5.4.1",
-    "next": "^14.2.35",
+    "next": "16.4.5",
     "nodemailer": "^8.0.1",
     "rate-limiter-flexible": "^5.0.3",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "react-input-mask": "^2.0.4",
     "sharp": "^0.33.5",
     "swiper": "^12.1.2",
@@ -34,9 +35,9 @@
   },
   "devDependencies": {
     "@types/node": "20.14.2",
-    "@types/react": "18.3.3",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.4",
+    "@types/react": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
     "sass": "^1.77.8"
   }
 }

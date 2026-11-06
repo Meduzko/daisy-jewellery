@@ -3,7 +3,7 @@ import { Montserrat, Cormorant_Garamond, Manrope } from "next/font/google";
 import '../globals.css';
 import Header from '../../components/Header/page';
 import Footer from '../../components/Footer/page';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
 import { CartProvider } from '../../context/CartContext';
 import PopupManager from '../../components/Popups/PopupManager';
 
@@ -25,7 +25,8 @@ const sans = Manrope({
   display: 'swap',
 });
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
 
   if (lang === 'ru') {
@@ -167,7 +168,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function RootLayout({ children, params }) {
+export default async function RootLayout(props) {
+  const params = await props.params;
+  const { children } = props;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
 
   return (

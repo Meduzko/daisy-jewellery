@@ -7,7 +7,8 @@ import { getProductJsonLd, getLogoJsonLd } from '../../../../../helpers/getJsonL
 import { notFound } from 'next/navigation';
 import { getItemTranslations } from '../../../../../dictionaries';
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   if (!params?.item) return notFound();
   const product = await getCachedProductByCode(process.env.NECKLACE_CATEGORY_ID, params.item);
   if (!product) return notFound();
@@ -26,7 +27,8 @@ export async function generateStaticParams() {
   }
 }
 
-export default async function NecklaceItem({ params }) {
+export default async function NecklaceItem(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const product = await getCachedProductByCode(process.env.NECKLACE_CATEGORY_ID, params.item);
   if (!product) return notFound();

@@ -17,7 +17,8 @@ export async function generateStaticParams() {
   return langs.flatMap(lang => pages.map(page_number => ({ lang, page_number })));
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const currentPage = +params.page_number;
   const totalPages = await getCachedTotalPages(CATEGORY_ID, ITEMS_PER_PAGE);
@@ -42,7 +43,8 @@ export async function generateMetadata({ params }) {
   return generateCategoryMetadata({ title, description, currentPage, lastPage, canonicalUrl, categorySlug, keywords, lang });
 }
 
-export default async function CategoryPageNumber({ params }) {
+export default async function CategoryPageNumber(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const baseURL = `/${lang}/braslety`;
   const itemBaseURL = `${baseURL}/${lang === 'ru' ? 'kupit-serebryanyy-braslet' : 'kupyty-sribnyy-braslet'}`;

@@ -8,7 +8,8 @@ import { getLogoJsonLd, getBussinesJsonLd, getWebSiteJsonLd } from '../../helper
 
 export const revalidate = 900;
 
-export default async function Home({ params }) {
+export default async function Home(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const logoJsonLd = getLogoJsonLd({ lang });
   const structuredDataBussines = getBussinesJsonLd();

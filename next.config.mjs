@@ -3,7 +3,6 @@ import { withSentryConfig } from "@sentry/nextjs";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['cdn.dntrade.com.ua'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -12,6 +11,9 @@ const nextConfig = {
       },
     ],
     minimumCacheTTL: 60 * 60 * 24 * 7,
+    // Next.js 16 only allows quality 75 by default; keep the qualities used by
+    // existing <Image quality={...}> props so rendering is unchanged.
+    qualities: [35, 75, 85, 90],
   },
 };
 

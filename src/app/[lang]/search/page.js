@@ -5,7 +5,9 @@ import styles from './styles.module.css';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params, searchParams }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const query = String(searchParams?.q || searchParams?.query || '').trim();
   const title = query
@@ -18,7 +20,9 @@ export async function generateMetadata({ params, searchParams }) {
   return getDefaultMetaData({ pagePath: 'search', title, description, lang });
 }
 
-export default async function SearchPage({ params, searchParams }) {
+export default async function SearchPage(props) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const query = String(searchParams?.q || searchParams?.query || '').trim();
   const { products } = query.length >= 2

@@ -8,8 +8,8 @@ import {
   CATEGORY_SLUGS,
 } from './seo';
 
-export function getDeviceType() {
-  const userAgent = headers().get('user-agent') || '';
+export async function getDeviceType() {
+  const userAgent = (await headers()).get('user-agent') || '';
   const isEmulationTablet = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15';
   const isTablet = /iPad|Tablet|Android(?!.*Mobile)/i.test(userAgent);
   const isMobile = /Mobile|iP(hone|od)|Android.*Mobile|BlackBerry|IEMobile|Silk-Accelerated/i.test(userAgent);
@@ -20,8 +20,8 @@ export function getDeviceType() {
   return 'desktop';
 }
 
-export function getIsMobile() {
-  const deviceType = headers().get('x-device-type');
+export async function getIsMobile() {
+  const deviceType = (await headers()).get('x-device-type');
   return deviceType === 'mobile';
 }
 

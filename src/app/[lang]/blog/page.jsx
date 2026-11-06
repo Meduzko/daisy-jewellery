@@ -4,7 +4,8 @@ import styles from '../../../styles/BlogPage.module.css';
 
 const siteUrl = process.env.SITE_DOMAIN || process.env.NEXT_PUBLIC_BASE_URL || 'https://daisy-jewellery.com.ua';
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const title = lang === 'ru' 
     ? 'Блог о серебряных украшениях | Daisy Jewellery' 
@@ -36,7 +37,8 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default function BlogPage({ params }) {
+export default async function BlogPage(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const posts = getAllHtmlPosts({ lang });
 

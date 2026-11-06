@@ -6,7 +6,8 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import { getDefaultMetaData } from '../../../helpers';
 import styles from './styles.module.css';
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const title = lang === 'ru'
     ? 'Контакты | Daisy Jewellery'
@@ -17,7 +18,8 @@ export async function generateMetadata({ params }) {
   return getDefaultMetaData({ pagePath: 'contact', title, description, lang });
 }
 
-export default function AboutPage({ params }) {
+export default async function AboutPage(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   return (
     <div className={styles.container}>

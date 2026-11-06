@@ -5,7 +5,8 @@ import { notFound } from 'next/navigation';
 
 const siteUrl = process.env.SITE_DOMAIN || process.env.NEXT_PUBLIC_BASE_URL || 'https://daisy-jewellery.com.ua';
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   if (params?.slug) {
     const metadata = getHtmlPostMetadata(params.slug, lang);
@@ -57,7 +58,8 @@ export async function generateStaticParams() {
   return slugsByLang.flat();
 }
 
-export default async function BlogPostPage({ params }) {
+export default async function BlogPostPage(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const content = await getBlogContent(lang, params.slug);
   if (!content) notFound();

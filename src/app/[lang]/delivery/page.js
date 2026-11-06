@@ -2,7 +2,8 @@ import { getDefaultMetaData } from '../../../helpers';
 import styles from './styles.module.css';
 import Image from 'next/image';
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const title = lang === 'ru'
     ? 'Доставка и оплата | Daisy Jewellery'
@@ -13,7 +14,8 @@ export async function generateMetadata({ params }) {
   return getDefaultMetaData({ pagePath: 'delivery', title, description, lang });
 }
 
-export default function DeliveryPage({ params }) {
+export default async function DeliveryPage(props) {
+  const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   return (
     <div className={styles.deliveryWrapper}>
