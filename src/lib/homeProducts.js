@@ -1,5 +1,5 @@
 import { getCachedProductByCode } from './dataCache';
-import { categoryMap } from '../helpers';
+import { CATEGORY_KEYS } from './catalog/categories';
 import { getItemTranslations } from '../dictionaries';
 import { getProductLink } from '../helpers/getProductLink';
 import { getDisplayPrices } from '../helpers/productPricing';
@@ -21,11 +21,10 @@ const DICTIONARY_CATEGORY = {
 export async function getHomeProducts(list = [], lang = 'uk') {
   const products = await Promise.all(
     list.map(async ({ category, code }) => {
-      const categoryId = categoryMap[category];
-      if (!categoryId) return null;
+      if (!CATEGORY_KEYS.includes(category)) return null;
 
       try {
-        const product = await getCachedProductByCode(categoryId, code);
+        const product = await getCachedProductByCode(category, code, lang);
         if (!product) return null;
 
         const item = { ...product, category };

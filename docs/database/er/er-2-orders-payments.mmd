@@ -1,0 +1,5 @@
+erDiagram
+    orders ||--|{ order_items : contains
+    product_variants ||--o{ order_items : "sold as (snapshot)"
+    orders ||--o{ payments : "LiqPay attempts"
+    payments ||--o{ payment_events : "callbacks (idempotent)"

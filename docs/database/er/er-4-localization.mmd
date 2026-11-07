@@ -1,0 +1,13 @@
+erDiagram
+    direction LR
+    categories ||--|{ category_translations : "translated as"
+    products ||--|{ product_translations : "translated as"
+    collections ||--|{ collection_translations : "translated as"
+    attributes ||--|{ attribute_translations : "translated as"
+    attribute_values ||--|{ attribute_value_translations : "translated as"
+    category_translations }o--|| locales : "in"
+    product_translations }o--|| locales : "in"
+    collection_translations }o--|| locales : "in"
+    attribute_translations }o--|| locales : "in"
+    attribute_value_translations }o--|| locales : "in"
+    orders }o--|| locales : "placed in"

@@ -1,0 +1,20 @@
+erDiagram
+    categories ||--o{ products : contains
+    suppliers |o--o{ products : supplies
+    products ||--|{ product_variants : "sold as"
+    products ||--o{ product_images : shows
+    collections ||--o{ collection_products : includes
+    products ||--o{ collection_products : "listed in"
+    attributes ||--o{ attribute_values : defines
+    products ||--o{ product_attribute_values : has
+    attribute_values ||--o{ product_attribute_values : "assigned to"
+    categories ||--|{ category_translations : "translated as"
+    products ||--|{ product_translations : "translated as"
+    collections ||--|{ collection_translations : "translated as"
+    attributes ||--|{ attribute_translations : "translated as"
+    attribute_values ||--|{ attribute_value_translations : "translated as"
+    orders ||--|{ order_items : contains
+    product_variants ||--o{ order_items : "sold as (snapshot)"
+    orders ||--o{ payments : "LiqPay attempts"
+    payments ||--o{ payment_events : "callbacks (idempotent)"
+    admin_users |o--o{ audit_logs : "performed"

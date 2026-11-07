@@ -83,7 +83,11 @@ export function applyProductDiscount(product) {
   const badges = getProductBadges(product.tags);
   const catalogPrice = product.originalPrice ?? product.price;
   const originalPrice = parsePrice(catalogPrice) ?? catalogPrice;
-  const salePrice = getSalePrice(catalogPrice, badges);
+  // PostgreSQL catalog products carry an explicit sale price (products.sale_price);
+  // DNTrade products derive it from the «знижка/N» badge.
+  const salePrice = product.catalogSalePrice != null
+    ? parsePrice(product.catalogSalePrice)
+    : getSalePrice(catalogPrice, badges);
 
   return {
     ...product,

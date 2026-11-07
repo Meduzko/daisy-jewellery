@@ -151,6 +151,12 @@ export const getProductSizes = async (sku, categoryId) => {
     }
 
     const data = await response.json() || {};
+
+    // PostgreSQL catalog: the API returns the sizes directly.
+    if (Array.isArray(data?.sizes)) {
+      return data.sizes;
+    }
+
     const products = data?.products;
 
     if (!Array.isArray(products) || products?.length === 0) {

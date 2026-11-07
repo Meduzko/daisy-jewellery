@@ -2,6 +2,8 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Keep the DB driver out of the server bundle (src/lib/db.js).
+  serverExternalPackages: ['knex', 'pg'],
   images: {
     remotePatterns: [
       {

@@ -4,7 +4,7 @@ import { getCachedAllProducts } from '../../../../../lib/dataCache';
 
 export async function generateStaticParams() {
   try {
-    const products = await getCachedAllProducts(process.env.BRACER_CATEGORY_ID);
+    const products = await getCachedAllProducts('bracer');
     if (!products || !products?.length) return [];
     return products.map(product => ({ lang: 'uk', item: product.code.toString() }));
   } catch (e) {

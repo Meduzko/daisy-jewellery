@@ -1,7 +1,6 @@
 import { Suspense } from 'react'
 import SwiperCarousel from '../SwiperCarousel/carousel';
 import { getCachedProductByCode } from '../../lib/dataCache';
-import { categoryMap } from '../../helpers';
 import { NEW_PRODUCTS } from './config';
 import styles from './styles.module.css';
 
@@ -9,10 +8,8 @@ export default async function RingsSlider({ lang = 'uk' }) {
   const products = (
     await Promise.all(
       NEW_PRODUCTS.map(async ({ category, code }) => {
-        const categoryId = categoryMap[category];
-        if (!categoryId) return null;
         try {
-          const product = await getCachedProductByCode(categoryId, code);
+          const product = await getCachedProductByCode(category, code, lang);
           // Inject category from config so getProductLink builds the correct URL.
           return product ? { ...product, category } : null;
         } catch {

@@ -1,5 +1,6 @@
 import { resolveProductCategory } from '../helpers/resolveProductCategory';
 import { applyProductDiscount } from '../helpers/productPricing';
+import { getCatalogSource } from './catalog/source';
 
 const toSearchResult = (product) => {
   const discounted = applyProductDiscount(product);
@@ -10,6 +11,8 @@ const toSearchResult = (product) => {
     price: discounted.price,
     originalPrice: discounted.originalPrice,
     salePrice: discounted.salePrice,
+    catalogSalePrice: discounted.catalogSalePrice,
+    store_id: discounted.store_id,
     code: discounted.code,
     sku: discounted.sku,
     image_path: discounted.image_path,
@@ -24,12 +27,19 @@ const toSearchResult = (product) => {
 export const searchProductsByTitle = async ({
   title,
   limit = 20,
-  offset = 0
+  offset = 0,
+  locale = 'uk'
 } = {}) => {
   const query = String(title || '').trim();
 
   if (query.length < 2) {
     return { products: [], hasMore: false };
+  }
+
+  if (getCatalogSource() === 'postgres') {
+    const { searchCatalog } = await import('./catalog');
+    const result = await searchCatalog(query.slice(0, 100), { limit, offset, locale });
+    return { products: result.products.map(toSearchResult), hasMore: result.hasMore };
   }
 
   const ROOT_URI = process.env.API_ROOT_URI;

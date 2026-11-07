@@ -1,5 +1,6 @@
 import { fetchProduct } from '../actions/fetchProduct';
 import { getAllHtmlPosts } from '../lib/posts';
+import { getCatalogSource } from '../lib/catalog/source';
 
 // Regenerate sitemap every 24 hours to pick up new products
 export const revalidate = 86400;
@@ -38,7 +39,19 @@ export default async function sitemap() {
     }
   };
 
-  async function fetchAllByCategory(categoryId, categoryName, pageLimit = 100) {
+  async function fetchAllByCategory(categoryId, categoryName, pageLimit = 100, categoryKey) {
+    if (getCatalogSource() === 'postgres') {
+      try {
+        const { getCatalogProductRefs } = await import('../lib/catalog');
+        const refs = await getCatalogProductRefs(categoryKey);
+        console.log(`[Sitemap] Loaded ${refs.length} products for ${categoryName} from PostgreSQL`);
+        return refs;
+      } catch (error) {
+        console.error(`[Sitemap] Error loading ${categoryName} from PostgreSQL:`, error.message);
+        return [];
+      }
+    }
+
     if (!categoryId) {
       console.warn(`[Sitemap] Missing category ID for ${categoryName}`);
       return [];
@@ -81,10 +94,10 @@ export default async function sitemap() {
   
   // Fetch all categories in parallel for better performance
   const [ringProducts, necklaceProducts, earringProducts, bracerProducts] = await Promise.all([
-    fetchAllByCategory(process.env.RING_CATEGORY_ID, 'rings', 100),
-    fetchAllByCategory(process.env.NECKLACE_CATEGORY_ID, 'necklaces', 100),
-    fetchAllByCategory(process.env.EARING_CATEGORY_ID, 'earrings', 100),
-    fetchAllByCategory(process.env.BRACER_CATEGORY_ID, 'bracelets', 100),
+    fetchAllByCategory(process.env.RING_CATEGORY_ID, 'rings', 100, 'ring'),
+    fetchAllByCategory(process.env.NECKLACE_CATEGORY_ID, 'necklaces', 100, 'necklace'),
+    fetchAllByCategory(process.env.EARING_CATEGORY_ID, 'earrings', 100, 'earring'),
+    fetchAllByCategory(process.env.BRACER_CATEGORY_ID, 'bracelets', 100, 'bracer'),
   ]);
 
   const ringPages = Math.ceil(ringProducts?.length / limitPerPage) || 6;

@@ -26,7 +26,7 @@ export default async function SearchPage(props) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const query = String(searchParams?.q || searchParams?.query || '').trim();
   const { products } = query.length >= 2
-    ? await searchProductsByTitle({ title: query, limit: 20 })
+    ? await searchProductsByTitle({ title: query, limit: 20, locale: lang })
     : { products: [] };
 
   const title = query

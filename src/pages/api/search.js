@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { title, limit = 8, offset = 0 } = req.body || {};
+    const { title, limit = 8, offset = 0, lang } = req.body || {};
     const query = String(title || '').trim();
 
     if (query.length < 2) {
@@ -16,7 +16,8 @@ export default async function handler(req, res) {
     const result = await searchProductsByTitle({
       title: query,
       limit: Math.min(Number(limit) || 8, 20),
-      offset: Number(offset) || 0
+      offset: Number(offset) || 0,
+      locale: lang === 'ru' ? 'ru' : 'uk'
     });
 
     return res.status(200).json(result);

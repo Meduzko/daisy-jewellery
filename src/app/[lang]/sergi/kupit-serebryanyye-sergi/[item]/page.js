@@ -10,7 +10,7 @@ import { getItemTranslations } from '../../../../../dictionaries';
 export async function generateMetadata(props) {
   const params = await props.params;
   if (!params?.item) return notFound();
-  const product = await getCachedProductByCode(process.env.EARING_CATEGORY_ID, params.item);
+  const product = await getCachedProductByCode('earring', params.item, params?.lang);
   if (!product) return notFound();
   const lang = 'ru';
   return getProductMetadata({ product, categoryName: 'sergi', lang });
@@ -18,7 +18,7 @@ export async function generateMetadata(props) {
 
 export async function generateStaticParams() {
   try {
-    const products = await getCachedAllProducts(process.env.EARING_CATEGORY_ID);
+    const products = await getCachedAllProducts('earring');
     if (!products || !products?.length) return [];
     // sergi/kupit-serebryanyye-sergi is Russian - only generate ru pages
     return products.map(product => ({ lang: 'ru', item: product.code.toString() }));
@@ -31,7 +31,7 @@ export async function generateStaticParams() {
 export default async function EarringsItem(props) {
   const params = await props.params;
   const lang = 'ru';
-  const product = await getCachedProductByCode(process.env.EARING_CATEGORY_ID, params.item);
+  const product = await getCachedProductByCode('earring', params.item, params?.lang);
   if (!product) return notFound();
 
   const categorySlug = 'sergi';

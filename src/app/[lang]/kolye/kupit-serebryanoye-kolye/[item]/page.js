@@ -10,7 +10,7 @@ import { getItemTranslations } from '../../../../../dictionaries';
 export async function generateMetadata(props) {
   const params = await props.params;
   if (!params?.item) return notFound();
-  const product = await getCachedProductByCode(process.env.NECKLACE_CATEGORY_ID, params.item);
+  const product = await getCachedProductByCode('necklace', params.item, params?.lang);
   if (!product) return notFound();
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   return getProductMetadata({ product, categoryName: 'kolye', lang });
@@ -18,7 +18,7 @@ export async function generateMetadata(props) {
 
 export async function generateStaticParams() {
   try {
-    const products = await getCachedAllProducts(process.env.NECKLACE_CATEGORY_ID);
+    const products = await getCachedAllProducts('necklace');
     if (!products || !products?.length) return [];
     return products.map(product => ({ lang: 'ru', item: product.code.toString() }));
   } catch (e) {
@@ -30,7 +30,7 @@ export async function generateStaticParams() {
 export default async function NecklaceItem(props) {
   const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const product = await getCachedProductByCode(process.env.NECKLACE_CATEGORY_ID, params.item);
+  const product = await getCachedProductByCode('necklace', params.item, params?.lang);
   if (!product) return notFound();
 
   const productJsonLd = await getProductJsonLd(product, lang === 'ru' ? 'kolye/kupit-serebryanoye-kolye' : 'kolye/kupyty-sribne-kolye', { categoryName: 'kolye', lang });

@@ -13,7 +13,7 @@ export async function generateMetadata(props) {
     return notFound();
   }
 
-  const product = await getCachedProductByCode(process.env.BRACER_CATEGORY_ID, params.item);
+  const product = await getCachedProductByCode('bracer', params.item, params?.lang);
 
   if (!product) {
     return notFound();
@@ -25,7 +25,7 @@ export async function generateMetadata(props) {
 
 export async function generateStaticParams() {
   try {
-    const products = await getCachedAllProducts(process.env.BRACER_CATEGORY_ID);
+    const products = await getCachedAllProducts('bracer');
     if (!products || !products?.length) return [];
     return products.map(product => ({ lang: 'ru', item: product.code.toString() }));
   } catch (error) {
@@ -37,7 +37,7 @@ export async function generateStaticParams() {
 export default async function BracerItem(props) {
   const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const product = await getCachedProductByCode(process.env.BRACER_CATEGORY_ID, params.item);
+  const product = await getCachedProductByCode('bracer', params.item, params?.lang);
 
   if (!product) {
     return notFound();

@@ -1,0 +1,10 @@
+erDiagram
+    categories ||--o{ products : contains
+    suppliers |o--o{ products : supplies
+    products ||--|{ product_variants : "sold as"
+    products ||--o{ product_images : shows
+    collections ||--o{ collection_products : includes
+    products ||--o{ collection_products : "listed in"
+    attributes ||--o{ attribute_values : defines
+    products ||--o{ product_attribute_values : has
+    attribute_values ||--o{ product_attribute_values : "assigned to"

@@ -8,10 +8,10 @@ import { notFound } from 'next/navigation';
 export const revalidate = 900;
 
 const ITEMS_PER_PAGE = 16;
-const CATEGORY_ID = process.env.RING_CATEGORY_ID;
+const CATEGORY = 'ring';
 
 export async function generateStaticParams() {
-  const totalPages = await getCachedTotalPages(CATEGORY_ID, ITEMS_PER_PAGE);
+  const totalPages = await getCachedTotalPages(CATEGORY, ITEMS_PER_PAGE);
   const langs = ['uk', 'ru'];
   const pages = Array.from({ length: totalPages }, (_, i) => (i + 1).toString());
   return langs.flatMap(lang => pages.map(page_number => ({ lang, page_number })));
@@ -21,7 +21,7 @@ export async function generateMetadata(props) {
   const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const currentPage = +params.page_number;
-  const totalPages = await getCachedTotalPages(CATEGORY_ID, ITEMS_PER_PAGE);
+  const totalPages = await getCachedTotalPages(CATEGORY, ITEMS_PER_PAGE);
 
   if (isNaN(currentPage) || currentPage < 1 || currentPage > totalPages) {
     return generate404MetaData();
@@ -51,7 +51,7 @@ export default async function Page(props) {
   const baseURL = `/${lang}/${baseSlug}`;
   const itemBaseURL = `${baseURL}/${itemSlug}`;
   const { currentPage, limit, offset } = getPaginationData(params.page_number);
-  const { products, hasMore } = await getCachedProducts({ categoryId: CATEGORY_ID, offset, limit });
+  const { products, hasMore } = await getCachedProducts({ category: CATEGORY, offset, limit, locale: lang });
   const tk = await getCategoryTranslations({ lang, categoryName: lang === 'ru' ? 'koltsa' : 'ring' }).catch(() => undefined);
 
   if (!products || !products.length) {

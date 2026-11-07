@@ -191,11 +191,12 @@ export const getProductMetadata = async ({ product, categoryName, lang = 'uk' })
   const tkTitle = tk?.title || title;
   const tkDescription = tk?.description || short_description;
 
-  const { keywords, canonicalUrl, description, languages } = getItemMetaData({ categoryName, title, code, short_description: tkDescription, lang });
-
+  const { keywords, canonicalUrl, description: generatedDescription, languages } = getItemMetaData({ categoryName, title, code, short_description: tkDescription || '', lang });
+  // Explicit SEO texts from the PostgreSQL catalog (product_translations.seo_*) win when set.
+  const description = product.seo_description || generatedDescription;
 
   return {
-    title: `${tkTitle} | ${siteName}`,
+    title: product.seo_title || `${tkTitle} | ${siteName}`,
     description,
     alternates: {
       canonical: canonicalUrl,

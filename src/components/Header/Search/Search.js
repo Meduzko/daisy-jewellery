@@ -98,7 +98,7 @@ const Search = ({ lang = 'uk' }) => {
         const response = await fetch('/api/search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, limit: 8 }),
+          body: JSON.stringify({ title, limit: 8, lang: locale }),
           signal: controller.signal
         });
         const data = await response.json();
@@ -118,7 +118,7 @@ const Search = ({ lang = 'uk' }) => {
       clearTimeout(timeoutId);
       controller.abort();
     };
-  }, [open, query]);
+  }, [open, query, locale]);
 
   const goToSearchPage = () => {
     const title = query.trim();
