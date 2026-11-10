@@ -43,7 +43,7 @@ export default async function EarringsItem(props) {
 
   const segments = [
     { name: 'Главная', href: `/${lang}` },
-    { name: 'Серьги', href: `/${lang}/${categorySlug}/1` },
+    { name: 'Серьги', href: `/${lang}/${categorySlug}` },
     { name: t?.title || product?.title, href: `/${lang}/${categorySlug}/${productSlug}/${params.item}` },
   ];
 

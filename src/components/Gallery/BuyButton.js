@@ -10,7 +10,9 @@ import SizeSelector from '../ProductPage/sizeSelector/sizeSelector';
 
 import styles from './styles.module.css';
 
-export default function BuyButton({ item, showSizes, lang }) {
+// variant="icon" (category page redesign): renders `children` inside an icon-only
+// button labelled by `ariaLabel`; the default variant is unchanged.
+export default function BuyButton({ item, showSizes, lang, variant = 'button', className = '', ariaLabel, children }) {
   const buyButtonLabel = lang === 'ru' ? 'Купить' : 'Купити';
   const cancelLabel = lang === 'ru' ? 'Отмена' : 'Скасувати';
   const confirmLabel = lang === 'ru' ? 'Добавить в корзину' : 'Додати до кошика';
@@ -60,14 +62,25 @@ export default function BuyButton({ item, showSizes, lang }) {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={handleBtnClick}
-        className={styles.buyButton}
-      >
-        <LocalMallOutlinedIcon className={styles.buyButtonIcon} />
-        <span>{buyButtonLabel}</span>
-      </button>
+      {variant === 'icon' ? (
+        <button
+          type="button"
+          onClick={handleBtnClick}
+          className={className}
+          aria-label={ariaLabel || buyButtonLabel}
+        >
+          {children}
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={handleBtnClick}
+          className={styles.buyButton}
+        >
+          <LocalMallOutlinedIcon className={styles.buyButtonIcon} />
+          <span>{buyButtonLabel}</span>
+        </button>
+      )}
 
       <Dialog
         open={open}

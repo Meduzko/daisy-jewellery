@@ -40,7 +40,7 @@ export default async function RingItem(props) {
 
   const segments = [
     { name: lang === 'ru' ? 'Главная' : 'Головна', href: `/${lang}` },
-    { name: lang === 'ru' ? 'Кольца' : 'Каблучки', href: `/${lang}/${lang === 'ru' ? 'koltsa' : 'kabluchki'}/1` },
+    { name: lang === 'ru' ? 'Кольца' : 'Каблучки', href: `/${lang}/${lang === 'ru' ? 'koltsa' : 'kabluchki'}` },
     { name: t?.title || product?.title, href: `/${lang}/${lang === 'ru' ? 'koltsa/kupit-serebryanoye-koltso' : 'kabluchki/kupyty-sribnu-kabluchku'}/${params.item}` },
   ];
 

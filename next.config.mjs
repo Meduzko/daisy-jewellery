@@ -17,6 +17,17 @@ const nextConfig = {
     // existing <Image quality={...}> props so rendering is unchanged.
     qualities: [35, 75, 85, 90],
   },
+  // Category listings no longer have numbered pages: /uk/kabluchki/2 → /uk/kabluchki
+  // (query string is kept). 301 so search engines move the old URLs' signals over.
+  async redirects() {
+    return [
+      {
+        source: '/:lang(uk|ru)/:category(kabluchki|koltsa|serezhky|sergi|kolye|braslety)/:page(\\d+)',
+        destination: '/:lang/:category',
+        statusCode: 301,
+      },
+    ];
+  },
 };
 
 // Sentry configuration for source maps and error tracking

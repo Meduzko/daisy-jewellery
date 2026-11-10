@@ -39,7 +39,7 @@ export default async function EarringsItem(props) {
 
   const segments = [
     { name: lang === 'ru' ? 'Главная' : 'Головна', href: `/${lang}` },
-    { name: lang === 'ru' ? 'Серьги' : 'Сережки', href: `/${lang}/${lang === 'ru' ? 'sergi' : 'serezhky'}/1` },
+    { name: lang === 'ru' ? 'Серьги' : 'Сережки', href: `/${lang}/${lang === 'ru' ? 'sergi' : 'serezhky'}` },
     { name: t?.title || product?.title, href: `/${lang}/${lang === 'ru' ? 'sergi/kupit-serebryanyye-sergi' : 'serezhky/kupyty-serezhky-sribni'}/${params.item}` },
   ];
 

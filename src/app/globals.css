@@ -1,13 +1,13 @@
 :root {
-  /* Daisy design system (homepage redesign) */
-  --dj-ivory: #F6F2EB;
-  --dj-white: #FBFAF7;
-  --dj-beige: #E9E1D5;
-  --dj-cream: #F1EEE9;
-  --dj-hairline: #D8CFC3;
-  --dj-hairline-soft: #E2DAD0;
-  --dj-text-2: #6B655D;
-  --dj-text-3: #5E5850;
+  /* Daisy design system — neutral palette (approved 2026-11-10: grey + white, no warm tones) */
+  --dj-ivory: #F5F5F4;
+  --dj-white: #FFFFFF;
+  --dj-beige: #E7E7E5;
+  --dj-cream: #F3F3F2;
+  --dj-hairline: #D6D6D3;
+  --dj-hairline-soft: #E4E4E2;
+  --dj-text-2: #686764;
+  --dj-text-3: #5C5B58;
   --dj-graphite: #2A2927;
   --dj-silver: #A9ACB0;
   --dj-serif: var(--font-serif, 'Cormorant Garamond'), 'Cormorant Garamond', Georgia, serif;

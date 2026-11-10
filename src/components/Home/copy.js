@@ -4,10 +4,10 @@
 export const getCategoryLinks = (lang = 'uk') => {
   const ru = lang === 'ru';
   return {
-    ring: ru ? '/ru/koltsa/1' : '/uk/kabluchki/1',
-    earring: ru ? '/ru/sergi/1' : '/uk/serezhky/1',
-    necklace: `/${ru ? 'ru' : 'uk'}/kolye/1`,
-    bracer: `/${ru ? 'ru' : 'uk'}/braslety/1`,
+    ring: ru ? '/ru/koltsa' : '/uk/kabluchki',
+    earring: ru ? '/ru/sergi' : '/uk/serezhky',
+    necklace: `/${ru ? 'ru' : 'uk'}/kolye`,
+    bracer: `/${ru ? 'ru' : 'uk'}/braslety`,
   };
 };
 

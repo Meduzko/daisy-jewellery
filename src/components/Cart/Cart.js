@@ -83,7 +83,7 @@ const CartDrawler = ({ lang = 'uk' } = {}) => {
                         <div className={styles.basketImageContainer}>
                           <picture>
                             <img
-                              src={item.images[0]}
+                              src={item.images?.[0] || item.image_path}
                               alt={item.title}
                               className={styles.basketImage} />
                           </picture>

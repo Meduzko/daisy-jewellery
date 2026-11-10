@@ -25,18 +25,6 @@ export async function getIsMobile() {
   return deviceType === 'mobile';
 }
 
-export const getPaginationData = (paramsPage) => {
-  const currentPage = parseInt(paramsPage || 1, 10) || 1;
-  const limit = 16;
-  const offset = (currentPage - 1) * limit;
-
-  return {
-    limit,
-    offset,
-    currentPage
-  }
-};
-
 const tralslatedCat = {
   uk: {
     ring: 'koltsa',
@@ -221,15 +209,14 @@ export const getProductMetadata = async ({ product, categoryName, lang = 'uk' })
 };
 
 /**
- * Generate category page metadata with unique titles for pagination
+ * Category page metadata. Each category has a single URL (/{lang}/{slug});
+ * there are no numbered listing pages.
  * @param {object} options - Metadata options
  * @returns {object} Next.js metadata object
  */
 export const generateCategoryMetadata = ({
   title,
   description,
-  currentPage,
-  lastPage,
   canonicalUrl,
   categorySlug,
   keywords,
@@ -241,25 +228,14 @@ export const generateCategoryMetadata = ({
 
   const translatedSlugs = getTralslatedCategorySlugs({ lang, categoryName: categorySlug, translatedMap: translatedCategorySlug });
 
-  // Make title unique for pagination pages
-  const pageIndicator = lang === 'uk' ? 'Сторінка' : 'Страница';
-  const uniqueTitle = currentPage > 1 
-    ? `${title} - ${pageIndicator} ${currentPage}` 
-    : title;
-  
-  // Make description unique for pagination
-  const uniqueDescription = currentPage > 1 
-    ? `${description} ${pageIndicator} ${currentPage} з ${lastPage}.`
-    : description;
-
-  const baseMetaData = {
-    title: uniqueTitle,
-    description: uniqueDescription,
+  return {
+    title,
+    description,
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'uk-UA': `${siteUrl}/uk/${translatedSlugs.uk}/${currentPage}`,
-        'ru-UA': `${siteUrl}/ru/${translatedSlugs.ru}/${currentPage}`
+        'uk-UA': `${siteUrl}/uk/${translatedSlugs.uk}`,
+        'ru-UA': `${siteUrl}/ru/${translatedSlugs.ru}`
       }
     },
     robots: {
@@ -267,47 +243,17 @@ export const generateCategoryMetadata = ({
       follow: true,
       nocache: true,
     },
-    icons: {
-      other: [
-        { rel: 'next', url: `${siteUrl}/${lang}/${categorySlug}/${currentPage + 1}` },
-      ]
-    },
     keywords,
-    url: `${siteUrl}/${lang}/${categorySlug}/${currentPage}`,
+    url: `${siteUrl}/${lang}/${categorySlug}`,
     openGraph: {
-      title: uniqueTitle,
-      description: uniqueDescription,
+      title,
+      description,
       url: canonicalUrl,
       siteName,
       locale: locale,
       type: 'website',
     }
-  }
-
-  if (currentPage > 1 && currentPage < lastPage) {
-    return {
-      ...baseMetaData,
-      icons: {
-        other: [
-          { rel: 'prev', url: `${siteUrl}/${lang}/${categorySlug}/${currentPage - 1}` },
-          { rel: 'next', url: `${siteUrl}/${lang}/${categorySlug}/${currentPage + 1}` },
-        ]
-      }
-    }
-  }
-
-  if (currentPage === lastPage) {
-    return {
-      ...baseMetaData,
-      icons: {
-        other: [
-          { rel: 'prev', url: `${siteUrl}/${lang}/${categorySlug}/${currentPage - 1}` }
-        ]
-      }
-    }
-  }
-
-  return baseMetaData;
+  };
 }
 
 export const categoryMap = {
@@ -518,9 +464,3 @@ export const generate404MetaData = () => ({
     follow: false,
   },
 });
-
-export const is404Page = (currentPage, allowedPages) => {
-  const currPage = allowedPages.find(ap => +ap.page_number === +currentPage)
-
-  return !currPage;
-};

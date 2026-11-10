@@ -4,19 +4,19 @@ export const getMenuItems = (lang = 'uk') => {
     return [
       {
         title: 'Кольца',
-        link: `/${lang}/koltsa/1`
+        link: `/${lang}/koltsa`
       },
       {
         title: 'Серьги',
-        link: `/${lang}/sergi/1`
+        link: `/${lang}/sergi`
       },
       {
         title: 'Колье',
-        link: `/${lang}/kolye/1`
+        link: `/${lang}/kolye`
       },
       {
         title: 'Браслеты',
-        link: `/${lang}/braslety/1`
+        link: `/${lang}/braslety`
       }
     ];
   }
@@ -24,19 +24,19 @@ export const getMenuItems = (lang = 'uk') => {
   return [
     {
       title: 'Каблучки',
-      link: `/${lang}/kabluchki/1`
+      link: `/${lang}/kabluchki`
     },
     {
       title: 'Сережки',
-      link: `/${lang}/serezhky/1`
+      link: `/${lang}/serezhky`
     },
     {
       title: 'Кольє',
-      link: `/${lang}/kolye/1`
+      link: `/${lang}/kolye`
     },
     {
       title: 'Браслети',
-      link: `/${lang}/braslety/1`
+      link: `/${lang}/braslety`
     }
   ];
 };

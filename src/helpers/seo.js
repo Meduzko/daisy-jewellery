@@ -40,7 +40,7 @@ export const FACET_PARAMS = [
 
 /**
  * Build an absolute canonical URL
- * @param {string} path - Path without leading slash (e.g., 'uk/kabluchki/1')
+ * @param {string} path - Path without leading slash (e.g., 'uk/kabluchki')
  * @returns {string} Absolute URL
  */
 export function buildCanonicalUrl(path) {
@@ -51,7 +51,7 @@ export function buildCanonicalUrl(path) {
 /**
  * Build canonical URL for a specific locale
  * @param {string} lang - Locale code ('uk' or 'ru')
- * @param {string} path - Path without locale prefix (e.g., 'kabluchki/1')
+ * @param {string} path - Path without locale prefix (e.g., 'kabluchki')
  * @returns {string} Absolute URL with locale
  */
 export function buildLocalizedCanonicalUrl(lang, path = '') {

@@ -55,16 +55,17 @@ export async function getCachedProducts({ category, offset = 0, limit = 16, loca
     return {
       products: products.slice(offset, offset + limit),
       hasMore: offset + limit < products.length,
+      total: products.length,
     };
   }
   const { listCatalogProducts } = await import('./catalog');
-  const { products, hasMore } = await listCatalogProducts({
+  const { products, hasMore, total } = await listCatalogProducts({
     category: toCategoryKey(category),
     offset,
     limit,
     locale,
   });
-  return { products, hasMore };
+  return { products, hasMore, total };
 }
 
 export async function getCachedProductByCode(category, code, locale = 'uk') {
@@ -85,19 +86,6 @@ export async function getCachedProductByCode(category, code, locale = 'uk') {
   return getCatalogProduct(toCategoryKey(category), String(code), locale);
 }
 
-export const getCachedTotalPages = async (category, itemsPerPage = 16) => {
-  if (getCatalogSource() === 'dntrade') {
-    const products = await getCachedDntradeProducts(dntradeCategoryId(category));
-    return Math.ceil(products.length / itemsPerPage);
-  }
-  const { countCatalogProducts } = await import('./catalog');
-  const total = await countCatalogProducts(toCategoryKey(category));
-  if (!total) {
-    throw new Error(`Catalog returned no products for category ${category}`);
-  }
-  return Math.ceil(total / itemsPerPage);
-};
-
 /** Ring sizes for the product page / size dialog (server side). */
 export async function getCachedProductSizes(category, product) {
   if (getCatalogSource() === 'dntrade') {
@@ -106,4 +94,125 @@ export async function getCachedProductSizes(category, product) {
   }
   const { getCatalogSizes } = await import('./catalog');
   return getCatalogSizes(product?.sku, toCategoryKey(category));
+}
+
+// ---------------------------------------------------------------- category listing (redesign)
+// Sort + filters for the category pages (src/components/Category). PostgreSQL does
+// the work in SQL; the DNTrade rollback path supports sort, price, collection
+// (badge) and title search in memory, and has no attribute / size facets.
+
+const DNTRADE_BADGE = { new: 'новинка', popular: 'популярне' };
+
+const dntradePrice = (p) => {
+  const n = Number(String(p.price ?? '').replace(/\s/g, '').replace(',', '.'));
+  return Number.isFinite(n) ? n : null;
+};
+
+function filterDntradeProducts(products, f = {}) {
+  const words = String(f.q || '').toLowerCase().split(/\s+/).filter(Boolean);
+  let list = products.filter((p) => {
+    const title = String(p.title || '').toLowerCase();
+    if (words.some((w) => !title.includes(w))) return false;
+    const price = dntradePrice(p);
+    if (f.priceMin != null && (price == null || price < f.priceMin)) return false;
+    if (f.priceMax != null && (price == null || price > f.priceMax)) return false;
+    if (f.collection) {
+      const badge = DNTRADE_BADGE[f.collection];
+      const titles = (p.tags || []).flatMap((t) => t.items || []).map((i) => String(i.title || '').toLowerCase());
+      if (!badge || !titles.includes(badge)) return false;
+    }
+    return true;
+  });
+  if (f.sort === 'price_asc') list = [...list].sort((a, b) => (dntradePrice(a) ?? 0) - (dntradePrice(b) ?? 0));
+  if (f.sort === 'price_desc') list = [...list].sort((a, b) => (dntradePrice(b) ?? 0) - (dntradePrice(a) ?? 0));
+  if (f.sort === 'newest') list = [...list].reverse();
+  return list;
+}
+
+/**
+ * One page of a category listing with sort and filters.
+ * @param {{ category: string, offset?: number, limit?: number, locale?: string,
+ *   filters?: { sort?, q?, collection?, attributes?, sizes?, priceMin?, priceMax? } }} options
+ * @returns {Promise<{ products: object[], total: number, hasMore: boolean }>}
+ */
+export async function getCachedListing({ category, offset = 0, limit = 16, locale = 'uk', filters = {} }) {
+  if (getCatalogSource() === 'dntrade') {
+    const all = await getCachedDntradeProducts(dntradeCategoryId(category));
+    const list = filterDntradeProducts(all, filters);
+    return { products: list.slice(offset, offset + limit), total: list.length, hasMore: offset + limit < list.length };
+  }
+  const { listCatalogProducts } = await import('./catalog');
+  const { products, total, hasMore } = await listCatalogProducts({
+    ...filters,
+    category: toCategoryKey(category),
+    offset,
+    limit,
+    locale,
+  });
+  return { products, total, hasMore };
+}
+
+/** Filter options of a category: { price: {min,max}, attributes: [{code,name,values}], sizes: number[] }. */
+export async function getCachedFacets(category, locale = 'uk') {
+  if (getCatalogSource() === 'dntrade') {
+    const all = await getCachedDntradeProducts(dntradeCategoryId(category));
+    const prices = all.map(dntradePrice).filter((n) => n != null);
+    return {
+      price: { min: prices.length ? Math.min(...prices) : null, max: prices.length ? Math.max(...prices) : null },
+      attributes: [],
+      sizes: [],
+    };
+  }
+  const { getCatalogFacets } = await import('./catalog');
+  return getCatalogFacets(toCategoryKey(category), locale);
+}
+
+/**
+ * Curated quick links of a category page: for each title-search stem, the number of
+ * matching products and the image of the first one (links without matches are dropped).
+ * @param {string} category
+ * @param {string[]} stems
+ */
+export async function getCachedQuickLinkPreviews(category, stems, locale = 'uk') {
+  const results = await Promise.all(
+    stems.map(async (q) => {
+      try {
+        const { products, total } = await getCachedListing({ category, limit: 1, locale, filters: { q } });
+        const product = products[0];
+        return { q, total, image: product?.images?.[0] || product?.image_path || null };
+      } catch {
+        return { q, total: 0, image: null };
+      }
+    })
+  );
+  return results.filter((r) => r.total > 0);
+}
+
+/**
+ * Search results (title / article / code, every word must match) with the category
+ * listing's sort and filters, optionally narrowed to one category. Used by the
+ * search page (/{lang}/search?q=…) and GET /api/catalog/products?search=….
+ * @returns {Promise<{ products: object[], total: number, hasMore: boolean }>}
+ */
+export async function getCachedSearchListing({ search, category, offset = 0, limit = 16, locale = 'uk', filters = {} }) {
+  const query = String(search || '').trim().slice(0, 100);
+  if (query.length < 2) return { products: [], total: 0, hasMore: false };
+
+  if (getCatalogSource() === 'dntrade') {
+    const { searchProductsByTitle } = await import('./searchProducts');
+    const { products } = await searchProductsByTitle({ title: query, limit: 100, locale });
+    const key = toCategoryKey(category);
+    const list = filterDntradeProducts(key ? products.filter((p) => p.category === key) : products, { ...filters, collection: undefined });
+    return { products: list.slice(offset, offset + limit), total: list.length, hasMore: offset + limit < list.length };
+  }
+  const { listCatalogProducts } = await import('./catalog');
+  const { products, total, hasMore } = await listCatalogProducts({
+    ...filters,
+    q: [query, filters.q].filter(Boolean).join(' '),
+    category: toCategoryKey(category) || undefined,
+    offset,
+    limit,
+    locale,
+  });
+  return { products, total, hasMore };
 }

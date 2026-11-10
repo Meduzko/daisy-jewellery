@@ -90,8 +90,6 @@ export default async function sitemap() {
     return allProducts;
   }
 
-  const limitPerPage = 16;
-  
   // Fetch all categories in parallel for better performance
   const [ringProducts, necklaceProducts, earringProducts, bracerProducts] = await Promise.all([
     fetchAllByCategory(process.env.RING_CATEGORY_ID, 'rings', 100, 'ring'),
@@ -99,11 +97,6 @@ export default async function sitemap() {
     fetchAllByCategory(process.env.EARING_CATEGORY_ID, 'earrings', 100, 'earring'),
     fetchAllByCategory(process.env.BRACER_CATEGORY_ID, 'bracelets', 100, 'bracer'),
   ]);
-
-  const ringPages = Math.ceil(ringProducts?.length / limitPerPage) || 6;
-  const necklacePages = Math.ceil(necklaceProducts?.length / limitPerPage) || 3;
-  const earringPages = Math.ceil(earringProducts?.length / limitPerPage) || 4;
-  const bracerPages = Math.ceil(bracerProducts?.length / limitPerPage) || 3;
 
   const staticRoutes = ['', 'about', 'contact', 'delivery', 'oferta', 'returns', 'blog'];
 
@@ -155,22 +148,10 @@ export default async function sitemap() {
     );
   });
 
-  // Category pages with hreflang (both /uk and /ru)
-  const createCategoryRoutes = (pages, categoryType) => {
-    return Array.from({ length: pages }, (_, index) => {
-      const pageNum = index + 1;
-      return createEntries(
-        `uk/${localedCategory.uk[categoryType]}/${pageNum}`,
-        `ru/${localedCategory.ru[categoryType]}/${pageNum}`,
-        pageNum === 1 ? 0.9 : 0.7
-      );
-    }).flat();
-  };
-
-  const ringCategoryRoutes = createCategoryRoutes(ringPages, 'ring');
-  const necklaceCategoryRoutes = createCategoryRoutes(necklacePages, 'necklace');
-  const earringCategoryRoutes = createCategoryRoutes(earringPages, 'earring');
-  const bracerCategoryRoutes = createCategoryRoutes(bracerPages, 'bracer');
+  // Category pages with hreflang (both /uk and /ru) — one URL per category
+  const categoryRoutes = ['ring', 'earring', 'necklace', 'bracer'].flatMap((categoryType) =>
+    createEntries(`uk/${localedCategory.uk[categoryType]}`, `ru/${localedCategory.ru[categoryType]}`, 0.9)
+  );
 
   // Product pages with hreflang (both /uk and /ru)
   const createProductRoutes = (products, categoryType) => {
@@ -188,10 +169,7 @@ export default async function sitemap() {
 
   const allRoutes = [
     ...localizedStaticRoutes,
-    ...ringCategoryRoutes,
-    ...necklaceCategoryRoutes,
-    ...earringCategoryRoutes,
-    ...bracerCategoryRoutes,
+    ...categoryRoutes,
     ...ringProductRoutes,
     ...necklaceProductRoutes,
     ...earringProductRoutes,

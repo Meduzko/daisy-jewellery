@@ -49,7 +49,7 @@ export default async function BracerItem(props) {
 
   const segments = [
     { name: lang === 'ru' ? 'Главная' : 'Головна', href: `/${lang}` },
-    { name: lang === 'ru' ? 'Браслеты' : 'Браслети', href: `/${lang}/braslety/1` },
+    { name: lang === 'ru' ? 'Браслеты' : 'Браслети', href: `/${lang}/braslety` },
     { name: t?.title || product?.title, href: `/${lang}/braslety/${lang === 'ru' ? 'kupit-serebryanyy-braslet' : 'kupyty-sribnyy-braslet'}/${params.item}` },
   ];
 
