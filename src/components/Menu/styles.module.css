@@ -30,7 +30,7 @@
 .drawerContent {
     width: 100vw;
     max-width: 300px;
-    min-height: 100vh;
+    height: 100%;
     background: linear-gradient(180deg, #ffffff 0%, #faf8f5 100%);
     display: flex;
     flex-direction: column;
@@ -79,6 +79,8 @@
 .mobileMenuList {
     padding: 0 !important;
     flex: 1;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .mobileMenuListItem {

@@ -24,6 +24,8 @@
 .marquee {
     width: 100%;
     animation: topBarMarquee 20s linear infinite;
+    /* own compositor layer: keeps the marquee smooth while the main thread is busy */
+    will-change: transform;
 }
 
 .marqueeItem {
@@ -33,6 +35,7 @@
     width: max-content;
     white-space: nowrap;
     animation: topBarMarqueeSelf 20s linear infinite;
+    will-change: transform;
 }
 
 @keyframes topBarMarquee {
@@ -43,17 +46,6 @@
 @keyframes topBarMarqueeSelf {
     from { transform: translateX(-100%); }
     to { transform: translateX(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .marquee,
-    .marqueeItem {
-        animation: none;
-    }
-
-    .marqueeItem {
-        margin: 0 auto;
-    }
 }
 
 .topBarDot {
