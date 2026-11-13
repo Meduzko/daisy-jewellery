@@ -19,7 +19,8 @@ export async function generateMetadata(props) {
     ? 'Поиск серебряных украшений Daisy Jewellery'
     : 'Пошук срібних прикрас Daisy Jewellery';
 
-  return getDefaultMetaData({ pagePath: 'search', title, description, lang });
+  // Internal search results are not landing pages: keep them out of the index, follow the product links.
+  return { ...getDefaultMetaData({ pagePath: 'search', title, description, lang }), robots: { index: false, follow: true } };
 }
 
 // Search results in the category page design (src/components/Category/SearchResults.js).

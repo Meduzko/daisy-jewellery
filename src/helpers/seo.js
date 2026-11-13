@@ -20,7 +20,6 @@ export const TRACKING_PARAMS = [
   'fbclid',
   'msclkid',
   'ref',
-  'source',
 ];
 
 /**
@@ -232,6 +231,80 @@ export function getCategoryHreflangPaths(categoryType, pageNumber) {
  */
 export function getSiteUrl() {
   return SITE_URL;
+}
+
+// URL segments that differ between locales: [uk, ru]. Category, product-path and
+// blog-post slugs (src/content/{uk,ru}/<slug>.html). Add a pair for every new post.
+export const LOCALIZED_SEGMENTS = [
+  ['kabluchki', 'koltsa'],
+  ['serezhky', 'sergi'],
+  ['kupyty-sribnu-kabluchku', 'kupit-serebryanoye-koltso'],
+  ['kupyty-serezhky-sribni', 'kupit-serebryanyye-sergi'],
+  ['kupyty-sribne-kolye', 'kupit-serebryanoye-kolye'],
+  ['kupyty-sribnyy-braslet', 'kupit-serebryanyy-braslet'],
+  ['yak-vyznachyty-rozmir-kabluchky', 'kak-uznat-razmer-kolca'],
+  ['podarunok-divchyni-na-14-lyutoho', 'podarok-devushke-na-14-fevralya'],
+  ['podarunok-na-8-bereznya', 'podarok-na-8-marta'],
+];
+
+/** The `lang` version of a URL segment from either locale ('kabluchki', 'ru' → 'koltsa'). */
+export function localizeSegment(segment, lang) {
+  const pair = LOCALIZED_SEGMENTS.find((p) => p.includes(segment));
+  return pair ? pair[lang === 'ru' ? 1 : 0] : segment;
+}
+
+const LOCALE_RE = /^\/(uk|ru)(?=\/|$)/i;
+
+/**
+ * The one canonical form of a page URL (used by src/middleware.js): tracking params
+ * removed, a lowercase /uk or /ru prefix (non-localized paths go to /uk), and the
+ * locale's own category/product/blog slugs (/ru/kabluchki → /ru/koltsa).
+ * Returns null when the URL is already canonical, so every fix is a single 301 hop.
+ * @param {URL} nextUrl
+ */
+export function getCanonicalRedirect(nextUrl) {
+  const url = new URL(nextUrl.href);
+  let changed = false;
+
+  for (const param of TRACKING_PARAMS) {
+    if (url.searchParams.has(param)) {
+      url.searchParams.delete(param);
+      changed = true;
+    }
+  }
+
+  const match = url.pathname.match(LOCALE_RE);
+  const lang = match ? match[1].toLowerCase() : DEFAULT_LOCALE;
+  const rest = match ? url.pathname.slice(match[0].length) : url.pathname === '/' ? '' : url.pathname;
+  const pathname = `/${lang}${rest.split('/').map((s) => (s ? localizeSegment(s, lang) : s)).join('/')}`;
+
+  if (pathname !== url.pathname) {
+    url.pathname = pathname;
+    changed = true;
+  }
+  return changed ? url : null;
+}
+
+export const SITE_NAME = 'Daisy Jewellery';
+export const OG_LOCALE = { uk: 'uk_UA', ru: 'ru_UA' };
+// Campaign photo of the homepage hero: a real brand image instead of the logo.
+export const DEFAULT_OG_IMAGE = { url: '/banner.webp', width: 1870, height: 1403, alt: 'Daisy Jewellery' };
+
+/** Absolute URL for a site path ('uk/kabluchki' or '/uk/kabluchki'). */
+export const absoluteUrl = (path = '') => `${SITE_URL}/${String(path).replace(/^\/+/, '')}`.replace(/\/$/, '');
+
+/**
+ * Next.js `alternates` (canonical + hreflang) for a page.
+ * @param {'uk'|'ru'} lang  locale of the rendered page
+ * @param {{ uk: string, ru?: string|null }} paths  site paths of both versions (with locale prefix);
+ *   ru = null when the page has no real Russian version: the ru URL then canonicalizes to uk.
+ */
+export function buildAlternates(lang, { uk, ru = null }) {
+  const ukUrl = absoluteUrl(uk);
+  const ruUrl = ru ? absoluteUrl(ru) : null;
+  const languages = { 'uk-UA': ukUrl, 'x-default': ukUrl };
+  if (ruUrl) languages['ru-UA'] = ruUrl;
+  return { canonical: lang === 'ru' && ruUrl ? ruUrl : ukUrl, languages };
 }
 
 const seoHelpers = {

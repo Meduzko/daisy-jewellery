@@ -1,156 +1,196 @@
+import { decode } from 'html-entities';
 import { getItemTranslations } from '../dictionaries';
+import { getCategoryConfig } from '../components/Category/config';
+import { SOCIAL } from '../components/Home/copy';
 import { getDisplayPrices } from './productPricing';
 import { isProductAvailable } from './productAvailability';
+import { absoluteUrl, SITE_NAME, SLUG_TO_CATEGORY_TYPE } from './seo';
 
-export const getCategoryJsonLd = ({ categoryName, categoryDescription, url, lowPrice, highPrice }) => {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": categoryName,
-    "image": "https://daisy-jewellery.com.ua/_next/image?url=https%3A%2F%2Fcdn.dntrade.com.ua%2FD696FCD1-FB06-470D-9088-C5F062485E1E%2F2054%25D1%2580_2.jpg&w=640&q=75",
-    "brand": "Daisy Jewellery",
-    "description": categoryDescription,
-    "material": ["Срібло"],
-    "offers": {
-      "@type": "AggregateOffer",
-      "url": `https://daisy-jewellery.com.ua/${url}`,
-      "lowPrice": lowPrice,
-      "highPrice": highPrice,
-      "priceCurrency": "UAH",
-      "availability": "http://schema.org/InStock",
-      "itemCondition": "https://schema.org/NewCondition"
-    }
-  }
+// JSON-LD builders (schema.org). Only real data: catalog fields, the shop's own
+// contact details and copy that is shown on the site. No ratings, reviews or
+// shipping terms are declared.
 
-  return jsonLd;
-}
+const ORGANIZATION_ID = `${absoluteUrl('')}/#organization`;
+const WEBSITE_ID = `${absoluteUrl('')}/#website`;
+const IN_LANGUAGE = { uk: 'uk-UA', ru: 'ru-UA' };
+
+const plainText = (html) => decode(String(html || '').replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim();
+
+/** @param {{ name: string, path: string }[]} items  site paths with locale prefix, home first */
+export const getBreadcrumbJsonLd = (items) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    item: absoluteUrl(item.path),
+  })),
+});
+
+const homeCrumb = (lang) => ({ name: lang === 'ru' ? 'Главная' : 'Головна', path: lang });
+
+/**
+ * Category listing: CollectionPage whose main entity is the list of products shown
+ * on the server-rendered first page, plus breadcrumbs. (A category is not a Product,
+ * so no Product/AggregateOffer markup here.)
+ * @param {{ name: string, description: string, path: string, lang: 'uk'|'ru', items: { name: string, path: string }[] }} options
+ */
+export const getCategoryJsonLd = ({ name, description, path, lang, items = [] }) => [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${absoluteUrl(path)}#webpage`,
+    url: absoluteUrl(path),
+    name,
+    description,
+    inLanguage: IN_LANGUAGE[lang],
+    isPartOf: { '@id': WEBSITE_ID },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: items.length,
+      itemListElement: items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: absoluteUrl(item.path),
+        name: item.name,
+      })),
+    },
+  },
+  getBreadcrumbJsonLd([homeCrumb(lang), { name, path }]),
+];
 
 export const getProductJsonLd = async (product, categoryUrl, options = {}) => {
-  const {
-    title,
-    short_description: description,
-    images,
-    code
-  } = product;
+  const { title, code } = product;
   const { price } = getDisplayPrices(product);
+  const { lang, categoryName } = options;
+  const locale = lang === 'ru' ? 'ru' : 'uk';
 
   // Content-sheet products have only `description` (short_description cleared).
-  const plainTextDescription = String(description || product.description || '')
-    .replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  const tk = await getItemTranslations({ lang: locale, categoryName, code });
+  const name = tk?.title || title;
+  const description = plainText(tk?.description || product.short_description || product.description);
+  const path = `${locale}/${categoryUrl}/${code}`;
+  const url = absoluteUrl(path);
+  const images = (product.images?.length ? product.images : [product.image_path]).filter(Boolean);
+  const metals = (product.attributes || []).find((a) => a.code === 'metal')?.values?.map((v) => v.value).filter(Boolean) || [];
 
-  const { lang, categoryName } = options;
-  const tk = await getItemTranslations({ lang, categoryName, code });
-  const tkTitle = tk?.title || title;
-  const tkDescription = tk?.description || plainTextDescription;
-  const locale = lang || 'uk';
-  const material = locale === 'uk' ? "Срібло" : "Серебро";
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: tkTitle,
-    image: images[0],
-    brand: "Daisy Jewellery",
-    description: tkDescription,
-    sku: `${code}`,
-    "material": [material],
-    "offers": {
-      "@type": "Offer",
-      url: `https://daisy-jewellery.com.ua/${locale}/${categoryUrl}/${code}`,
-      price: `${price}`,
-      priceCurrency: "UAH",
-      availability: isProductAvailable(product) ? "http://schema.org/InStock" : "http://schema.org/OutOfStock",
-      itemCondition: "https://schema.org/NewCondition"
-    }
+  const productJsonLd = {
+    '@type': 'Product',
+    '@id': `${url}#product`,
+    name,
+    url,
+    image: images,
+    description: description || undefined,
+    sku: product.sku || String(code),
+    productID: String(code),
+    brand: { '@type': 'Brand', name: SITE_NAME },
+    material: metals.length ? metals.join(', ') : locale === 'ru' ? 'Серебро 925' : 'Срібло 925',
   };
 
-  return jsonLd;
-};
-
-
-export const getLogoJsonLd = ({ lang = 'uk' } = {}) => {
-  const inLanguage = lang === 'uk' ? 'uk-UA' : 'ru-UA';
-  const jsonLd = {
-    "@context": "http://schema.org",
-    "@type": "Organization",
-    "name": "Daisy Jewellery",
-    "@id": "https://daisy-jewellery.com.ua/#organization",
-    "url": `https://daisy-jewellery.com.ua/${lang}`,
-    "logo": {
-      "@type": "ImageObject",
-      "@id": "https://daisy-jewellery.com.ua/_next/image?url=%2Flogo_black.png&w=128&q=75",
-      "inLanguage": inLanguage,
-      "url": "https://daisy-jewellery.com.ua/_next/image?url=%2Flogo_black.png&w=128&q=75",
-      "contentUrl": "https://daisy-jewellery.com.ua/_next/image?url=%2Flogo_black.png&w=128&q=75",
-      "width": 263,
-      "height": 41,
-      "caption": "Daisy Jewellery"
-    }
+  // An Offer without a real price is invalid; leave it out rather than invent one.
+  if (Number(price) > 0) {
+    productJsonLd.offers = {
+      '@type': 'Offer',
+      url,
+      price: String(price),
+      priceCurrency: 'UAH',
+      availability: isProductAvailable(product) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      itemCondition: 'https://schema.org/NewCondition',
+      seller: { '@id': ORGANIZATION_ID },
+    };
   }
 
-  return jsonLd;
+  const categoryConfig = getCategoryConfig(SLUG_TO_CATEGORY_TYPE[String(categoryUrl).split('/')[0]]);
+  const crumbs = [homeCrumb(locale)];
+  if (categoryConfig) crumbs.push({ name: categoryConfig.name[locale], path: `${locale}/${categoryConfig.slugs[locale]}` });
+  crumbs.push({ name, path });
+  const { '@context': _context, ...breadcrumbJsonLd } = getBreadcrumbJsonLd(crumbs);
+
+  return { '@context': 'https://schema.org', '@graph': [productJsonLd, breadcrumbJsonLd] };
 };
 
-export const getBussinesJsonLd = () => {
-  return {
-    "@context": "http://schema.org",
-    "@type": "LocalBusiness",
-    "url": "https://daisy-jewellery.com.ua/", 
-    "priceRange": "UAH",
-    "name": "Daisy Jewellery",
-    "logo": "https://daisy-jewellery.com.ua/_next/image?url=%2Flogo_black.png&w=128&q=75",
-    "image": [
-      "https://daisy-jewellery.com.ua/_next/image?url=https%3A%2F%2Fcdn.dntrade.com.ua%2FD696FCD1-FB06-470D-9088-C5F062485E1E%2F424_2.jpg&w=640&q=75",
-      "https://daisy-jewellery.com.ua/_next/image?url=https%3A%2F%2Fcdn.dntrade.com.ua%2FD696FCD1-FB06-470D-9088-C5F062485E1E%2F436%25D1%2580_1.jpg&w=640&q=75",
-      "https://daisy-jewellery.com.ua/_next/image?url=https%3A%2F%2Fcdn.dntrade.com.ua%2FD696FCD1-FB06-470D-9088-C5F062485E1E%2F2054%25D1%2580_2.jpg&w=640&q=75"
-    ],
-    "currenciesAccepted": "UAH",
-    "paymentAccepted": "cash, credit card",
-    "hasMap": "https://maps.app.goo.gl/6TpG5JPm5LQsNSQYA",
-    "address": {
-      "@type": "PostalAddress",
-      "@id": "https://daisy-jewellery.com.ua/",
-      "name": "Daisy Jewellery",
-      "addressLocality": "Корець",
-      "postalCode": "34700",
-      "streetAddress": "вулиця Київська 3/3",
-      "telephone": "+380935492986",
-      "email": "daisyjewellery.info@gmail.com",
-      "addressCountry": "Ukraine"
-    },
-    "contactPoint": [
-      {
-        "@type": "ContactPoint",
-        "telephone": "+380935492986",
-        "contactType": "customer support"
-      }
-    ]
-  }
-};
+/** The shop as an organization (online store). Rendered on every page type. */
+export const getLogoJsonLd = () => ({
+  '@context': 'https://schema.org',
+  '@type': 'OnlineStore',
+  '@id': ORGANIZATION_ID,
+  name: SITE_NAME,
+  url: absoluteUrl('uk'),
+  logo: {
+    '@type': 'ImageObject',
+    url: absoluteUrl('logo_black.png'),
+    width: 1652,
+    height: 1352,
+  },
+  image: absoluteUrl('banner.webp'),
+  email: SOCIAL.email,
+  telephone: SOCIAL.phone,
+  sameAs: [SOCIAL.instagram, SOCIAL.facebook],
+  currenciesAccepted: 'UAH',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'вулиця Київська 3/3',
+    addressLocality: 'Корець',
+    postalCode: '34700',
+    addressCountry: 'UA',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: SOCIAL.phone,
+    email: SOCIAL.email,
+    contactType: 'customer support',
+    availableLanguage: ['uk', 'ru'],
+  },
+});
 
 export const getWebSiteJsonLd = ({ lang = 'uk' } = {}) => {
   const data = {
     uk: {
-      name: 'Срібні прикраси Daisy Jewellery',
-      description: 'Daisy Jewellery – вишукані срібні прикраси для будь-якої нагоди. Замовляйте онлайн з доставкою по Україні.'
+      description: 'Інтернет-магазин срібних прикрас 925 проби: каблучки, сережки, кольє та браслети з доставкою по Україні.',
     },
     ru: {
-      name: 'Серебряные украшения Daisy Jewellery',
-      description: 'Daisy Jewellery - изысканные серебряные украшения для любого случая. Заказывайте онлайн с доставкой по Украине.'
-    }
+      description: 'Интернет-магазин серебряных украшений 925 пробы: кольца, серьги, колье и браслеты с доставкой по Украине.',
+    },
   };
 
   return {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": "https://daisy-jewellery.com.ua/#website",
-    "url": "https://daisy-jewellery.com.ua/",
-    "name": data[lang].name,
-    "description": data[lang].description,
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://daisy-jewellery.com.ua/search?query={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': WEBSITE_ID,
+    url: absoluteUrl(lang),
+    name: SITE_NAME,
+    description: data[lang === 'ru' ? 'ru' : 'uk'].description,
+    inLanguage: IN_LANGUAGE[lang === 'ru' ? 'ru' : 'uk'],
+    publisher: { '@id': ORGANIZATION_ID },
+  };
+};
+
+/**
+ * Blog article. `date` is the post's own «DD.MM.YYYY» publication date.
+ * @param {{ title: string, description: string, date: string, image?: string|null, path: string, lang: 'uk'|'ru' }} post
+ */
+export const getBlogPostingJsonLd = ({ title, description, date, image, path, lang }) => {
+  const [day, month, year] = String(date || '').split('.');
+  const datePublished = year && month && day ? `${year}-${month}-${day}` : undefined;
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: title,
+      description,
+      datePublished,
+      image: image ? [absoluteUrl(image)] : undefined,
+      inLanguage: IN_LANGUAGE[lang],
+      mainEntityOfPage: absoluteUrl(path),
+      url: absoluteUrl(path),
+      author: { '@id': ORGANIZATION_ID, '@type': 'Organization', name: SITE_NAME, url: absoluteUrl('uk') },
+      publisher: { '@id': ORGANIZATION_ID },
+    },
+    getBreadcrumbJsonLd([
+      homeCrumb(lang),
+      { name: 'Блог', path: `${lang}/blog` },
+      { name: title, path },
+    ]),
+  ];
 };

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getDefaultMetaData } from '../../../helpers';
 import styles from './styles.module.css';
 
@@ -10,18 +11,19 @@ export async function generateMetadata(props) {
   const description = lang === 'ru'
     ? 'Публичный договор купли-продажи товаров интернет-магазина Daisy Jewellery. Условия заказа, оплаты и доставки украшений.'
     : 'Публічний договір купівлі-продажу товарів інтернет-магазину Daisy Jewellery. Умови замовлення, оплати та доставки прикрас.';
-  return getDefaultMetaData({ pagePath: 'oferta', title, description, lang });
+  // The contract text exists in Ukrainian only: /ru/oferta canonicalizes to /uk/oferta.
+  return getDefaultMetaData({ pagePath: 'oferta', title, description, lang, ruAvailable: false });
 }
 
 export default async function OfertaPage(props) {
   const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} lang="uk">
       <div className={styles.container}>
         <h1 className={styles.mainTitle}>ПУБЛІЧНИЙ ДОГОВІР (ОФЕРТА) на замовлення, купівлю-продаж і доставку товарів </h1>
         <p>Цей договір є офіційною та публічною пропозицією Продавця укласти договір купівлі-продажу Товару,
-          представленого на сайті <a className={styles.link} href='/'>https://daisy-jewellery.com.ua</a>. Даний договір є публічним, тобто відповідно до статті 633 Цивільного кодексу України,
+          представленого на сайті <Link className={styles.link} href='/uk'>https://daisy-jewellery.com.ua</Link>. Даний договір є публічним, тобто відповідно до статті 633 Цивільного кодексу України,
           його умови є однаковими для всіх покупців незалежно від їх статусу (фізична особа, юридична особа, фізична особа-підприємець)
           без надання переваги одному покупцю перед іншим. Шляхом укладення цього Договору покупець в повному обсязі приймає умови та порядок оформлення замовлення,
           оплати товару, доставки товару, повернення товару, відповідальності за недобросовісне замовлення та усі інші умови договору.

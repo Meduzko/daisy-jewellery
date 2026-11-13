@@ -239,6 +239,9 @@ describe('sizes, related, facets, refs', () => {
     const refs = await repo.listProductRefs(db);
     assert.equal(refs.length, 6);
     assert.deepEqual(refs.find((r) => r.code === '9').category, 'necklace');
+    // hasRu: a real Russian translation exists (sitemap lists the ru URL only then)
+    assert.equal(refs.find((r) => r.code === '100').hasRu, true);
+    assert.equal(refs.find((r) => r.code === '20').hasRu, false);
     assert.equal(await repo.countProducts(db, { category: 'earring' }), 2);
   });
 });

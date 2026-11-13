@@ -1,5 +1,9 @@
+import { getSiteUrl } from '../helpers/seo';
+
+// Checkout (/{lang}/order) and search (/{lang}/search) stay crawlable on purpose:
+// they carry a `noindex` robots meta tag, which crawlers only see if they may fetch the page.
 export default function robots() {
-  const baseUrl = process.env.SITE_DOMAIN || process.env.NEXT_PUBLIC_BASE_URL || 'https://daisy-jewellery.com.ua';
+  const baseUrl = getSiteUrl();
   return {
     rules: [
       {
@@ -7,7 +11,6 @@ export default function robots() {
         allow: '/',
         disallow: [
           '/api/',
-          '/order',
           '/*?*utm_',
           '/*?*gclid',
           '/*?*fbclid',
@@ -19,6 +22,5 @@ export default function robots() {
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
   };
 }

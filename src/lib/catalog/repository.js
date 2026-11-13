@@ -359,12 +359,15 @@ export async function getCategory(db, { category, locale } = {}) {
 
 /** Lightweight refs for sitemap / generateStaticParams. */
 export async function listProductRefs(db, { category } = {}) {
-  const rows = await applyFilters(db, baseQuery(db, DEFAULT_LOCALE), { category })
-    .select('p.legacy_code', 'c.code as category_code', 'p.updated_at')
+  // product_i18n has a row per locale for every product; the ru row tells whether a
+  // real Russian translation exists (is_fallback = only the Ukrainian text).
+  const rows = await applyFilters(db, baseQuery(db, 'ru'), { category })
+    .select('p.legacy_code', 'c.code as category_code', 'p.updated_at', 'i.is_fallback')
     .orderByRaw(`${CODE_ORDER} ASC NULLS LAST, p.id`);
   return rows.map((r) => ({
     code: String(r.legacy_code),
     category: mapProduct({ category_code: r.category_code }).category,
     updatedAt: r.updated_at instanceof Date ? r.updated_at.toISOString() : r.updated_at,
+    hasRu: !r.is_fallback,
   }));
 }
