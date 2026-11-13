@@ -142,7 +142,7 @@ export function createCategoryRoute({ category, langs }) {
           seoBlock={{
             title: config.seoBlock.title[lang],
             lead: config.seoBlock.lead[lang],
-            more: seo.description,
+            more: config.seoBlock.more?.[lang]
           }}
         />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }} />
