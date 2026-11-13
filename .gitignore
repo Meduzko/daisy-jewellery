@@ -38,5 +38,8 @@ next-env.d.ts
 # import reports (generated)
 /db/import/reports/
 
+# database backups (npm run db:backup)
+/db/backups/
+
 # Claude session scratch files (local only)
 /Claude outputs/

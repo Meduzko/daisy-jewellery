@@ -7,8 +7,9 @@
 // Texts come from product_i18n / category_i18n / attribute*_i18n, which fall back
 // to the default locale (uk) when a translation or a single field is missing.
 
-import { mapProduct, mapVariant } from './mapper.js';
+import { mapAttributes, mapProduct, mapVariant } from './mapper.js';
 import { toCategoryDbCode } from './categories.js';
+import { getArticleBase } from '../../helpers/productFamily.js';
 
 export const LOCALES = ['uk', 'ru'];
 export const DEFAULT_LOCALE = 'uk';
@@ -47,12 +48,18 @@ function baseQuery(db, locale) {
 
 function selectProduct(db, qb) {
   return qb.select(
-    'p.id', 'p.legacy_id', 'p.legacy_code', 'p.article', 'p.price', 'p.sale_price',
+    'p.id', 'p.legacy_id', 'p.legacy_code', 'p.article', 'p.price', 'p.sale_price', 'p.avg_weight_g',
     'p.source_created_at', 'p.updated_at', 'c.code as category_code',
     'i.locale', 'i.title', 'i.slug', 'i.short_description', 'i.description',
     'i.seo_title', 'i.seo_description', 'i.is_fallback',
     db.raw(`ARRAY(SELECT pi.url FROM product_images pi WHERE pi.product_id = p.id
                   ORDER BY pi.sort_order, pi.id) AS images`),
+    // uk insertion / coating values: keywords for the card descriptor (cardModel.getDescriptor)
+    db.raw(`ARRAY(SELECT t.value FROM product_attribute_values pav
+                  JOIN attribute_values av ON av.id = pav.attribute_value_id
+                  JOIN attributes a ON a.id = av.attribute_id AND a.code IN ('insertion', 'coating')
+                  JOIN attribute_value_translations t ON t.attribute_value_id = av.id AND t.locale = 'uk'
+                  WHERE pav.product_id = p.id ORDER BY a.sort_order, av.sort_order) AS spec_terms`),
     db.raw(`ARRAY(SELECT co.code FROM collection_products cp
                   JOIN collections co ON co.id = cp.collection_id AND co.is_active
                   WHERE cp.product_id = p.id ORDER BY co.sort_order, co.id) AS collection_codes`)
@@ -193,7 +200,26 @@ export async function getProductByCode(db, { code, category, locale, storeId, wi
   if (!row) return null;
   const product = mapProduct(row, { storeId });
   if (withVariants) product.variants = await getVariants(db, row.id);
+  product.attributes = await getProductAttributes(db, { productId: row.id, locale: row.locale });
   return product;
+}
+
+/**
+ * Specification attributes of one product (insertion, insertion_color, metal, coating,
+ * clasp, …) with texts in `locale` (uk fallback): [{ code, name, values: [{ slug, value }] }],
+ * attributes and values in their sort order.
+ */
+export async function getProductAttributes(db, { productId, locale } = {}) {
+  const loc = normalizeLocale(locale);
+  const rows = await db({ pav: 'product_attribute_values' })
+    .join({ av: 'attribute_values' }, 'av.id', 'pav.attribute_value_id')
+    .join({ a: 'attributes' }, 'a.id', 'av.attribute_id')
+    .join({ ai: 'attribute_i18n' }, function onAi() { this.on('ai.attribute_id', 'a.id').andOn('ai.locale', db.raw('?', [loc])); })
+    .join({ avi: 'attribute_value_i18n' }, function onAvi() { this.on('avi.attribute_value_id', 'av.id').andOn('avi.locale', db.raw('?', [loc])); })
+    .where('pav.product_id', productId)
+    .orderBy([{ column: 'a.sort_order' }, { column: 'a.id' }, { column: 'av.sort_order' }, { column: 'avi.value' }])
+    .select('a.code', 'ai.name', 'av.slug', 'avi.value');
+  return mapAttributes(rows);
 }
 
 /** Products by codes, returned in the order of `codes` (missing ones skipped). */
@@ -261,6 +287,26 @@ export async function getRelatedProducts(db, { productId, locale, limit = 8, sto
     )
     .limit(clampLimit(limit, 8));
   return rows.map((r) => mapProduct(r, { storeId }));
+}
+
+/**
+ * Other cards of the same model: visible products in ANY category whose article
+ * has the same base (see src/helpers/productFamily.js), default order. The product
+ * page shows those of the same category as variant swatches and those of other
+ * categories as the matching set.
+ */
+export async function getProductFamily(db, { productId, locale, storeId, limit = 24 } = {}) {
+  const base = await db('products').select('id', 'article').where('id', productId).first();
+  const articleBase = getArticleBase(base?.article);
+  if (!articleBase) return [];
+  const qb = baseQuery(db, normalizeLocale(locale))
+    .whereNot('p.id', base.id)
+    .whereRaw('lower(btrim(p.article)) LIKE ?', [`${escapeLike(articleBase)}%`]);
+  const rows = await applySort(db, selectProduct(db, qb), 'default').limit(clampLimit(limit, 24) * 2);
+  return rows
+    .filter((r) => getArticleBase(r.article) === articleBase)
+    .slice(0, clampLimit(limit, 24))
+    .map((r) => mapProduct(r, { storeId }));
 }
 
 /** Filter options for a listing: attribute values with counts, price range, sizes. */

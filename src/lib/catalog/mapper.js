@@ -62,6 +62,11 @@ export function mapProduct(row, { storeId = null } = {}) {
     image_path: images[0] || null,
     images,
     price: row.price == null ? null : String(row.price),
+    // «Середня вага» of the model (grams); piece weights stay on the variants.
+    avg_weight_g: row.avg_weight_g == null ? null : Number(row.avg_weight_g),
+    // [{ code, name, values: [{ slug, value }] }] — filled for the product page only.
+    attributes: Array.isArray(row.attributes) ? row.attributes : [],
+    spec_terms: Array.isArray(row.spec_terms) ? row.spec_terms : [],
     // Explicit sale price from the DB; productPricing.applyProductDiscount() prefers it.
     catalogSalePrice: row.sale_price == null ? null : String(row.sale_price),
     store_id: storeId || null,
@@ -74,6 +79,17 @@ export function mapProduct(row, { storeId = null } = {}) {
     status: 1,
     source: 'postgres',
   };
+}
+
+/** Flat attribute rows (code, name, slug, value; already sorted) → grouped list. */
+export function mapAttributes(rows = []) {
+  const out = [];
+  for (const r of rows) {
+    let a = out.find((x) => x.code === r.code);
+    if (!a) out.push((a = { code: r.code, name: r.name, values: [] }));
+    a.values.push({ slug: r.slug, value: r.value });
+  }
+  return out;
 }
 
 /** Public variant fields only (no cost price, no legacy ids). */

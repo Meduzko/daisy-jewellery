@@ -8,8 +8,11 @@
 // Rules: idempotent (match by products.legacy_code = CSV "Код"), one transaction
 // with a savepoint per row, never deletes, never overwrites a non-empty value
 // (it only fills empty fields; differing values are reported as conflicts).
-// Optional columns (Роздрібна, #вставка, #виробник, #постачальник, #довжина, #розмір, #бейдж)
-// are used when a file has them; values not present in the CSV are left NULL.
+// Reads only «Товари-<категорія>-…» exports. Optional columns (Ціна → products.price, else Роздрібна, #вставка, #виробник, #постачальник, #довжина, #розмір, #бейдж,
+// and since 2026-11-12 the owner's content merged into these files: Опис, Колір вставки, Матеріал, Покриття,
+// Середня вага, Тип застібки) are used when a file has them; values not present in the CSV are left NULL.
+// Spec values (#вставка … Тип застібки) are normalised exactly like db:import:content does (lib/catalog-values.js).
+// To push changed values into an existing DB use db:import:content (it overwrites); this importer only fills.
 
 const fs = require('fs');
 const path = require('path');
@@ -44,15 +47,8 @@ const CATEGORIES = [
     uk: { name: 'Браслети', slug: 'braslety', url_prefix: 'braslety/kupyty-sribnyy-braslet' },
     ru: { name: 'Браслеты', slug: 'braslety', url_prefix: 'braslety/kupit-serebryanyy-braslet' } },
 ];
-// Filter definitions (architecture §3: insertion, metal, coating, color, manufacturer).
-// Values are not in the CSV export, so none are created here.
-const ATTRIBUTES = [
-  { code: 'insertion', sort: 1, uk: 'Вставка', ru: 'Вставка' },
-  { code: 'metal', sort: 2, uk: 'Метал', ru: 'Металл' },
-  { code: 'coating', sort: 3, uk: 'Покриття', ru: 'Покрытие' },
-  { code: 'color', sort: 4, uk: 'Колір', ru: 'Цвет' },
-  { code: 'manufacturer', sort: 5, uk: 'Виробник', ru: 'Производитель' },
-];
+// Filter definitions (architecture §3) — shared with migration 2, see db/reference/attributes.js.
+const { ATTRIBUTES } = require('../reference/attributes');
 // #бейдж → collections (знижка/N is handled as sale_price).
 const COLLECTIONS = [
   { code: 'new', badge: 'новинка', sort: 1, uk: { name: 'Новинки', slug: 'novynky' }, ru: { name: 'Новинки', slug: 'novinki' } },
@@ -65,15 +61,22 @@ const LOCALES = [
 const COLUMNS = {
   code: 'Код', title: 'Назва', image: 'Зображ.', article: 'Артикул', web: 'Веб', created: 'Створення',
   // optional
-  price: 'Роздрібна', insertion: '#вставка', manufacturer: '#виробник', supplier: '#постачальник',
+  price: 'Ціна', retail: 'Роздрібна', insertion: '#вставка', manufacturer: '#виробник', supplier: '#постачальник',
   length: '#довжина', size: '#розмір', badge: '#бейдж', note: 'Примітка',
+  description: 'Опис', insertion_color: 'Колір вставки', metal: 'Матеріал', coating: 'Покриття',
+  weight: 'Середня вага', clasp: 'Тип застібки',
 };
-const ATTRIBUTE_COLUMNS = { insertion: 'insertion', manufacturer: 'manufacturer' }; // column key → attributes.code
+// Site price: «Ціна» (added 2026-11-12, separate from the retail «Роздрібна»); files without it → «Роздрібна».
+const priceCell = (r) => (clean(r[COLUMNS.price]) ? r[COLUMNS.price] : r[COLUMNS.retail]);
+const ATTRIBUTE_COLUMNS = { manufacturer: 'manufacturer' }; // raw single value: column key → attributes.code
+// Normalised, multi-value spec attributes (column key = attributes.code).
+const SPEC_COLUMNS = ['insertion', 'insertion_color', 'metal', 'coating', 'clasp'];
 // Target fields with no source column in this export (reported, never invented).
 const NOT_IN_SOURCE = [
-  'products.legacy_id', 'product_translations(ru)', 'product_translations.description',
-  'product_variants.weight_g/stock_qty/cost_price', 'attribute_values(metal, coating, color)',
+  'products.legacy_id', 'product_translations(ru)', 'product_translations.short_description',
+  'product_variants.weight_g/stock_qty/cost_price', 'attribute_values(color)',
 ];
+const { cleanText, parseWeight, normSizeLabel, parseValues } = require('./lib/catalog-values');
 
 // ---------------------------------------------------------------- helpers
 function parseCsv(text, delimiter = ';') {
@@ -197,10 +200,15 @@ async function seedReferenceData(trx, report) {
 }
 
 function readSource(report) {
-  const files = fs.readdirSync(DIR).filter((f) => f.toLowerCase().endsWith('.csv')).sort();
+  // Only DNTrade exports («Товари-<категорія>-…csv», «;»-separated). Other CSVs in the
+  // folder (e.g. the owner's spec sheets for db:import:content) are listed as ignored.
+  const all = fs.readdirSync(DIR).filter((f) => f.toLowerCase().endsWith('.csv')).sort();
+  const isExport = (f) => CATEGORIES.some((c) => f.normalize('NFC').toLowerCase().includes(`-${c.file}-`));
+  const files = all.filter(isExport);
+  report.ignored_files = all.filter((f) => !isExport(f));
   const records = [];
   for (const file of files) {
-    const category = CATEGORIES.find((c) => file.toLowerCase().includes(`-${c.file}-`));
+    const category = CATEGORIES.find((c) => file.normalize('NFC').toLowerCase().includes(`-${c.file}-`));
     const rows = parseCsv(fs.readFileSync(path.join(DIR, file), 'utf8'));
     report.files.push({ file, category: category?.code ?? null, rows: rows.length });
     for (const r of rows) records.push({ file, category, ...r });
@@ -236,9 +244,12 @@ async function importRecord(trx, r, ref, result) {
 
   const warn = (field, message) => result.warnings.push({ code, field, message });
 
+  let weight = parseWeight(r[COLUMNS.weight]);
+  if (weight === undefined) { warn(COLUMNS.weight, `invalid weight "${r[COLUMNS.weight]}" — not imported`); weight = null; }
+
   // Price and "знижка/N" badge → sale_price (computed from the source price, rounded to kopecks)
-  let price = parsePrice(r[COLUMNS.price]);
-  if (price === undefined) { warn(COLUMNS.price, `invalid price "${r[COLUMNS.price]}" — not imported`); price = null; }
+  let price = parsePrice(priceCell(r));
+  if (price === undefined) { warn(COLUMNS.price, `invalid price "${priceCell(r)}" — not imported`); price = null; }
   const badges = (clean(r[COLUMNS.badge]) || '').split(/[,;]/).map((b) => b.trim().toLowerCase()).filter(Boolean);
   let salePrice = null;
   for (const b of badges) {
@@ -264,6 +275,8 @@ async function importRecord(trx, r, ref, result) {
     supplier_id: supplierId,
     article: clean(r[COLUMNS.article]),
     source_created_at: createdAt,
+    note: cleanText(r[COLUMNS.note]) || null, // «Примітка» (migration 20261113000001)
+    ...(weight != null ? { avg_weight_g: weight } : {}),
     // status only on insert (NOT NULL default 'draft'): "Веб = Так" means it is on the website.
     ...(await trx('products').where({ legacy_code: code }).first() ? {} : { status: clean(r[COLUMNS.web]) === 'Так' ? 'active' : 'draft' }),
   });
@@ -274,6 +287,7 @@ async function importRecord(trx, r, ref, result) {
   const tr = await fillMissing(trx, 'product_translations', { product_id: id, locale: 'uk' }, {
     title,
     slug: `${slugify(title)}-${code}`,
+    description: cleanText(r[COLUMNS.description]) || null,
   });
   changes.push(tr.status);
   result.conflicts.push(...tr.conflicts.filter((c) => c.field.endsWith('.title')).map((c) => ({ code, ...c })));
@@ -284,7 +298,8 @@ async function importRecord(trx, r, ref, result) {
     await trx('product_images').insert({ product_id: id, url: image, sort_order: 0 });
     changes.push('updated');
   }
-  const length = clean(r[COLUMNS.length]), sizeCol = clean(r[COLUMNS.size]);
+  const length = clean(r[COLUMNS.length]) && normSizeLabel(r[COLUMNS.length]);
+  const sizeCol = clean(r[COLUMNS.size]) && normSizeLabel(r[COLUMNS.size]);
   const sizeLabel = length || sizeCol; // bracelets/necklaces: length; rings: size
   if (length && sizeCol && length !== sizeCol) warn(COLUMNS.size, `both ${COLUMNS.length} "${length}" and ${COLUMNS.size} "${sizeCol}" — used ${COLUMNS.length}`);
   const variants = await trx('product_variants').where({ product_id: id });
@@ -292,16 +307,47 @@ async function importRecord(trx, r, ref, result) {
     await trx('product_variants').insert({ product_id: id, size_label: sizeLabel, size: parseSize(sizeLabel) });
     changes.push('updated');
   } else if (sizeLabel && variants.length === 1) {
-    const v = await fillMissing(trx, 'product_variants', { id: variants[0].id }, { size_label: sizeLabel, size: parseSize(sizeLabel) });
+    // label and numeric size belong together: a label set elsewhere (e.g. a range «17–19 см»
+    // from db:import:content, size NULL) must not get this export's number added to it
+    const keep = variants[0].size_label != null;
+    const v = await fillMissing(trx, 'product_variants', { id: variants[0].id }, keep ? { size_label: sizeLabel } : { size_label: sizeLabel, size: parseSize(sizeLabel) });
     changes.push(v.status);
     result.conflicts.push(...v.conflicts.map((c) => ({ code, ...c })));
   } else if (sizeLabel) warn(COLUMNS.length, `product has ${variants.length} variants — size "${sizeLabel}" not applied`);
 
-  // Attributes (#вставка, #виробник): value matched by slug within the attribute; links only added
+  // Spec attributes (#вставка, Колір вставки, Матеріал, Покриття, Тип застібки): normalised values
+  // (shared with db:import:content); links only added to products with no value of that attribute yet.
+  for (const attrCode of SPEC_COLUMNS) {
+    const cell = r[COLUMNS[attrCode]];
+    if (!clean(cell)) continue;
+    const attributeId = ref.attributeIds[attrCode];
+    const hasValues = await trx('product_attribute_values as pav').join('attribute_values as av', 'av.id', 'pav.attribute_value_id')
+      .where({ 'pav.product_id': id, 'av.attribute_id': attributeId }).first();
+    if (hasValues) continue;
+    for (const v of parseValues(attrCode, cell, (field, message) => warn(COLUMNS[field], message))) {
+      let av = await trx('attribute_values').where({ attribute_id: attributeId, slug: v.slug }).first();
+      if (!av) {
+        av = (await trx('attribute_values').insert({ attribute_id: attributeId, slug: v.slug, sort_order: v.sort }).returning('*'))[0];
+        result.created.attribute_values++;
+      }
+      for (const [locale, value] of [['uk', v.uk], ['ru', v.ru]]) {
+        if (value) await insertMissing(trx, 'attribute_value_translations', { attribute_value_id: av.id, locale }, { value });
+      }
+      if (await insertMissing(trx, 'product_attribute_values', { product_id: id, attribute_value_id: av.id }, {})) changes.push('updated');
+    }
+  }
+
+  // Attributes (#виробник): value matched by slug within the attribute; links only added,
+  // and only to products that have no value of that attribute yet
   for (const [col, attrCode] of Object.entries(ATTRIBUTE_COLUMNS)) {
     const value = clean(r[COLUMNS[col]]) && normName(r[COLUMNS[col]]);
     if (!value) continue;
     const attributeId = ref.attributeIds[attrCode];
+    // A product that already has values of this attribute (e.g. normalised by
+    // db:import:content from the owner's spec sheets) keeps them — no raw DNTrade value next to them.
+    const hasValues = await trx('product_attribute_values as pav').join('attribute_values as av', 'av.id', 'pav.attribute_value_id')
+      .where({ 'pav.product_id': id, 'av.attribute_id': attributeId }).first();
+    if (hasValues) continue;
     const slug = slugify(value);
     let av = await trx('attribute_values').where({ attribute_id: attributeId, slug }).first();
     if (!av) {
@@ -319,7 +365,6 @@ async function importRecord(trx, r, ref, result) {
     if (!collectionId) { warn(COLUMNS.badge, `unknown badge "${b}"`); continue; }
     if (await insertMissing(trx, 'collection_products', { collection_id: collectionId, product_id: id }, {})) changes.push('updated');
   }
-  if (clean(r[COLUMNS.note])) warn(COLUMNS.note, 'note present — not mapped');
 
   return product.status === 'inserted' ? 'inserted' : changes.some((s) => s !== 'unchanged') ? 'updated' : 'unchanged';
 }
@@ -342,18 +387,32 @@ async function validate(trx, records, report) {
       const variants = await trx('product_variants').where({ product_id: p.id }).count('* as n').first();
       if (p.category_code !== r.category.code) issues.push(`category ${p.category_code} ≠ ${r.category.code}`);
       if (uk?.title !== clean(r[COLUMNS.title])) issues.push('uk title differs');
+      const description = cleanText(r[COLUMNS.description]);
+      if (description && uk?.description !== description) issues.push('uk description differs');
+      const weight = parseWeight(r[COLUMNS.weight]);
+      if (weight && Number(p.avg_weight_g) !== Number(weight)) issues.push(`avg weight ${p.avg_weight_g} ≠ ${weight}`);
+      for (const attrCode of SPEC_COLUMNS) {
+        if (!clean(r[COLUMNS[attrCode]])) continue;
+        const expected = parseValues(attrCode, r[COLUMNS[attrCode]], () => {}).map((x) => x.slug).sort().join();
+        const actual = (await trx('product_attribute_values as pav').join('attribute_values as av', 'av.id', 'pav.attribute_value_id')
+          .join('attributes as a', 'a.id', 'av.attribute_id').where({ 'pav.product_id': p.id, 'a.code': attrCode }).pluck('av.slug')).sort().join();
+        if (expected !== actual) issues.push(`${attrCode} [${actual}] ≠ [${expected}]`);
+      }
       if ((p.article ?? null) !== clean(r[COLUMNS.article])) issues.push('article differs');
+      const note = cleanText(r[COLUMNS.note]);
+      if (note && p.note !== note) issues.push('note differs');
       if (clean(r[COLUMNS.image]) && !images.includes(clean(r[COLUMNS.image]))) issues.push('image missing');
       if (Number(variants.n) < 1) issues.push('no variant');
       if (!ru?.title) issues.push('ru fallback missing');
-      const price = parsePrice(r[COLUMNS.price]);
+      const price = parsePrice(priceCell(r));
       if (price && p.price !== price) issues.push(`price ${p.price} ≠ ${price}`);
       for (const [col, attrCode] of Object.entries(ATTRIBUTE_COLUMNS)) {
         const value = clean(r[COLUMNS[col]]);
         if (!value) continue;
+        // any value of the attribute counts (content-sheet values replace the raw DNTrade ones)
         const linked = await trx('product_attribute_values as pav')
           .join('attribute_values as av', 'av.id', 'pav.attribute_value_id').join('attributes as a', 'a.id', 'av.attribute_id')
-          .where({ 'pav.product_id': p.id, 'a.code': attrCode, 'av.slug': slugify(normName(value)) }).first();
+          .where({ 'pav.product_id': p.id, 'a.code': attrCode }).first();
         if (!linked) issues.push(`${attrCode} "${value}" not linked`);
       }
       const supplier = clean(r[COLUMNS.supplier]);
@@ -361,7 +420,7 @@ async function validate(trx, records, report) {
         const s = p.supplier_id && (await trx('suppliers').where({ id: p.supplier_id }).first());
         if (!s || s.name.toLowerCase() !== normName(supplier).toLowerCase()) issues.push('supplier differs');
       }
-      const sizeLabel = clean(r[COLUMNS.length]) || clean(r[COLUMNS.size]);
+      const sizeLabel = (clean(r[COLUMNS.length]) && normSizeLabel(r[COLUMNS.length])) || (clean(r[COLUMNS.size]) && normSizeLabel(r[COLUMNS.size]));
       if (sizeLabel && !(await trx('product_variants').where({ product_id: p.id, size_label: sizeLabel }).first())) issues.push('size missing');
     }
     if (issues.length) v.problems.push({ code, file: r.file, issues });
@@ -397,6 +456,12 @@ async function main() {
   const db = knexFactory(knexConfig);
   try {
     await db.transaction(async (trx) => {
+      if (records.some((r) => clean(r[COLUMNS.weight])) && !(await trx.schema.hasColumn('products', 'avg_weight_g'))) {
+        throw new Error('products.avg_weight_g is missing — run `npm run db:patch:specs` first (existing DB) or `npm run db:migrate` (new DB).');
+      }
+      if (!(await trx.schema.hasColumn('products', 'note'))) {
+        throw new Error('products.note is missing — run `npm run db:migrate` first (migration 20261113000001).');
+      }
       const ref = await seedReferenceData(trx, report);
       const seen = new Map();
       for (const r of records) {

@@ -116,6 +116,77 @@ npm run db:import:ru [-- --dry-run]
 
 Copies `src/dictionaries/ru.json` → `products.<koltsa|sergi|kolye|braslety>.<code>` into `product_translations` (`ru`): title, slug (`<translit>-<code>`), description → `short_description`. Inserts missing rows, fills empty fields only. Products without a Russian row fall back to Ukrainian.
 
+## Product source files (`db/products_csv/`, merged 2026-11-12)
+
+The four DNTrade exports `Товари-<категорія>-…-веб-так.csv` (`;`, UTF-8 BOM) are the single source of
+product data. The owner's content sheets were merged into them on 2026-11-12 and 2026-11-13 (pre-merge exports in git history). One header for all four:
+
+`Код;Назва;Опис;Зображ.;Артикул;#вставка;Колір вставки;Матеріал;Покриття;Середня вага;#довжина;#розмір;Тип застібки;#постачальник;#виробник;#бейдж;Веб;Примітка;Створення;Ціна;Роздрібна`
+
+`Ціна` = the site price (→ `products.price`), a separate field from the retail `Роздрібна` (not stored in the DB;
+used for the price only when `Ціна` is empty). `Ціна` is taken strictly from the owner's sheets
+(column «Ціна»): 233 products. Empty for 8061 (empty in the sheet, Роздрібна empty too →
+no price, the product is hidden on the site) and for 7112 / 4830 (not in the sheets → Роздрібна 1450,00 / 2200,00 is used).
+Checked 2026-11-12 against the live site: all sheet prices match. The site's discounts are in `#бейдж` as `знижка/10`
+(7723, 3322, 8536, 4795, 11560, 4693, 4699).
+
+```bash
+# new database
+npm run db:migrate && npm run db:import:products && npm run db:import:dntrade && npm run db:import:ru
+# existing database (migrated before 2026-11-12)
+npm run db:patch:specs                    # adds products.avg_weight_g + attribute definitions (idempotent)
+npm run db:import:content -- --dry-run    # preview, rolled back
+npm run db:import:content                 # apply; report → db/import/reports/content-*.json
+```
+
+- `db:import:products` — fill-only (never overwrites): creates cards and fills empty fields, including description,
+  avg weight and the spec attributes (added only to products with no value of that attribute).
+- `db:import:content` — authoritative for the content columns, for updating an existing DB: overwrites uk title,
+  description (clears the old DNTrade short_description), avg_weight_g, the only variant's size label and the
+  attributes insertion / insertion_color / metal / coating / clasp (links of that attribute replaced). Empty cell =
+  keep. Price only fills an empty price; article is never changed. Previous values → report + `audit_logs.before`.
+- Both normalise values the same way (`db/import/lib/catalog-values.js`: spellings such as «Куб.цикроній»,
+  «перламутрм», «Англійська защібка» → one value with uk + ru text, multi-values split on `,`/`;`), so running
+  them in any order gives the same data. ru product texts are not touched.
+
+Migrations 2 and 3 were edited in place on 2026-11-12 (attribute definitions from `db/reference/attributes.js`,
+`products.avg_weight_g numeric(8,3)`); an existing DB gets the same via `db:patch:specs`.
+
+## Sheet update 2026-11-13
+
+The owner's updated sheets were merged into the four exports; `db/products_csv/` now holds only these 4 merged files
+(the sheets, merge logs and the 2026-11-12 versions were removed on 2026-11-13; earlier versions are in git history).
+To merge a future sheet export, put the sheets in a folder and run:
+
+```bash
+npm run db:merge:sheets -- --sheets=<folder with the sheets> [--out=<output folder>]   # review, then copy the 4 CSVs over db/products_csv/
+```
+
+Merge rules (`db/import/merge-source-sheets.js`): match by `Код` (Артикул is shared, never a key); empty / `Same` / `-`
+keeps the old value; formatting-only differences keep the old formatting; `Артикул` and `#довжина` are never changed
+(lengths stay single numbers so the numeric size filter keeps working — owner decision 2026-11-13); `Same` in a
+description = the description of the sheet row with the same Артикул (16995 ← 7943); invalid prices/weights are logged,
+not written; duplicates, cross-category codes and unknown sheet columns abort the run.
+Result: 21 products changed — price 9798 1950 → 1400 (confirmed by the owner), 18 descriptions, 2 weights,
+coating 4904 / 828, insertion + colour 828.
+
+`products.note` (migration `20261113000001_products_note.js`, `text NULL`) stores `Примітка` — internal, not exposed
+by the storefront mapper. `Роздрібна` is deliberately not stored (owner decision 2026-11-13).
+
+Apply to the local database — one command:
+
+```bash
+npm run db:update     # db:up → db:backup → db:migrate → content import dry run → content import (--update-prices)
+```
+
+It stops at the first failing step (`db/update-catalog.js`), so nothing is imported without a backup and a clean
+dry run. The same steps one by one: `npm run db:up`, `npm run db:backup`, `npm run db:migrate`,
+`npm run db:import:content -- --update-prices --dry-run`, `npm run db:import:content -- --update-prices`.
+
+`--update-prices` overwrites `products.price` from `Ціна` (old values → report + `audit_logs`); `Примітка` → `products.note`
+(empty keeps). Re-running reports `updated 0`. Restore a backup:
+`docker compose --env-file .env.local exec -T postgres pg_restore -U daisy -d daisy_dev --clean --if-exists < db/backups/<file>.dump`.
+
 ## Storefront catalog (PostgreSQL)
 
 - Source switch: `CATALOG_SOURCE=postgres` (default) or `dntrade` (rollback; the old DNTrade API code path is unchanged). Restart/rebuild after changing it.

@@ -76,13 +76,14 @@ export async function seedCatalog(db) {
   ]);
 
   // attributes
-  const [{ id: insertion }] = await db('attributes').insert({ code: 'insertion', sort_order: 1 }).returning('id');
+  // `insertion` (and the other spec attributes) are seeded by migration 2.
+  const { id: insertion } = await db('attributes').where({ code: 'insertion' }).first('id');
   const [{ id: internal }] = await db('attributes').insert({ code: 'internal', is_filterable: false }).returning('id');
   await db('attribute_translations').insert([
     { attribute_id: insertion, locale: 'uk', name: 'Вставка' },
     { attribute_id: insertion, locale: 'ru', name: 'Вставка (ru)' },
     { attribute_id: internal, locale: 'uk', name: 'Службове' },
-  ]);
+  ]).onConflict(['attribute_id', 'locale']).merge(['name']);
   const [{ id: onyx }] = await db('attribute_values').insert({ attribute_id: insertion, slug: 'oniks' }).returning('id');
   const [{ id: cz }] = await db('attribute_values').insert({ attribute_id: insertion, slug: 'fianit' }).returning('id');
   const [{ id: x }] = await db('attribute_values').insert({ attribute_id: internal, slug: 'x' }).returning('id');

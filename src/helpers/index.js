@@ -170,6 +170,21 @@ const getItemMetaData = ({ categoryName, productTitle, code, short_description, 
  * @returns 
  */
 
+/** Plain text of `html`, cut after whole sentences to ≈ `max` characters (meta description). */
+export const toMetaSummary = (html, max = 160) => {
+  const text = String(html || '').replace(/<[^>]*>/g, ' ').replace(/&[^;\s]+;/g, ' ').replace(/\s+/g, ' ').trim();
+  if (text.length <= max) return text;
+  const sentences = text.match(/[^.!?]+[.!?]+(\s|$)/g) || [];
+  let out = '';
+  for (const s of sentences) {
+    if ((out + s).trim().length > max) break;
+    out += s;
+  }
+  if (out.trim()) return out.trim();
+  const cut = text.slice(0, max);
+  return `${cut.slice(0, cut.lastIndexOf(' ') > 0 ? cut.lastIndexOf(' ') : max).trim()}…`;
+};
+
 export const getProductMetadata = async ({ product, categoryName, lang = 'uk' }) => {
   const siteName = 'Daisy Jewellery';
   const locale = lang === 'uk' ? 'uk_UA' : 'ru_UA';
@@ -177,7 +192,9 @@ export const getProductMetadata = async ({ product, categoryName, lang = 'uk' })
 
   const tk = await getItemTranslations({ lang, categoryName, code });
   const tkTitle = tk?.title || title;
-  const tkDescription = tk?.description || short_description;
+  // DB products whose text came from the content sheets have only `description`
+  // (short_description cleared) — use its opening sentences for the meta description.
+  const tkDescription = tk?.description || short_description || toMetaSummary(product.description);
 
   const { keywords, canonicalUrl, description: generatedDescription, languages } = getItemMetaData({ categoryName, title, code, short_description: tkDescription || '', lang });
   // Explicit SEO texts from the PostgreSQL catalog (product_translations.seo_*) win when set.

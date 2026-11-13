@@ -1,5 +1,4 @@
 export const revalidate = 900;
-import Breadcrumbs from '../../../../../components/Breadcrumbs';
 import ProductPageNew from '../../../../../components/ProductPage';
 import { getCachedAllProducts, getCachedProductByCode } from '../../../../../lib/dataCache';
 import { getProductMetadata } from '../../../../../helpers';
@@ -37,16 +36,9 @@ export default async function NecklaceItem(props) {
   const logoJsonLd = getLogoJsonLd({ lang });
   const t = await getItemTranslations({ lang, categoryName: 'kolye', code: product.code }).catch(() => undefined);
 
-  const segments = [
-    { name: lang === 'ru' ? 'Главная' : 'Головна', href: `/${lang}` },
-    { name: lang === 'ru' ? 'Колье' : 'Кольє', href: `/${lang}/kolye` },
-    { name: t?.title || product?.title, href: `/${lang}/${lang === 'ru' ? 'kolye/kupit-serebryanoye-kolye' : 'kolye/kupyty-sribne-kolye'}/${params.item}` },
-  ];
-
   return (
     <>
-      <Breadcrumbs segments={segments} />
-      <ProductPageNew item={product} t={t} />
+      <ProductPageNew item={product} t={t} lang={lang} category="necklace" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }} />
     </>

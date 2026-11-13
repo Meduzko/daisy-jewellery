@@ -96,6 +96,83 @@ export async function getCachedProductSizes(category, product) {
   return getCatalogSizes(product?.sku, toCategoryKey(category));
 }
 
+// ---------------------------------------------------------------- product page (redesign)
+
+const ALL_CATEGORY_KEYS = ['ring', 'earring', 'necklace', 'bracer'];
+
+/**
+ * Other cards of the same model (same article base, see helpers/productFamily.js),
+ * in every category: `variants` = same category (swatches), `set` = cards of
+ * the other categories («Доповніть образ»; the page picks one per category).
+ * @returns {Promise<{ variants: object[], set: object[] }>}
+ */
+export async function getCachedProductFamily(category, product, locale = 'uk') {
+  const key = toCategoryKey(category);
+  let family = [];
+  if (getCatalogSource() === 'dntrade') {
+    const { getArticleBase } = await import('../helpers/productFamily');
+    const base = getArticleBase(product?.sku);
+    if (!base) return { variants: [], set: [] };
+    const lists = await Promise.all(
+      ALL_CATEGORY_KEYS.map(async (k) => {
+        try {
+          const items = await getCachedDntradeProducts(dntradeCategoryId(k));
+          return items.map((p) => ({ ...p, category: p.category || k }));
+        } catch {
+          return [];
+        }
+      })
+    );
+    family = lists.flat().filter((p) => String(p.code) !== String(product.code) && getArticleBase(p.sku) === base);
+  } else {
+    if (!product?.id) return { variants: [], set: [] };
+    const { getCatalogProductFamily } = await import('./catalog');
+    family = await getCatalogProductFamily(product.id, locale);
+  }
+
+  const variants = family.filter((p) => p.category === key);
+  const set = family.filter((p) => p.category && p.category !== key);
+  return { variants, set };
+}
+
+/**
+ * «Вам також сподобається»: same-category products. Cards matching `stem` (the
+ * product's collection, e.g. «клевер») come first, then the catalog's related
+ * ranking (shared collections / attributes, neighbouring codes).
+ * @param {{ category: string, product: object, locale?: string, stem?: string|null, exclude?: string[], limit?: number }} options
+ */
+export async function getCachedRelatedProducts({ category, product, locale = 'uk', stem = null, exclude = [], limit = 4 }) {
+  const skip = new Set([String(product.code), ...exclude.map(String)]);
+  const picked = [];
+  const take = (list) => {
+    for (const p of list) {
+      if (picked.length >= limit) return;
+      if (skip.has(String(p.code))) continue;
+      skip.add(String(p.code));
+      picked.push(p);
+    }
+  };
+
+  if (stem) {
+    const { products } = await getCachedListing({ category, limit: limit + skip.size + 4, locale, filters: { q: stem } });
+    take(products);
+  }
+  if (picked.length < limit) {
+    if (getCatalogSource() === 'dntrade') {
+      const all = await getCachedDntradeProducts(dntradeCategoryId(category));
+      const code = Number(product.code);
+      const near = Number.isFinite(code)
+        ? [...all].sort((a, b) => Math.abs(Number(a.code) - code) - Math.abs(Number(b.code) - code))
+        : all;
+      take(near);
+    } else if (product?.id) {
+      const { getRelatedCatalogProducts } = await import('./catalog');
+      take(await getRelatedCatalogProducts(product.id, locale, limit + skip.size + 4));
+    }
+  }
+  return picked.map((p) => ({ ...p, category: p.category || toCategoryKey(category) }));
+}
+
 // ---------------------------------------------------------------- category listing (redesign)
 // Sort + filters for the category pages (src/components/Category). PostgreSQL does
 // the work in SQL; the DNTrade rollback path supports sort, price, collection

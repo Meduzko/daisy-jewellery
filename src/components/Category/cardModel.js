@@ -61,11 +61,11 @@ function getBadges(product, display, lang) {
 
 /**
  * Product as stored in the cart (CartContext → Cart, OrderList, order upload).
- * Only the long description HTML and SEO texts are dropped; `images` must stay:
+ * Only the long description HTML, SEO texts and spec attributes are dropped; `images` must stay:
  * the cart and the order form render `item.images[0]`.
  */
 export function toCartItem(product) {
-  const { description, seo_title, seo_description, ...rest } = product;
+  const { description, seo_title, seo_description, attributes, ...rest } = product;
   const images = (product.images?.length ? product.images : [product.image_path]).filter(Boolean);
   return { ...rest, images };
 }
@@ -87,7 +87,8 @@ export function toCardModel(product, { lang, translations, itemBaseURL } = {}) {
     sku: product.sku || '',
     href,
     name: title,
-    descriptor: getDescriptor(`${title} ${product.title || ''} ${stripHtml(product.short_description)}`, lang),
+    // spec_terms: insertion / coating values from the catalog (owner's spec sheets)
+    descriptor: getDescriptor(`${title} ${product.title || ''} ${(product.spec_terms || []).join(' ')} ${stripHtml(product.short_description)}`, lang),
     image: images[0] || null,
     image2: images[1] || null,
     price: display.price,

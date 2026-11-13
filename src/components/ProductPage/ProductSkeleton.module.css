@@ -1,0 +1,93 @@
+.page {
+    background: #FFFFFF;
+    padding-bottom: 64px;
+}
+
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+.gallery > div,
+.panel > div,
+.size {
+    background: var(--dj-cream);
+    animation: pulse 1.4s ease-in-out infinite;
+}
+
+.hero {
+    aspect-ratio: 4 / 5;
+}
+
+.panel {
+    padding: 24px 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.line {
+    height: 14px;
+}
+
+.titleLine {
+    height: 32px;
+}
+
+.panel > .sizes {
+    background: none;
+    animation: none;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.size {
+    height: 44px;
+}
+
+.cta {
+    margin-top: 16px;
+    height: 56px;
+}
+
+@media (min-width: 1024px) {
+    .product {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(340px, 408px);
+        column-gap: clamp(40px, 6.67vw, 96px);
+        padding: 62px var(--dj-gutter) 0;
+        align-items: start;
+    }
+
+    .hero {
+        max-height: calc(100vh - 180px);
+        min-height: 520px;
+    }
+
+    .panel {
+        padding: 32px 0 0;
+    }
+
+    .titleLine {
+        height: 42px;
+    }
+}
+
+@keyframes pulse {
+    50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gallery > div,
+    .panel > div,
+    .size {
+        animation: none;
+    }
+}

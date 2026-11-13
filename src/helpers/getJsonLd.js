@@ -1,5 +1,6 @@
 import { getItemTranslations } from '../dictionaries';
 import { getDisplayPrices } from './productPricing';
+import { isProductAvailable } from './productAvailability';
 
 export const getCategoryJsonLd = ({ categoryName, categoryDescription, url, lowPrice, highPrice }) => {
   const jsonLd = {
@@ -33,7 +34,9 @@ export const getProductJsonLd = async (product, categoryUrl, options = {}) => {
   } = product;
   const { price } = getDisplayPrices(product);
 
-  const plainTextDescription = description.replace(/<[^>]*>/g, "");
+  // Content-sheet products have only `description` (short_description cleared).
+  const plainTextDescription = String(description || product.description || '')
+    .replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 
   const { lang, categoryName } = options;
   const tk = await getItemTranslations({ lang, categoryName, code });
@@ -56,7 +59,7 @@ export const getProductJsonLd = async (product, categoryUrl, options = {}) => {
       url: `https://daisy-jewellery.com.ua/${locale}/${categoryUrl}/${code}`,
       price: `${price}`,
       priceCurrency: "UAH",
-      availability: "http://schema.org/InStock",
+      availability: isProductAvailable(product) ? "http://schema.org/InStock" : "http://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition"
     }
   };

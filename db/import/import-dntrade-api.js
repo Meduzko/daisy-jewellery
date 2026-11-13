@@ -188,11 +188,18 @@ async function importCard(trx, p, report) {
     }
   }
 
-  const s2 = await fillNulls(trx, 'product_translations', { product_id: product.id, locale: 'uk' }, {
-    short_description: nonEmptyHtml(p.short_description),
-    description: nonEmptyHtml(p.description),
-  }, conflicts);
-  changed ||= s2 === 'updated';
+  // A card with a description but no short description has its text from
+  // db:import:content (which clears the old DNTrade short_description on purpose):
+  // the DNTrade texts must not come back next to it.
+  const ukText = await trx('product_translations').where({ product_id: product.id, locale: 'uk' })
+    .first('short_description', 'description');
+  if (!(ukText && ukText.description != null && ukText.short_description == null)) {
+    const s2 = await fillNulls(trx, 'product_translations', { product_id: product.id, locale: 'uk' }, {
+      short_description: nonEmptyHtml(p.short_description),
+      description: nonEmptyHtml(p.description),
+    }, conflicts);
+    changed ||= s2 === 'updated';
+  }
 
   // images: append URLs that are not there yet, in API order
   const urls = [clean(p.image_path), ...(p.images || []).map(clean)].filter(Boolean);

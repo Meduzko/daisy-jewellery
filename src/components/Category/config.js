@@ -13,7 +13,7 @@ const BLOG = {
 
 const blogHref = (post, lang) => `/${lang}/blog/${post[lang]}`;
 
-const QUICK = {
+export const QUICK = {
   clover: { q: 'клевер', uk: 'Клевер', ru: 'Клевер' },
   cz: { q: 'фіаніт', uk: 'З фіанітами', ru: 'С фианитами' },
   hearts: { q: 'серц', uk: 'Серця', ru: 'Сердца' },

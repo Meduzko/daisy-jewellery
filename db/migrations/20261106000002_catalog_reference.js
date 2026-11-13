@@ -5,6 +5,7 @@
 // The default locale (uk) is the fallback — see the *_i18n views (migration 5).
 
 const { createTranslationTable } = require('../translation-table');
+const { ATTRIBUTES } = require('../reference/attributes');
 
 /** @param {import('knex').Knex} knex */
 exports.up = async function up(knex) {
@@ -56,7 +57,7 @@ exports.up = async function up(knex) {
 
   await knex.schema.createTable('attributes', (t) => {
     t.increments('id');
-    t.text('code').notNullable().unique({ indexName: 'attributes_code_unique' }); // insertion, metal, coating, color, manufacturer
+    t.text('code').notNullable().unique({ indexName: 'attributes_code_unique' }); // see db/reference/attributes.js
     t.boolean('is_filterable').notNullable().defaultTo(true);
     t.integer('sort_order').notNullable().defaultTo(0);
     t.timestamp('created_at', { useTz: true }).notNullable().defaultTo(knex.fn.now());
@@ -66,6 +67,14 @@ exports.up = async function up(knex) {
   await createTranslationTable(knex, 'attribute_translations', 'attribute_id', 'attributes', (t) => {
     t.text('name').notNullable();
   });
+  // Attribute definitions (reference data; values come from the product imports).
+  for (const a of ATTRIBUTES) {
+    const [{ id }] = await knex('attributes').insert({ code: a.code, sort_order: a.sort }).returning('id');
+    await knex('attribute_translations').insert([
+      { attribute_id: id, locale: 'uk', name: a.uk },
+      { attribute_id: id, locale: 'ru', name: a.ru },
+    ]);
+  }
 
   await knex.schema.createTable('attribute_values', (t) => {
     t.increments('id');

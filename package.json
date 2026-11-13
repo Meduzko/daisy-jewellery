@@ -16,6 +16,11 @@
     "db:import:products": "node db/import/import-products.js",
     "db:import:dntrade": "node db/import/import-dntrade-api.js",
     "db:import:ru": "node db/import/import-ru-translations.js",
+    "db:import:content": "node db/import/import-product-content.js",
+    "db:patch:specs": "node db/patches/20261112_product_specs.js",
+    "db:backup": "node db/backup.js",
+    "db:update": "node db/update-catalog.js",
+    "db:merge:sheets": "node db/import/merge-source-sheets.js",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test --test-concurrency=1 \"test/**/*.test.mjs\""
   },
   "dependencies": {

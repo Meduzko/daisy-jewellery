@@ -1,4 +1,4 @@
-import { test } from 'node:test';
+import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { mapProduct, mapVariant, buildBadgeTags, salePercent } from '../../src/lib/catalog/mapper.js';
 import { applyProductDiscount, getDisplayPrices, getLinePrices } from '../../src/helpers/productPricing.js';
@@ -71,4 +71,18 @@ test('category key mapping', () => {
   assert.equal(toCategoryKey('ring'), 'ring');
   assert.equal(toCategoryKey('x'), null);
   assert.equal(toCategoryDbCode('bracer'), 'bracelets');
+});
+
+describe('mapAttributes', async () => {
+  const { mapAttributes } = await import('../../src/lib/catalog/mapper.js');
+  test('groups sorted rows by attribute', () => {
+    assert.deepEqual(mapAttributes([
+      { code: 'insertion', name: 'Вставка', slug: 'oniks', value: 'Онікс' },
+      { code: 'insertion', name: 'Вставка', slug: 'fianit', value: 'Фіаніт' },
+      { code: 'coating', name: 'Покриття', slug: 'rodii', value: 'Родій' },
+    ]), [
+      { code: 'insertion', name: 'Вставка', values: [{ slug: 'oniks', value: 'Онікс' }, { slug: 'fianit', value: 'Фіаніт' }] },
+      { code: 'coating', name: 'Покриття', values: [{ slug: 'rodii', value: 'Родій' }] },
+    ]);
+  });
 });

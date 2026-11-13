@@ -1,5 +1,4 @@
 export const revalidate = 900;
-import Breadcrumbs from '../../../../../components/Breadcrumbs';
 import ProductPageNew from '../../../../../components/ProductPage';
 import { getCachedAllProducts, getCachedProductByCode, getCachedProductSizes } from '../../../../../lib/dataCache';
 import { getProductMetadata } from '../../../../../helpers';
@@ -38,16 +37,9 @@ export default async function RingItem(props) {
   const logoJsonLd = getLogoJsonLd({ lang });
   const t = await getItemTranslations({ lang, categoryName: lang === 'ru' ? 'koltsa' : 'ring', code: product.code }).catch(() => undefined);
 
-  const segments = [
-    { name: lang === 'ru' ? 'Главная' : 'Головна', href: `/${lang}` },
-    { name: lang === 'ru' ? 'Кольца' : 'Каблучки', href: `/${lang}/${lang === 'ru' ? 'koltsa' : 'kabluchki'}` },
-    { name: t?.title || product?.title, href: `/${lang}/${lang === 'ru' ? 'koltsa/kupit-serebryanoye-koltso' : 'kabluchki/kupyty-sribnu-kabluchku'}/${params.item}` },
-  ];
-
   return (
     <>
-      <Breadcrumbs segments={segments} />
-      <ProductPageNew item={product} productSizes={productSizes} t={t} />
+      <ProductPageNew item={product} productSizes={productSizes} t={t} lang={lang} category="ring" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }} />
     </>

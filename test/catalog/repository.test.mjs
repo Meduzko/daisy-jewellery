@@ -211,6 +211,18 @@ describe('sizes, related, facets, refs', () => {
     assert.deepEqual(none, []);
   });
 
+  test('product family: same article base in any category, never itself or hidden products', async () => {
+    // 100 «2069р» and 20 «2069р » share the base «2069»
+    assert.deepEqual(codes(await repo.getProductFamily(db, { productId: seed.ids['100'] })), ['20']);
+    // ring 3 and earrings 6 share «508-родовано» → base «508»
+    const family = await repo.getProductFamily(db, { productId: seed.ids['3'] });
+    assert.deepEqual(codes(family), ['6']);
+    assert.equal(family[0].category, 'earring');
+    // no article base (too short / none) → empty
+    assert.deepEqual(await repo.getProductFamily(db, { productId: seed.ids['7'] }), []);
+    assert.deepEqual(await repo.getProductFamily(db, { productId: 999999 }), []);
+  });
+
   test('facets list filterable attribute values with counts, price range and sizes', async () => {
     const f = await repo.getFacets(db, { category: 'ring', locale: 'ru' });
     assert.deepEqual(f.price, { min: 900, max: 2200 });

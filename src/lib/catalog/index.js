@@ -53,7 +53,11 @@ export const getRelatedCatalogProducts = cached('related', (productId, locale = 
   repo.getRelatedProducts(getDb(), { productId, locale, limit, storeId: storeId() })
 );
 
-export const getCatalogFacets = cached('facets', (category, locale = 'uk', collection = null) =>
+export const getCatalogProductFamily = cached('family', (productId, locale = 'uk') =>
+  repo.getProductFamily(getDb(), { productId, locale, storeId: storeId() })
+);
+
+export const getCatalogFacets =cached('facets', (category, locale = 'uk', collection = null) =>
   repo.getFacets(getDb(), { category, locale, collection })
 );
 

@@ -2,7 +2,8 @@
 // product_images, product_attribute_values, collections, collection_translations,
 // collection_products.
 //
-// Money: numeric(10,2) (UAH). Weight: numeric(8,3) grams. Size: numeric(6,2)
+// Money: numeric(10,2) (UAH). Weight: numeric(8,3) grams (products.avg_weight_g =
+// average weight of the model from the owner's spec sheet; variant weight_g = actual piece). Size: numeric(6,2)
 // (ring size or chain length). pg returns numeric as strings — no float rounding.
 
 const { createTranslationTable } = require('../translation-table');
@@ -18,6 +19,7 @@ exports.up = async function up(knex) {
     t.text('article'); // Артикул — NOT unique (shared across cards)
     t.decimal('price', 10, 2);
     t.decimal('sale_price', 10, 2);
+    t.decimal('avg_weight_g', 8, 3); // «Середня вага» — average weight shown on the product page
     t.text('status').notNullable().defaultTo('draft');
     t.timestamp('source_created_at', { useTz: true }); // original DNTrade creation date
     t.timestamp('created_at', { useTz: true }).notNullable().defaultTo(knex.fn.now());
@@ -30,6 +32,7 @@ exports.up = async function up(knex) {
       [],
       'products_sale_price_check'
     );
+    t.check('avg_weight_g IS NULL OR avg_weight_g > 0', [], 'products_avg_weight_check');
     t.index(['category_id', 'status'], 'products_category_status_idx');
     t.index(['supplier_id'], 'products_supplier_idx');
     t.index(['article'], 'products_article_idx');

@@ -1,0 +1,217 @@
+/* Product photos — one swipe slider (4:5) on all sizes; ≥1024 adds arrows and stays sticky. */
+
+.gallery {
+    position: relative;
+    min-width: 0;
+}
+
+.frame {
+    position: relative;
+}
+
+.track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+}
+
+.track::-webkit-scrollbar {
+    display: none;
+}
+
+.shot {
+    position: relative;
+    flex: 0 0 100%;
+    aspect-ratio: 4 / 5;
+    scroll-snap-align: start;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: var(--dj-cream);
+    overflow: hidden;
+    cursor: zoom-in;
+}
+
+.shot:focus-visible {
+    outline: 2px solid var(--dj-graphite);
+    outline-offset: -2px;
+}
+
+.image {
+    object-fit: cover;
+    /* white packshot backgrounds melt into the grey tile */
+    mix-blend-mode: multiply;
+}
+
+.counter {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    height: 26px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--dj-graphite);
+    pointer-events: none;
+}
+
+.zoomButton {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dj-graphite);
+    cursor: pointer;
+}
+
+.bars {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.bar,
+.barOn {
+    width: 24px;
+    height: 2px;
+    background: var(--dj-hairline);
+    transition: background-color 0.2s ease;
+}
+
+.barOn {
+    background: var(--dj-graphite);
+}
+
+.empty {
+    aspect-ratio: 4 / 5;
+    background: var(--dj-cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--dj-serif);
+    font-size: 22px;
+    color: var(--dj-text-2);
+}
+
+/* tablet: peek of the next photo */
+@media (min-width: 600px) and (max-width: 1023.98px) {
+    .track {
+        gap: 8px;
+        padding: 0 var(--dj-gutter);
+        scroll-padding: 0 var(--dj-gutter);
+    }
+
+    .shot {
+        flex-basis: 62%;
+    }
+
+    .counter {
+        left: calc(var(--dj-gutter) + 16px);
+    }
+
+    .zoomButton {
+        right: calc(var(--dj-gutter) + 12px);
+    }
+}
+
+/* prev / next arrows: desktop only (touch devices swipe) */
+.arrow {
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    /* the slider stays in view while the (taller) purchase column scrolls */
+    .gallery {
+        position: sticky;
+        top: calc(var(--dj-header-sticky-desktop, 84px) + 24px);
+    }
+
+    .shot {
+        aspect-ratio: 4 / 5;
+        /* whole photo + bars fit under the sticky header */
+        max-height: calc(100vh - 180px);
+        min-height: 520px;
+    }
+
+    .counter {
+        left: 20px;
+        top: 20px;
+    }
+
+    .zoomButton {
+        right: 20px;
+        bottom: 20px;
+        width: 48px;
+        height: 48px;
+        transition: transform 0.2s ease;
+    }
+
+    .zoomButton:hover {
+        transform: scale(1.06);
+    }
+
+    .arrow {
+        position: absolute;
+        top: 50%;
+        width: 48px;
+        height: 48px;
+        margin-top: -24px;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.92);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--dj-graphite);
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .arrowPrev {
+        left: 20px;
+    }
+
+    .arrowNext {
+        right: 20px;
+    }
+
+    .frame:hover .arrow,
+    .arrow:focus-visible {
+        opacity: 1;
+    }
+
+    .arrow:focus-visible {
+        outline: 2px solid var(--dj-graphite);
+        outline-offset: 2px;
+    }
+}
+
+@media (min-width: 1024px) and (hover: none) {
+    .arrow {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bar,
+    .barOn,
+    .arrow,
+    .zoomButton {
+        transition: none;
+    }
+}
