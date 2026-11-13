@@ -38,7 +38,8 @@ export default function Hero({ lang = 'uk' }) {
           {t.titleA} <br className={styles.wideBreak} />
           <em>{t.titleB}</em>
           <br />
-          {t.titleC}
+          {/* The visible heading is the brand; screen readers and crawlers get what the page is about. */}
+          <span className={ui.visuallyHidden}> — {t.h1Suffix}</span>
         </h1>
         <p className={styles.text}>
           <span className={ui.onlyWide}>{t.text}</span>

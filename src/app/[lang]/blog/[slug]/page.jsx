@@ -2,45 +2,40 @@ import fs from 'fs';
 import path from 'path';
 import { getHtmlPostMetadata, getBlogContent } from '../../../../lib/posts';
 import { notFound } from 'next/navigation';
+import { buildAlternates, localizeSegment, SITE_NAME, OG_LOCALE } from '../../../../helpers/seo';
+import { getBlogPostingJsonLd, getLogoJsonLd } from '../../../../helpers/getJsonLd';
 
-const siteUrl = process.env.SITE_DOMAIN || process.env.NEXT_PUBLIC_BASE_URL || 'https://daisy-jewellery.com.ua';
+/** uk/ru paths of a post; ru only when the translated post exists. */
+function getPostPaths(slug) {
+  const ukSlug = localizeSegment(slug, 'uk');
+  const ruSlug = localizeSegment(slug, 'ru');
+  return {
+    uk: `uk/blog/${ukSlug}`,
+    ru: getHtmlPostMetadata(ruSlug, 'ru') ? `ru/blog/${ruSlug}` : null,
+  };
+}
 
 export async function generateMetadata(props) {
   const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  if (params?.slug) {
-    const metadata = getHtmlPostMetadata(params.slug, lang);
-    if (metadata) {
-      return {
-        title: metadata.title,
-        description: metadata.description,
-        alternates: {
-          canonical: `${siteUrl}/${lang}/blog/${params.slug}`,
-          languages: {
-            'uk-UA': `${siteUrl}/uk/blog/${params.slug}`,
-            'ru-UA': `${siteUrl}/ru/blog/${params.slug}`,
-          },
-        },
-        openGraph: {
-          title: metadata.title,
-          description: metadata.description,
-          url: `${siteUrl}/${lang}/blog/${params.slug}`,
-          type: 'article',
-        },
-        robots: {
-          index: true,
-          follow: true,
-        },
-      };
-    }
-  }
+  const metadata = params?.slug ? getHtmlPostMetadata(params.slug, lang) : null;
+  if (!metadata) return { title: `Blog | ${SITE_NAME}`, robots: { index: false, follow: true } };
 
+  const alternates = buildAlternates(lang, getPostPaths(params.slug));
+  const title = `${metadata.title} | ${SITE_NAME}`;
   return {
-    title: 'Blog | Daisy Jewellery',
-    description: 'Jewellery blog',
-    robots: {
-      index: false,
-      follow: true,
+    title,
+    description: metadata.description,
+    alternates,
+    openGraph: {
+      title,
+      description: metadata.description,
+      url: alternates.canonical,
+      siteName: SITE_NAME,
+      locale: OG_LOCALE[lang],
+      type: 'article',
+      publishedTime: metadata.datePublished,
+      ...(metadata.image ? { images: [{ url: metadata.image, alt: metadata.title }] } : {}),
     },
   };
 }
@@ -63,10 +58,23 @@ export default async function BlogPostPage(props) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   const content = await getBlogContent(lang, params.slug);
   if (!content) notFound();
+  const metadata = getHtmlPostMetadata(params.slug, lang);
+  const jsonLd = [
+    getLogoJsonLd(),
+    ...getBlogPostingJsonLd({
+      title: metadata.title,
+      description: metadata.description,
+      date: metadata.date,
+      image: metadata.image,
+      path: `${lang}/blog/${params.slug}`,
+      lang,
+    }),
+  ];
 
   return (
-    <div dangerouslySetInnerHTML={{ __html: content }} />
+    <>
+      <div dangerouslySetInnerHTML={{ __html: content }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    </>
   );
 }
-
-

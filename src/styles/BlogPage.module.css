@@ -87,3 +87,26 @@
     padding: 8px 0;
   }
 }
+
+/* Card titles were <h1>: keep their default-h1 look as <h2> (one H1 per page). */
+.cardTitle {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+.readMore {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}

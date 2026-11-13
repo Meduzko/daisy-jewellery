@@ -7,9 +7,13 @@
 //   npm run db:import:ru                 # import
 //   npm run db:import:ru -- --dry-run    # roll back at the end
 //   npm run db:import:ru -- --env=test
+//   npm run db:import:ru -- --overwrite  # also REPLACE title/short_description that differ
 //
-// Inserts missing ru rows, fills only NULL fields of existing ones, never overwrites;
-// the dictionary `description` (plain text) goes to short_description, which is what
+// Inserts missing ru rows, fills only NULL fields of existing ones, never overwrites —
+// unless --overwrite: then ru.json wins for title and short_description, and every
+// previous value goes to the report and the audit log (before/after). Rollback: restore
+// the previous ru.json (git) and run with --overwrite again, or restore the db:backup dump.
+// The dictionary `description` (plain text) goes to short_description, which is what
 // the storefront shows. Refuses production; audit_logs entry per run.
 
 const fs = require('fs');
@@ -25,6 +29,7 @@ const args = Object.fromEntries(
 );
 const ENV = args.env || 'development';
 const DRY_RUN = Boolean(args['dry-run']);
+const OVERWRITE = Boolean(args.overwrite);
 const FILE = path.resolve(ROOT, args.file || 'src/dictionaries/ru.json');
 const knexConfig = require(path.join(ROOT, 'knexfile.js'))[ENV];
 
@@ -49,7 +54,7 @@ async function main() {
   const report = {
     started_at: new Date().toISOString(), env: ENV, dry_run: DRY_RUN, source: path.relative(ROOT, FILE),
     totals: { total: 0, inserted: 0, updated: 0, unchanged: 0, skipped: 0, failed: 0 },
-    not_in_db: [], wrong_category: [], conflicts: [], failed: [],
+    overwrite: OVERWRITE, not_in_db: [], wrong_category: [], conflicts: [], changes: [], failed: [],
   };
 
   const db = knexFactory(knexConfig);
@@ -82,8 +87,20 @@ async function main() {
                 return 'inserted';
               }
               const patch = {};
-              if (existing.short_description == null && description) patch.short_description = description;
-              if (existing.title !== title) report.conflicts.push({ code, field: 'title', db: existing.title, source: title });
+              if (OVERWRITE) {
+                if (existing.title !== title) patch.title = title;
+                if (description && existing.short_description !== description) patch.short_description = description;
+                if (Object.keys(patch).length) {
+                  report.changes.push({
+                    code,
+                    before: Object.fromEntries(Object.keys(patch).map((k) => [k, existing[k]])),
+                    after: patch,
+                  });
+                }
+              } else {
+                if (existing.short_description == null && description) patch.short_description = description;
+                if (existing.title !== title) report.conflicts.push({ code, field: 'title', db: existing.title, source: title });
+              }
               if (!Object.keys(patch).length) return 'unchanged';
               await sp('product_translations').where({ product_id: product.id, locale: 'ru' }).update({ ...patch, updated_at: sp.fn.now() });
               return 'updated';
@@ -98,7 +115,8 @@ async function main() {
       await trx('audit_logs').insert({
         action: DRY_RUN ? 'import.ru_translations.dry_run' : 'import.ru_translations',
         entity_type: 'import',
-        after: JSON.stringify({ totals: report.totals, source: report.source }),
+        ...(report.changes.length ? { before: JSON.stringify(report.changes.map(({ code, before }) => ({ code, ...before }))) } : {}),
+        after: JSON.stringify({ totals: report.totals, source: report.source, overwrite: OVERWRITE, changes: report.changes.map(({ code, after }) => ({ code, ...after })) }),
       });
       if (DRY_RUN) throw Object.assign(new Error('dry run'), { dryRun: true });
     });

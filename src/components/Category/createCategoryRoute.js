@@ -41,12 +41,10 @@ export function createCategoryRoute({ category, langs }) {
     const lang = resolveLang(params);
     const { title, description, keywords } = config.seo[lang];
     const categorySlug = config.slugs[lang];
-    const canonicalUrl = `${process.env.SITE_DOMAIN}/${lang}/${categorySlug}`;
 
     return generateCategoryMetadata({
       title,
       description,
-      canonicalUrl,
       categorySlug,
       keywords,
       lang,
@@ -91,14 +89,13 @@ export function createCategoryRoute({ category, langs }) {
       })
       .filter(Boolean);
 
-    const seo = config.seo[lang];
-    const logoJsonLd = getLogoJsonLd({ lang });
+    const logoJsonLd = getLogoJsonLd();
     const categoryJsonLd = getCategoryJsonLd({
-      categoryName: seo.jsonLdName,
-      categoryDescription: seo.jsonLdDescription,
-      url: baseURL,
-      lowPrice: config.jsonLdPrice.low,
-      highPrice: config.jsonLdPrice.high,
+      name: config.h1[lang],
+      description: config.seo[lang].description,
+      path: baseURL,
+      lang,
+      items: cards.map((card) => ({ name: card.name, path: card.href })),
     });
 
     const { editorial, service } = config;

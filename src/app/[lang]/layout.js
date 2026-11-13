@@ -6,6 +6,7 @@ import Footer from '../../components/Footer/page';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
 import { CartProvider } from '../../context/CartContext';
 import PopupManager from '../../components/Popups/PopupManager';
+import { getSiteUrl, SITE_NAME, OG_LOCALE, DEFAULT_OG_IMAGE } from '../../helpers/seo';
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
 
@@ -25,145 +26,39 @@ const sans = Manrope({
   display: 'swap',
 });
 
+// Site-wide defaults. Every indexable page sets its own title, description,
+// canonical/hreflang (alternates) and Open Graph; nothing page-specific lives here,
+// so pages without their own metadata (404, checkout) never inherit the homepage canonical.
 export async function generateMetadata(props) {
   const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-
-  if (lang === 'ru') {
-    return {
-      metadataBase: new URL('https://daisy-jewellery.com.ua/ru'),
-      title: 'Магазин серебряных украшений - Daisy Jewellery',
-      description: 'Купить серебряные украшения - это легко с Daisy Jewellery. Изысканность в каждой детали!',
-      keywords: [
-        'Інтернет-магазин',
-        'срібні прикраси',
-        'каблучки',
-        'сережки',
-        'кольє',
-        'браслети',
-      ],
-      authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua/ru' }],
-      openGraph: {
-        title: 'Магазин серебряных украшений - Daisy Jewellery',
-        description: 'Купить серебряные украшения - это легко с Daisy Jewellery. Изысканность в каждой детали!',
-        url: 'https://daisy-jewellery.com.ua/ru',
-        siteName: 'Daisy Jewellery',
-        images: [
-          {
-            url: '/logo_black.png',
-            width: 800,
-            height: 600,
-            alt: 'Магазин серебряных украшений - Daisy Jewellery',
-          },
-        ],
-        locale: 'ru_UA',
-        type: 'website',
-      },
-      twitter: {
-        card: 'summary_large_image',
-        site: '@daisy-jewellery.com.ua',
-        creator: '@O.P',
-        title: 'Магазин серебряных украшений - Daisy Jewellery',
-        description: 'Купить серебряные украшения - это легко с Daisy Jewellery. Изысканность в каждой детали!',
-        image: '/logo_black.png',
-        images: ['/logo_black.png'],
-      },
-      icons: {
-        icon: '/favicon.ico',
-        shortcut: '/favicon.ico',
-        apple: '/apple-touch-icon.png',
-        other: [
-          { rel: 'icon', url: '/favicon-16x16.png', sizes: '16x16' },
-          { rel: 'icon', url: '/favicon-32x32.png', sizes: '32x32' },
-          { rel: 'manifest', url: '/site.webmanifest' },
-        ],
-      },
-      manifest: '/site.webmanifest',
-      robots: { index: true, follow: true, nocache: true },
-      alternates: {
-        canonical: 'https://daisy-jewellery.com.ua/ru',
-        languages: {
-          'uk-UA': 'https://daisy-jewellery.com.ua/uk',
-          'ru-UA': 'https://daisy-jewellery.com.ua/ru',
-        },
-      },
-      other: {
-        'application/ld+json': JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'Organization',
-          'name': 'Daisy Jewellery',
-          'url': 'https://daisy-jewellery.com.ua/ru',
-          'logo': 'https://daisy-jewellery.com.ua/logo_black.png',
-        }),
-      },
-    };
-  }
+  const ru = lang === 'ru';
+  const title = ru ? 'Серебряные украшения — Daisy Jewellery' : 'Срібні прикраси — Daisy Jewellery';
 
   return {
-    metadataBase: new URL('https://daisy-jewellery.com.ua'),
-    title: 'Магазин срібних прикрас - Daisy Jewellery',
-    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
-    keywords: [
-      'Інтернет-магазин',
-      'срібні прикраси',
-      'каблучки',
-      'сережки',
-      'кольє',
-      'браслети',
-    ],
-    authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua' }],
+    metadataBase: new URL(getSiteUrl()),
+    title,
+    applicationName: SITE_NAME,
     openGraph: {
-      title: 'Магазин срібних прикрас - Daisy Jewellery',
-      description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
-      url: 'https://daisy-jewellery.com.ua',
-      siteName: 'Daisy Jewellery',
-      images: [
-        {
-          url: '/logo_black.png',
-          width: 800,
-          height: 600,
-          alt: 'Магазин срібних прикрас - Daisy Jewellery',
-        },
-      ],
-      locale: 'uk_UA',
+      siteName: SITE_NAME,
+      locale: OG_LOCALE[lang],
       type: 'website',
+      images: [DEFAULT_OG_IMAGE],
     },
-    twitter: {
-      card: 'summary_large_image',
-      site: '@daisy-jewellery.com.ua',
-      creator: '@O.P',
-      title: 'Магазин срібних прикрас - Daisy Jewellery',
-      description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
-      image: '/logo_black.png',
-      images: ['/logo_black.png'],
-    },
+    twitter: { card: 'summary_large_image' },
     icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon.ico',
-      apple: '/apple-touch-icon.png',
-      other: [
-        { rel: 'icon', url: '/favicon-16x16.png', sizes: '16x16' },
-        { rel: 'icon', url: '/favicon-32x32.png', sizes: '32x32' },
-        { rel: 'manifest', url: '/site.webmanifest' },
+      icon: [
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/favicon.svg', type: 'image/svg+xml' },
+        { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
       ],
+      apple: '/apple-touch-icon.png',
     },
     manifest: '/site.webmanifest',
-    robots: { index: true, follow: true, nocache: true },
-    alternates: {
-      canonical: 'https://daisy-jewellery.com.ua/uk',
-      languages: {
-        'uk-UA': 'https://daisy-jewellery.com.ua/uk',
-        'ru-UA': 'https://daisy-jewellery.com.ua/ru',
-      },
-    },
-    other: {
-      'application/ld+json': JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'Organization',
-        'name': 'Daisy Jewellery',
-        'url': 'https://daisy-jewellery.com.ua',
-        'logo': 'https://daisy-jewellery.com.ua/logo_black.png',
-      }),
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
     },
   };
 }

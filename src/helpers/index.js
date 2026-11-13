@@ -1,11 +1,12 @@
 import { headers } from 'next/headers';
 import { getItemTranslations } from '../dictionaries';
-import { 
-  buildCanonicalUrl, 
-  buildHreflangAlternates,
-  getSiteUrl,
+import { getDisplayPrices } from './productPricing';
+import {
   PRODUCT_URL_SLUGS,
-  CATEGORY_SLUGS,
+  SITE_NAME,
+  OG_LOCALE,
+  DEFAULT_OG_IMAGE,
+  buildAlternates,
 } from './seo';
 
 export async function getDeviceType() {
@@ -83,17 +84,10 @@ const getTralslatedCategorySlugs = ({ lang, categoryName, translatedMap }) => {
 };
 
 /**
- * Get product metadata including canonical URL, keywords and description
- * @param {string} categoryName - Category identifier
- * @param {string} productTitle - Product title  
- * @param {number} code - Product code
- * @param {string} short_description - Product short description with HTML
- * @param {string} lang - Language code
- * @returns {object} Product canonical and keywords metadata
+ * Product keywords, meta-description suffix and the uk/ru site paths of a product.
+ * @param {{ categoryName: string, code: number|string, lang: 'uk'|'ru' }} options
  */
-const getItemMetaData = ({ categoryName, productTitle, code, short_description, lang }) => {
-  const siteUrl = getSiteUrl();
-  
+const getItemMetaData = ({ categoryName, code, lang }) => {
   const keywords = {
     uk: {
       ring: 'срібні каблучки, каблучка срібло 925, купити каблучку срібну, жіночі каблучки, каблучки Україна',
@@ -144,24 +138,13 @@ const getItemMetaData = ({ categoryName, productTitle, code, short_description, 
   const ukSlug = PRODUCT_URL_SLUGS.uk[translatedSlugs.uk];
   const ruSlug = PRODUCT_URL_SLUGS.ru[translatedSlugs.ru];
   
-  const canonicalRes = `${siteUrl}/${lang}/${lang === 'uk' ? ukSlug : ruSlug}/${code}`;
-  
-  const shortDescription = short_description.replace(/<[^>]*>/g, '');
-  const description = shortDescription.replace(/&[^;\s]+;/g, '');
-  const descriptionSuffix = descriptionMap[lang][categoryName] || 'Купити від Daisy Jewellery';
-  const descriptionRes = `${description.trim()} ${descriptionSuffix}`;
-  
-  const languages = {
-    'uk-UA': `${siteUrl}/uk/${ukSlug}/${code}`,
-    'ru-UA': `${siteUrl}/ru/${ruSlug}/${code}`
-  };
+  const descriptionSuffix = descriptionMap[lang][categoryName] || (lang === 'ru' ? 'Купить в Daisy Jewellery' : 'Купити в Daisy Jewellery');
 
   return {
-    canonicalUrl: canonicalRes,
     keywords: keywordsRes,
-    description: descriptionRes,
-    languages
-  }
+    descriptionSuffix,
+    paths: { uk: `uk/${ukSlug}/${code}`, ru: `ru/${ruSlug}/${code}` },
+  };
 };
 
 /**
@@ -186,43 +169,44 @@ export const toMetaSummary = (html, max = 160) => {
 };
 
 export const getProductMetadata = async ({ product, categoryName, lang = 'uk' }) => {
-  const siteName = 'Daisy Jewellery';
-  const locale = lang === 'uk' ? 'uk_UA' : 'ru_UA';
   const { title, short_description, code } = product;
 
   const tk = await getItemTranslations({ lang, categoryName, code });
   const tkTitle = tk?.title || title;
   // DB products whose text came from the content sheets have only `description`
   // (short_description cleared) — use its opening sentences for the meta description.
-  const tkDescription = tk?.description || short_description || toMetaSummary(product.description);
+  const tkDescription = tk?.description || short_description || product.description || '';
 
-  const { keywords, canonicalUrl, description: generatedDescription, languages } = getItemMetaData({ categoryName, title, code, short_description: tkDescription || '', lang });
+  // A ru page without a Russian translation shows the Ukrainian text: it is a duplicate
+  // of the uk page, so it canonicalizes there, is not offered as a ru alternate, and its
+  // meta description stays entirely Ukrainian (no mixed-language snippet).
+  const hasOwnLocale = !(lang === 'ru' && product.is_fallback);
+  const textLang = hasOwnLocale ? lang : 'uk';
+  const { keywords, descriptionSuffix, paths } = getItemMetaData({ categoryName: hasOwnLocale ? categoryName : product.category || categoryName, code, lang: textLang });
+  const { price } = getDisplayPrices(product);
+  const priceText = Number(price) > 0 ? (textLang === 'ru' ? `Цена ${price} грн.` : `Ціна ${price} грн.`) : '';
+  const generatedDescription = [toMetaSummary(tkDescription, 110), priceText, `${descriptionSuffix}.`].filter(Boolean).join(' ');
   // Explicit SEO texts from the PostgreSQL catalog (product_translations.seo_*) win when set.
   const description = product.seo_description || generatedDescription;
+  const pageTitle = product.seo_title || `${tkTitle} | ${SITE_NAME}`;
+  const alternates = buildAlternates(lang, { uk: paths.uk, ru: hasOwnLocale ? paths.ru : null });
+  const images = (product.images?.length ? product.images : [product.image_path]).filter(Boolean).slice(0, 4);
 
   return {
-    title: product.seo_title || `${tkTitle} | ${siteName}`,
+    title: pageTitle,
     description,
-    alternates: {
-      canonical: canonicalUrl,
-      languages
-    },
+    alternates,
     keywords,
-    robots: {
-      index: true,
-      follow: true,
-      nocache: true,
-    },
-    url: canonicalUrl,
     openGraph: {
-      title: `${title} | ${siteName}`,
+      title: pageTitle,
       description,
-      url: canonicalUrl,
-      siteName,
-      locale,
+      url: alternates.canonical,
+      siteName: SITE_NAME,
+      locale: OG_LOCALE[lang],
       type: 'website',
-    }
-  }
+      images: images.length ? images.map((url) => ({ url, alt: tkTitle })) : [DEFAULT_OG_IMAGE],
+    },
+  };
 };
 
 /**
@@ -234,42 +218,28 @@ export const getProductMetadata = async ({ product, categoryName, lang = 'uk' })
 export const generateCategoryMetadata = ({
   title,
   description,
-  canonicalUrl,
   categorySlug,
   keywords,
+  image,
   lang = 'uk'
 }) => {
-  const siteName = 'Daisy Jewellery';
-  const locale = lang === 'uk' ? 'uk_UA' : 'ru_UA';
-  const siteUrl = getSiteUrl();
-
   const translatedSlugs = getTralslatedCategorySlugs({ lang, categoryName: categorySlug, translatedMap: translatedCategorySlug });
+  const alternates = buildAlternates(lang, { uk: `uk/${translatedSlugs.uk}`, ru: `ru/${translatedSlugs.ru}` });
 
   return {
     title,
     description,
-    alternates: {
-      canonical: canonicalUrl,
-      languages: {
-        'uk-UA': `${siteUrl}/uk/${translatedSlugs.uk}`,
-        'ru-UA': `${siteUrl}/ru/${translatedSlugs.ru}`
-      }
-    },
-    robots: {
-      index: true,
-      follow: true,
-      nocache: true,
-    },
+    alternates,
     keywords,
-    url: `${siteUrl}/${lang}/${categorySlug}`,
     openGraph: {
       title,
       description,
-      url: canonicalUrl,
-      siteName,
-      locale: locale,
+      url: alternates.canonical,
+      siteName: SITE_NAME,
+      locale: OG_LOCALE[lang],
       type: 'website',
-    }
+      images: [image || DEFAULT_OG_IMAGE],
+    },
   };
 }
 
@@ -280,198 +250,30 @@ export const categoryMap = {
   bracer: process.env.BRACER_CATEGORY_ID
 };
 
-export const defaultMetadata =  {
-  uk: {
-    metadataBase: new URL('https://daisy-jewellery.com.ua/uk'),
-    title: 'Магазин срібних прикрас - Daisy Jewellery',
-    description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
-    keywords: [
-      'купити',
-      'срібні прикраси',
-    ],
-    authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua' }],
-    openGraph: {
-      title: 'Магазин срібних прикрас - Daisy Jewellery',
-      description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
-      url: 'https://daisy-jewellery.com.ua/uk',
-      siteName: 'Daisy Jewellery',
-      images: [
-        {
-          url: '/logo_black.png',
-          width: 800,
-          height: 600,
-          alt: 'Магазин срібних прикрас - Daisy Jewellery',
-        },
-      ],
-      locale: 'uk_UA', // Updated locale for Ukrainian language
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      site: '@daisy-jewellery.com.ua',
-      creator: '@O.P',
-      title: 'Магазин срібних прикрас - Daisy Jewellery',
-      description: 'Купити срібні прикраси – це легко з Daisy Jewellery. Вишуканість у кожній деталі!',
-      image: '/logo_black.png',
-      images: ['/logo_black.png'],
-    },
-    icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon.ico',
-      apple: '/apple-touch-icon.png',
-      other: [
-        {
-          rel: 'icon',
-          url: '/favicon-16x16.png',
-          sizes: '16x16',
-        },
-        {
-          rel: 'icon',
-          url: '/favicon-32x32.png',
-          sizes: '32x32',
-        },
-        {
-          rel: 'manifest',
-          url: '/site.webmanifest',
-        },
-      ],
-    },
-    manifest: '/site.webmanifest',
-    robots: {
-      index: true,
-      follow: true,
-      nocache: true,
-    },
-    alternates: {
-      canonical: 'https://daisy-jewellery.com.ua',
-      languages: {
-        'uk-UA': 'https://daisy-jewellery.com.ua/uk',
-        'ru-UA': 'https://daisy-jewellery.com.ua/ru',
-      },
-    },
-    other: {
-      // Added structured data for your logo
-      'application/ld+json': JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'Organization',
-        'name': 'Daisy Jewellery',
-        'url': 'https://daisy-jewellery.com.ua',
-        'logo': 'https://daisy-jewellery.com.ua/logo_black.png',
-      }),
-    }
-  },
-  ru: {
-    metadataBase: new URL('https://daisy-jewellery.com.ua/ru'),
-    title: 'Магазин серебряных украшений - Daisy Jewellery',
-    description: 'Купить серебряные украшения - это легко с Daisy Jewellery. Изысканность в каждой детали!',
-    keywords: [
-      'купить ',
-      'серебряные украшения',
-    ],
-    authors: [{ name: 'A.P.', url: 'https://daisy-jewellery.com.ua/ru' }],
-    openGraph: {
-      title: 'Магазин серебряных украшений - Daisy Jewellery',
-      description: 'Купить серебряные украшения - это легко с Daisy Jewellery. Изысканность в каждой детали!',
-      url: 'https://daisy-jewellery.com.ua/ru',
-      siteName: 'Daisy Jewellery',
-      images: [
-        {
-          url: '/logo_black.png',
-          width: 800,
-          height: 600,
-          alt: 'Магазин серебряных украшений - Daisy Jewellery',
-        },
-      ],
-      locale: 'ru_UA', // Updated locale for Ukrainian language
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      site: '@daisy-jewellery.com.ua',
-      creator: '@O.P',
-      title: 'Магазин серебряных украшений - Daisy Jewellery',
-      description: 'Купить серебряные украшения - это легко с Daisy Jewellery. Изысканность в каждой детали!',
-      image: '/logo_black.png',
-      images: ['/logo_black.png'],
-    },
-    icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon.ico',
-      apple: '/apple-touch-icon.png',
-      other: [
-        {
-          rel: 'icon',
-          url: '/favicon-16x16.png',
-          sizes: '16x16',
-        },
-        {
-          rel: 'icon',
-          url: '/favicon-32x32.png',
-          sizes: '32x32',
-        },
-        {
-          rel: 'manifest',
-          url: '/site.webmanifest',
-        },
-      ],
-    },
-    manifest: '/site.webmanifest',
-    robots: {
-      index: true,
-      follow: true,
-      nocache: true,
-    },
-    alternates: {
-      canonical: 'https://daisy-jewellery.com.ua/ru',
-      languages: {
-        'uk-UA': 'https://daisy-jewellery.com.ua/uk',
-        'ru-UA': 'https://daisy-jewellery.com.ua/ru',
-      },
-    },
-    other: {
-      // Added structured data for your logo
-      'application/ld+json': JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'Organization',
-        'name': 'Daisy Jewellery',
-        'url': 'https://daisy-jewellery.com.ua',
-        'logo': 'https://daisy-jewellery.com.ua/logo_black.png',
-      }),
-    }
-  }
-};
+/**
+ * Metadata of a static page that exists at /uk/{pagePath} and /ru/{pagePath}.
+ * Icons, manifest, robots and the twitter card come from the [lang] layout.
+ * @param {{ pagePath: string, title: string, description: string, lang?: 'uk'|'ru', ruAvailable?: boolean }} options
+ *   ruAvailable: false when the ru URL only repeats the Ukrainian text (canonical → uk).
+ */
+export const getDefaultMetaData = ({ pagePath, title, description, lang = 'uk', ruAvailable = true } = {}) => {
+  const path = pagePath ? `/${pagePath}` : '';
+  const alternates = buildAlternates(lang, { uk: `uk${path}`, ru: ruAvailable ? `ru${path}` : null });
 
-export const getDefaultMetaData = ({ pagePath, title, description, lang = 'uk' } = {}) => {
-  const siteUrl = getSiteUrl();
-  const newTitle = title || 'Магазин срібних прикрас - Daisy Jewellery';
-  const newDescription = description || defaultMetadata[lang].description;
-  
-  const result = {
-    ...defaultMetadata[lang],
-    title: newTitle,
-    description: newDescription,
+  return {
+    title,
+    description,
+    alternates,
     openGraph: {
-      ...defaultMetadata[lang].openGraph,
-      title: newTitle,
-      description: newDescription,
-      url: `${siteUrl}/${lang}/${pagePath}`,
-    },
-    twitter: {
-      ...defaultMetadata[lang].twitter,
-      title: newTitle,
-      description: newDescription,
-    },
-    alternates: {
-      ...defaultMetadata[lang].alternates,
-      canonical: `${siteUrl}/${lang}/${pagePath}`,
-      languages: {
-        'uk-UA': `${siteUrl}/uk/${pagePath}`,
-        'ru-UA': `${siteUrl}/ru/${pagePath}`
-      },
+      title,
+      description,
+      url: alternates.canonical,
+      siteName: SITE_NAME,
+      locale: OG_LOCALE[lang],
+      type: 'website',
+      images: [DEFAULT_OG_IMAGE],
     },
   };
-
-  return result;
 };
 
 export const generate404MetaData = () => ({

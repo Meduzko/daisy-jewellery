@@ -68,10 +68,14 @@ export function getHtmlPostMetadata(slug, lang = 'uk') {
   if (!content) return null;
 
   const $ = cheerio.load(content);
-  const title = $('#title').text() || `Blog Post - ${slug}`;
-  const description = $('#description').text() || 'Untitled Post';
+  const title = $('#title').text().trim() || `Blog Post - ${slug}`;
+  const description = $('#description').text().trim() || 'Untitled Post';
+  const date = $('#date').text().trim();
+  const [day, month, year] = date.split('.');
+  const datePublished = year && month && day ? `${year}-${month}-${day}` : undefined;
+  const image = $('img').first().attr('src') || null;
 
-  return { title, description };
+  return { title, description, date, datePublished, image };
 }
 
 export async function getBlogContent(locale, slug) {

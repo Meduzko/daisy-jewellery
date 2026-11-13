@@ -7,16 +7,29 @@ import Instagram from '../../components/Home/Instagram/Instagram';
 import SeoBlock from '../../components/Category/SeoBlock';
 import categoryStyles from '../../components/Category/CategoryPage.module.css';
 import { getHomeCopy } from '../../components/Home/copy';
-import { getLogoJsonLd, getBussinesJsonLd, getWebSiteJsonLd } from '../../helpers/getJsonLd';
+import { getLogoJsonLd, getWebSiteJsonLd } from '../../helpers/getJsonLd';
+import { getDefaultMetaData } from '../../helpers';
 
 export const revalidate = 900;
+
+export async function generateMetadata(props) {
+  const params = await props.params;
+  const lang = params?.lang === 'ru' ? 'ru' : 'uk';
+  const meta = lang === 'ru'
+    ? {
+      title: 'Серебряные украшения 925 пробы — интернет-магазин Daisy Jewellery',
+      description: 'Интернет-магазин серебряных украшений Daisy Jewellery: кольца, серьги, колье и браслеты из серебра 925 пробы. Бесплатная подарочная упаковка, доставка Новой Почтой по Украине.',
+    }
+    : {
+      title: 'Срібні прикраси 925 проби — інтернет-магазин Daisy Jewellery',
+      description: 'Інтернет-магазин срібних прикрас Daisy Jewellery: каблучки, сережки, кольє та браслети зі срібла 925 проби. Безкоштовне подарункове пакування, доставка Новою Поштою по Україні.',
+    };
+  return getDefaultMetaData({ pagePath: '', lang, ...meta });
+}
 
 export default async function Home(props) {
   const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const logoJsonLd = getLogoJsonLd({ lang });
-  const structuredDataBussines = getBussinesJsonLd();
-  const structuredDataWebSite = getWebSiteJsonLd({ lang });
   const { seo } = getHomeCopy(lang);
 
   return (
@@ -35,15 +48,7 @@ export default async function Home(props) {
       </main>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(logoJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredDataBussines) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredDataWebSite) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([getLogoJsonLd(), getWebSiteJsonLd({ lang })]) }}
       />
     </>
   );
