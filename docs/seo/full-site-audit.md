@@ -82,8 +82,8 @@ Severity: **P0** critical indexing/canonical/localization/schema · **P1** key p
 | Very short ru descriptions (<80 chars) | 113 of 210 | uk: 1 of 236 | Owner-supplied ru texts via the existing import. |
 | Duplicate product titles | uk 9 pairs, ru 5 pairs | e.g. «Срібні пусети «Клевер» з фіанітами» = codes 7993 & 6865 (different article, weight, price) | Owner to add the real distinguishing attribute (size, design) to `product_translations.title`. Not auto-generated to avoid inventing differences. |
 | `seo_title` / `seo_description` unused | 0 of 446 | fields exist and override generated text | Optional; fill only for products with GSC data showing weak CTR. |
-| Business claim consistency | — | Homepage says «український виробник» (maker); categories say «від українського виробника» (sourced from a maker) | Owner to confirm which is true; adjust copy once. |
-| Physical address in schema | — | `вулиця Київська 3/3, Корець, 34700` taken from the existing LocalBusiness markup | Owner to confirm it is current; type kept as `OnlineStore` (no walk-in claim). |
+| Business claim consistency | — | Homepage said «український виробник» (maker); categories say «від українського виробника» (sourced from a maker) | **Resolved 2026-11-13:** owner confirmed the shop sells jewellery *from* a Ukrainian manufacturer; homepage hero label and SEO intro (uk/ru) reworded. |
+| Physical address in schema | — | `вулиця Київська 3/3, Корець, 34700` taken from the existing LocalBusiness markup | **Confirmed by the owner** as the store's real address; kept in the `OnlineStore` markup. |
 
 No migration was required: no data was changed. The only DB-layer code change is a read-only `hasRu` flag in `listProductRefs`.
 

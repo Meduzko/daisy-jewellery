@@ -85,7 +85,8 @@ Nothing was deployed and no production or local data was modified.
 ## 5. Remaining work
 
 **External / business dependencies**
-- Confirm the Корець address and «виробник» vs. «від виробника» wording (see audit §4).
+- ~~Confirm the Корець address and «виробник» vs. «від виробника» wording~~ — done 2026-11-13: address confirmed; copy now says the shop sells jewellery from a Ukrainian manufacturer.
+- Optional: if customers can visit the Корець store, a Google Business Profile (and `JewelryStore` markup with opening hours) would add local visibility — needs real opening hours.
 - Google Search Console: submit sitemap, inspect a ru fallback product and a redirected cross-locale URL after deploy.
 - Optional `shippingDetails` / `hasMerchantReturnPolicy` in Offer schema once delivery cost below 2 500 UAH and the return policy are formalized (not added: would require inventing rates).
 
