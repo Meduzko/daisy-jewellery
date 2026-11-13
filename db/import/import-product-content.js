@@ -48,6 +48,8 @@ const ENV = args.env || 'development';
 const DIR = path.resolve(ROOT, args.dir || 'db/products_csv');
 const DRY_RUN = Boolean(args['dry-run']);
 const UPDATE_PRICES = Boolean(args['update-prices']);
+// Production only through `npm run db:update -- --production` (backup first); never by accident.
+const ALLOW_PRODUCTION = Boolean(args['allow-production']);
 
 // ---------------------------------------------------------------- source format
 const CATEGORY_BY_FILE = [
@@ -285,8 +287,8 @@ async function validate(trx, records, report) {
 
 // ---------------------------------------------------------------- main
 async function main() {
-  if (process.env.NODE_ENV === 'production' || ENV === 'production') {
-    throw new Error('Refusing to run against production. This importer is for local/staging databases.');
+  if ((process.env.NODE_ENV === 'production' || ENV === 'production') && !ALLOW_PRODUCTION) {
+    throw new Error('Refusing to run against production. Use `npm run db:update -- --production` (backs up the database first).');
   }
   const report = {
     started_at: new Date().toISOString(), env: ENV, dry_run: DRY_RUN, update_prices: UPDATE_PRICES, source_dir: path.relative(ROOT, DIR),

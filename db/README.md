@@ -173,15 +173,21 @@ coating 4904 / 828, insertion + colour 828.
 `products.note` (migration `20261113000001_products_note.js`, `text NULL`) stores `Примітка` — internal, not exposed
 by the storefront mapper. `Роздрібна` is deliberately not stored (owner decision 2026-11-13).
 
-Apply to the local database — one command:
+Apply — one command:
 
 ```bash
-npm run db:update     # db:up → db:backup → db:migrate → content import dry run → content import (--update-prices)
+npm run db:update                          # local Docker DB (.env.local): db:up → db:backup → migrate → patch:specs → dry run → import
+npm run db:update -- --production          # production server: asks you to type the DB name, then
+                                           # backup → migrate → patch:specs → dry run → import → cache purge
 ```
 
-It stops at the first failing step (`db/update-catalog.js`), so nothing is imported without a backup and a clean
-dry run. The same steps one by one: `npm run db:up`, `npm run db:backup`, `npm run db:migrate`,
-`npm run db:import:content -- --update-prices --dry-run`, `npm run db:import:content -- --update-prices`.
+`db/update-catalog.js` stops at the first failing step, so nothing is imported without a verified backup and a clean
+dry run. Production mode reads `DATABASE_URL` like Next.js (`.env.production.local`, `.env.local`, `.env.production`,
+`.env`), dumps the database inside the PostgreSQL container that publishes the `DATABASE_URL` port (the server has no
+`pg_dump`; override with `--container=<name>`) into `db/backups/`, checks the dump with `pg_restore --list`, and prints
+the restore command. `--yes` skips the prompt; `--site-url=…` sets where `POST /api/catalog/revalidate` goes (needs
+`CATALOG_REVALIDATE_SECRET`, otherwise the site updates within 15 min). The content importer refuses production unless
+called with `--allow-production`, which only this command passes.
 
 `--update-prices` overwrites `products.price` from `Ціна` (old values → report + `audit_logs`); `Примітка` → `products.note`
 (empty keeps). Re-running reports `updated 0`. Restore a backup:
