@@ -89,11 +89,33 @@ Nothing was deployed and no production or local data was modified.
 - Google Search Console: submit sitemap, inspect a ru fallback product and a redirected cross-locale URL after deploy.
 - Optional `shippingDetails` / `hasMerchantReturnPolicy` in Offer schema once delivery cost below 2 500 UAH and the return policy are formalized (not added: would require inventing rates).
 
-**Database tasks** (via existing import scripts, `db/README.md`)
-1. Russian translations for 26 products (list in audit §4).
-2. Richer ru descriptions for 113 products.
-3. Distinct titles for 9 uk / 5 ru duplicate-title pairs.
-Once (1) is imported, those ru pages become self-canonical and return to the sitemap automatically.
+**Database tasks — done in the repo, applied to the local dev DB only (2026-11-13)**
+
+Sources of truth: Russian texts live in `src/dictionaries/ru.json` (they also override the DB on ru pages);
+Ukrainian titles live in the owner's content CSVs `db/products_csv/*.csv`.
+
+1. **26 missing Russian translations** — added to `ru.json` (title + translated description; 7112 has no
+   Ukrainian description, so title only). These ru pages are now self-canonical and back in the sitemap (499 URLs).
+2. **113 short ru descriptions** — replaced by faithful translations of the owner's Ukrainian descriptions
+   (no new facts). Titles of all 145 touched products were re-translated from the current Ukrainian titles,
+   which also fixed ru titles that named the wrong stone (e.g. 4723 сердолик was «…с перламутром и фианитами»,
+   5142 перламутр was «…с малахитом», 8072 оникс was «пусеты «Сердце»»). Also fixed 4736, whose «ru» text was Ukrainian.
+3. **Duplicate titles** — 6 of 9 uk pairs resolved where a real difference is verifiable (description or product
+   photos): 8824 «…з оніксом і фіанітами»; 7993/2807 «ажурні» (stones outline an open clover) vs 6865/8736
+   «з розсипом фіанітів» (fully paved); 2465 and 5724 «в оправі із зерню» (beaded rim); 10327 «мініатюрні»
+   (0.9 g vs 2.1 g). Still identical — owner to name the difference: **4942/5149, 8733/8860, 9531/11393**
+   (photos and descriptions don't show a reliable difference). Note: 8736's description says the stones run
+   «по контуру», but the photo shows a fully paved clover — please check.
+
+Applying to another database (never production directly):
+```
+npm run db:backup
+npm run db:import:content -- --dry-run && npm run db:import:content         # 8 uk titles
+npm run db:import:ru -- --overwrite --dry-run && npm run db:import:ru -- --overwrite   # 26 inserted, 120 updated
+curl -X POST -H "Authorization: Bearer $CATALOG_REVALIDATE_SECRET" https://…/api/catalog/revalidate
+```
+`--overwrite` (new) writes every previous value to the report and `audit_logs.before`. Rollback: restore the
+previous `ru.json`/CSV from git and re-run the same commands, or restore the `db:backup` dump.
 
 **Code (P3)**
 - Font loading: Montserrat (latin-only subset) on Cyrillic body text — design decision.

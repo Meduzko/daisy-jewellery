@@ -111,7 +111,7 @@ npm run db:import:dntrade -- --file=dump.json   # or a saved snapshot: {"product
 ## Russian product texts
 
 ```bash
-npm run db:import:ru [-- --dry-run]
+npm run db:import:ru [-- --dry-run] [-- --overwrite]   # --overwrite: ru.json replaces differing title/short_description (previous values → report + audit log)
 ```
 
 Copies `src/dictionaries/ru.json` → `products.<koltsa|sergi|kolye|braslety>.<code>` into `product_translations` (`ru`): title, slug (`<translit>-<code>`), description → `short_description`. Inserts missing rows, fills empty fields only. Products without a Russian row fall back to Ukrainian.
