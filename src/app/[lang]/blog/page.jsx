@@ -1,7 +1,10 @@
 import Link from 'next/link';
-import { getAllHtmlPosts } from '../../../lib/posts';
+import { getAllHtmlPosts, byDateDesc } from '../../../lib/posts';
+import { getDbPosts } from '../../../lib/blog';
 import { getDefaultMetaData } from '../../../helpers';
 import styles from '../../../styles/BlogPage.module.css';
+
+export const revalidate = 900; // CMS posts; purged on publish by /api/catalog/revalidate
 
 export async function generateMetadata(props) {
   const params = await props.params;
@@ -19,7 +22,7 @@ export async function generateMetadata(props) {
 export default async function BlogPage(props) {
   const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const posts = getAllHtmlPosts({ lang });
+  const posts = [...getAllHtmlPosts({ lang }), ...(await getDbPosts(lang))].sort(byDateDesc);
 
   return (
     <div className={styles.blogWrapper}>
@@ -34,9 +37,15 @@ export default async function BlogPage(props) {
               <p>{lang === 'ru' ? 'Дата публикации' : 'Дата публікації'}: {post.date}</p>
             </div>
             <div className={styles.blogCardContent}>
-              {post.sections.map((section, index) => (
+              {post.sections ? post.sections.map((section, index) => (
                 <div key={index} dangerouslySetInnerHTML={{ __html: section }} />
-              ))}
+              )) : (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- external Directus asset */}
+                  {post.image && <img src={post.image} alt={post.title} className="blog-image-inside" loading="lazy" />}
+                  <p className="blog-content-p">{post.excerpt}</p>
+                </>
+              )}
               <div>
                 <Link href={`/${lang}/blog/${post.slug}`} className={styles.readMoreLink}>
                   <span className={styles.readMore}>{lang === 'ru' ? 'Читать полностью' : 'Читати повністю'}</span>

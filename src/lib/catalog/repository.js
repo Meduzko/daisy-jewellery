@@ -54,6 +54,9 @@ function selectProduct(db, qb) {
     'i.seo_title', 'i.seo_description', 'i.is_fallback',
     db.raw(`ARRAY(SELECT pi.url FROM product_images pi WHERE pi.product_id = p.id
                   ORDER BY pi.sort_order, pi.id) AS images`),
+    // same order as `images`; mapper.js picks R2 or DNTrade per image
+    db.raw(`ARRAY(SELECT pi.r2_key FROM product_images pi WHERE pi.product_id = p.id
+                  ORDER BY pi.sort_order, pi.id) AS image_keys`),
     // uk insertion / coating values: keywords for the card descriptor (cardModel.getDescriptor)
     db.raw(`ARRAY(SELECT t.value FROM product_attribute_values pav
                   JOIN attribute_values av ON av.id = pav.attribute_value_id
@@ -355,6 +358,27 @@ export async function getCategory(db, { category, locale } = {}) {
     .where('c.is_active', true)
     .first('c.code', 'ci.name', 'ci.slug', 'ci.url_prefix', 'ci.description', 'ci.seo_title', 'ci.seo_description', 'ci.is_fallback');
   return row || null;
+}
+
+/**
+ * Server-side cart total (UAH): effective price (sale price when discounted) of each visible
+ * product × quantity, summed in kopecks. null when an item is unknown/hidden or has a bad quantity.
+ * @param {{ code: string|number, quantity: number }[]} items
+ */
+export async function quoteCart(db, items = []) {
+  const codes = [...new Set(items.map((i) => String(i?.code ?? '').trim()))];
+  if (!codes.length || codes.some((c) => !c)) return null;
+  const rows = await baseQuery(db, DEFAULT_LOCALE).whereIn('p.legacy_code', codes)
+    .select('p.legacy_code', db.raw(`${EFFECTIVE_PRICE} AS price`));
+  const kopecks = new Map(rows.map((r) => [String(r.legacy_code), Math.round(Number(r.price) * 100)]));
+  let total = 0;
+  for (const item of items) {
+    const price = kopecks.get(String(item.code).trim());
+    const quantity = Number(item.quantity);
+    if (price == null || !Number.isInteger(quantity) || quantity < 1) return null;
+    total += price * quantity;
+  }
+  return total / 100;
 }
 
 /** Lightweight refs for sitemap / generateStaticParams. */

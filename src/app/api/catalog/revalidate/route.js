@@ -1,9 +1,10 @@
 import { timingSafeEqual } from 'node:crypto';
 import { revalidateTag } from 'next/cache';
 import { CATALOG_CACHE_TAGS } from '../../../../lib/catalog/tags';
+import { BLOG_CACHE_TAG } from '../../../../lib/blog';
 
-// On-demand cache purge after catalog changes in PostgreSQL (imports, manual edits,
-// future admin panel). Without it, pages pick up changes within 900 s (ISR window).
+// On-demand cache purge after catalog or blog changes in PostgreSQL (imports, manual edits,
+// Directus Flow «Оновити кеш сайту» — db/directus/configure.mjs). Without it, pages pick up changes within 900 s (ISR window).
 //
 //   curl -X POST http://localhost:3000/api/catalog/revalidate \
 //        -H "Authorization: Bearer $CATALOG_REVALIDATE_SECRET"
@@ -29,8 +30,9 @@ export async function POST(request) {
     return Response.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
-  for (const tag of CATALOG_CACHE_TAGS) {
+  const tags = [...CATALOG_CACHE_TAGS, BLOG_CACHE_TAG];
+  for (const tag of tags) {
     revalidateTag(tag, { expire: 0 });
   }
-  return Response.json({ revalidated: CATALOG_CACHE_TAGS, at: new Date().toISOString() });
+  return Response.json({ revalidated: tags, at: new Date().toISOString() });
 }

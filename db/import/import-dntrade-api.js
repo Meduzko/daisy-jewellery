@@ -366,4 +366,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { parseSize, parseWeight, parsePrice, nonEmptyHtml };
+module.exports = { parseSize, parseWeight, parsePrice, nonEmptyHtml, readFromApi };

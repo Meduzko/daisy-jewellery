@@ -6,6 +6,7 @@
 // rendered into pages and stored in the visitor's cart.
 
 import { CATEGORY_KEY_BY_DB_CODE } from './categories.js';
+import { productImageUrl } from './images.js';
 
 // Collections that the storefront shows as badges (DNTrade tag «бейдж» items).
 const BADGE_BY_COLLECTION = {
@@ -43,7 +44,9 @@ export function buildBadgeTags(row) {
  */
 export function mapProduct(row, { storeId = null } = {}) {
   if (!row) return null;
-  const images = Array.isArray(row.images) ? row.images.filter(Boolean) : [];
+  const images = Array.isArray(row.images)
+    ? row.images.map((url, i) => productImageUrl(url, row.image_keys?.[i])).filter(Boolean)
+    : [];
   const category = CATEGORY_KEY_BY_DB_CODE[row.category_code] || '';
 
   return {

@@ -11,6 +11,11 @@ const nextConfig = {
         hostname: 'cdn.dntrade.com.ua',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.daisy-jewellery.com.ua',
+        pathname: '/**',
+      },
     ],
     minimumCacheTTL: 60 * 60 * 24 * 7,
     // Next.js 16 only allows quality 75 by default; keep the qualities used by
