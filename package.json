@@ -21,6 +21,11 @@
     "db:backup": "node db/backup.js",
     "db:update": "node db/update-catalog.js",
     "db:merge:sheets": "node db/import/merge-source-sheets.js",
+    "images:download": "node scripts/download-product-images.js",
+    "images:r2": "node scripts/map-r2-images.js",
+    "cms:up": "docker compose -f compose.yaml -f compose.cms.yaml --env-file .env.local up -d --wait directus",
+    "cms:down": "docker compose -f compose.yaml -f compose.cms.yaml --env-file .env.local stop directus",
+    "cms:configure": "node db/directus/configure.mjs",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test --test-concurrency=1 \"test/**/*.test.mjs\""
   },
   "dependencies": {
@@ -51,6 +56,7 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1169.0",
     "@types/node": "20.14.2",
     "@types/react": "^19",
     "eslint": "^9",

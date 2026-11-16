@@ -43,3 +43,6 @@ next-env.d.ts
 
 # Claude session scratch files (local only)
 /Claude outputs/
+
+# product image downloads (npm run images:download)
+/data/product-images/

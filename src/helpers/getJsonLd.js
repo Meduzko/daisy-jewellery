@@ -180,7 +180,7 @@ export const getBlogPostingJsonLd = ({ title, description, date, image, path, la
       headline: title,
       description,
       datePublished,
-      image: image ? [absoluteUrl(image)] : undefined,
+      image: image ? [/^https?:\/\//.test(image) ? image : absoluteUrl(image)] : undefined, // CMS covers are absolute
       inLanguage: IN_LANGUAGE[lang],
       mainEntityOfPage: absoluteUrl(path),
       url: absoluteUrl(path),

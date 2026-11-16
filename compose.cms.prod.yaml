@@ -1,0 +1,16 @@
+# Production (VPS) override: PostgreSQL runs natively on the host, not as compose.yaml's container.
+#   docker compose -f compose.cms.yaml -f compose.cms.prod.yaml --env-file .env.local up -d --wait directus
+# Host networking: Directus reaches PostgreSQL on 127.0.0.1 (no pg_hba/listen changes) and itself
+# listens on 127.0.0.1:8055 only — Nginx is the only way in. Needs Docker Compose ≥ 2.24.4 (!reset).
+name: daisy-jewellery
+
+services:
+  directus:
+    depends_on: !reset {}
+    network_mode: host
+    ports: !reset []
+    extra_hosts: !reset []
+    environment:
+      HOST: 127.0.0.1
+      DB_HOST: 127.0.0.1
+      DB_PORT: ${DIRECTUS_DB_PORT:-5432}

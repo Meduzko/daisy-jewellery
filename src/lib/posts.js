@@ -26,16 +26,15 @@ export function getAllHtmlPosts({ lang }) {
         date
       };
     })
-    .sort((a, b) => {
-      const parseDate = (str) => {
-        // Очікується формат DD.MM.YYYY
-        const [day, month, year] = str.split('.');
-        return new Date(`${year}-${month}-${day}`);
-      };
-
-      return parseDate(b.date) - parseDate(a.date); // Від новішого до старішого
-    });
+    .sort(byDateDesc);
 }
+
+// Newest first; `date` is DD.MM.YYYY (static posts and CMS posts alike).
+const parseDate = (str) => {
+  const [day, month, year] = String(str).split('.');
+  return new Date(`${year}-${month}-${day}`);
+};
+export const byDateDesc = (a, b) => parseDate(b.date) - parseDate(a.date);
 
 // Get the content of a specific HTML file by slug
 export function getHtmlPostBySlug(slug, lang) {

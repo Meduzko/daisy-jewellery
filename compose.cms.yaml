@@ -1,0 +1,57 @@
+# Directus CMS (admin panel), layered on compose.yaml so `db:up` / `db:backup` don't need CMS vars:
+#   npm run cms:up   (= docker compose -f compose.yaml -f compose.cms.yaml --env-file .env.local up -d --wait directus)
+# Connects to the same PostgreSQL as the restricted `directus` role — see db/directus/README.md.
+
+services:
+  directus:
+    image: directus/directus:12.6.1
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_CLIENT: pg
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${DIRECTUS_DB_DATABASE:-daisy_dev}
+      DB_USER: directus
+      DB_PASSWORD: ${DIRECTUS_DB_PASSWORD:?set DIRECTUS_DB_PASSWORD}
+      # System tables go to the `directus` schema; app tables are read from `public`.
+      DB_SEARCH_PATH: directus,public
+      # Not granted to the role anyway (setup-db.sql); this also hides them from the Data Model list.
+      DB_EXCLUDE_TABLES: admin_users,audit_logs,knex_migrations,knex_migrations_lock
+      SECRET: ${DIRECTUS_SECRET:?set DIRECTUS_SECRET}
+      # Used only on the first bootstrap of an empty `directus` schema.
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL:?set DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD:?set DIRECTUS_ADMIN_PASSWORD}
+      PUBLIC_URL: ${DIRECTUS_PUBLIC_URL:-http://localhost:8055}
+      # First location = where new uploads go: Cloudflare R2 (built-in S3 driver), stored byte for byte
+      # under cms/<file uuid>.<ext> — the prefix setup-db.sql puts into product_images.r2_key.
+      # `local` stays so files uploaded before the switch (blog) are still served.
+      STORAGE_LOCATIONS: r2,local
+      STORAGE_R2_DRIVER: s3
+      STORAGE_R2_KEY: ${DIRECTUS_R2_ACCESS_KEY_ID:?set DIRECTUS_R2_ACCESS_KEY_ID}
+      STORAGE_R2_SECRET: ${DIRECTUS_R2_SECRET_ACCESS_KEY:?set DIRECTUS_R2_SECRET_ACCESS_KEY}
+      STORAGE_R2_BUCKET: ${R2_BUCKET:-daisy-jewellery-images}
+      STORAGE_R2_REGION: auto
+      STORAGE_R2_ENDPOINT: ${DIRECTUS_R2_ENDPOINT:?set DIRECTUS_R2_ENDPOINT (https://<account id>.r2.cloudflarestorage.com)}
+      STORAGE_R2_ROOT: cms
+      STORAGE_LOCAL_ROOT: /directus/uploads
+      TELEMETRY: "false"
+      WEBSOCKETS_ENABLED: "false"
+    ports:
+      - "127.0.0.1:${DIRECTUS_PORT:-8055}:8055" # loopback only; production goes through Nginx
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Flows call Next.js on the host (/api/catalog/revalidate)
+    volumes:
+      - directus-uploads:/directus/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8055/server/ping || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  directus-uploads:
+    name: daisy-jewellery-directus-uploads

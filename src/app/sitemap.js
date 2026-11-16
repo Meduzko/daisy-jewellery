@@ -1,5 +1,6 @@
 import { fetchProduct } from '../actions/fetchProduct';
 import { getAllHtmlPosts } from '../lib/posts';
+import { getDbPosts } from '../lib/blog';
 import { getCatalogSource } from '../lib/catalog/source';
 import { PRODUCT_URL_SLUGS, CATEGORY_SLUGS, absoluteUrl, buildAlternates, localizeSegment } from '../helpers/seo';
 
@@ -105,7 +106,11 @@ export default async function sitemap() {
     return entries(`uk/blog/${post.slug}`, ruSlugs.has(ruSlug) ? `ru/blog/${ruSlug}` : null, { priority: 0.6, lastModified: postDate(post.date) });
   });
 
-  const allRoutes = [...staticRoutes, ...categoryRoutes, ...productRoutes, ...blogRoutes];
+  const cmsBlogRoutes = (await getDbPosts('uk')).flatMap((post) =>
+    entries(post.paths.uk, post.paths.ru, { priority: 0.6, lastModified: post.updatedAt })
+  );
+
+  const allRoutes = [...staticRoutes, ...categoryRoutes, ...productRoutes, ...blogRoutes, ...cmsBlogRoutes];
   console.log(`[Sitemap] Generated ${allRoutes.length} URLs (${productsByCategory.flat().length} products)`);
   return allRoutes;
 }

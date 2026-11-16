@@ -190,7 +190,8 @@ async function importRecord(trx, rec, ctx, result) {
           const sale = (Math.round(Number(p) * (100 - Number(m[1].replace(',', '.')))) / 100).toFixed(2);
           if (!same(product.sale_price, sale)) { productPatch.sale_price = sale; change('sale_price', product.sale_price ?? null, sale); }
         } else if (product.sale_price != null) {
-          warn('sale_price', `price changed to ${p} but sale_price ${product.sale_price} kept (no «знижка/N» in #бейдж) — the site shows sale_price`);
+          // products.discount_percent is kept; the DB trigger recomputes sale_price from the new price
+          warn('sale_price', `price changed to ${p}; no «знижка/N» in #бейдж, so the current discount % is kept and sale_price recalculated`);
         }
       }
     }

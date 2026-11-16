@@ -128,6 +128,22 @@ describe('product detail', () => {
     assert.deepEqual(p.variants.map((v) => v.in_stock), [true, true, false]); // 16.5 (untracked), 17 (1), 17.5 (0)
   });
 
+  test('photos uploaded in Directus (R2 only) keep their gallery position', async () => {
+    const env = { ...process.env };
+    process.env.NEXT_PUBLIC_IMAGE_BASE_URL = 'https://images.example';
+    process.env.PRODUCT_IMAGE_SOURCE = 'dntrade';
+    const [row] = await db('product_images')
+      .insert({ product_id: seed.ids['100'], url: null, r2_key: 'cms/0f0e.webp', sort_order: -1 }).returning('id');
+    try {
+      const p = await repo.getProductByCode(db, { code: '100' });
+      assert.deepEqual(p.images, ['https://images.example/cms/0f0e.webp', 'https://cdn.example/100-a.jpg', 'https://cdn.example/100-b.jpg']);
+      await assert.rejects(db('product_images').insert({ product_id: seed.ids['100'], sort_order: 9 }), /product_images_source_check/);
+    } finally {
+      await db('product_images').where({ id: row.id }).del();
+      process.env = env;
+    }
+  });
+
   test('no internal fields leak into storefront products', async () => {
     const { products } = await repo.listProducts(db, { limit: 100 });
     const json = JSON.stringify(products);
