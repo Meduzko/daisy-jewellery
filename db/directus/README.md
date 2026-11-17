@@ -50,19 +50,9 @@ Admin panel: <http://localhost:8055>. Next.js needs `DIRECTUS_PUBLIC_URL` (cover
 
 ## Production (Ubuntu VPS, Docker, Nginx)
 
-Prerequisite: PostgreSQL runs as the `postgres` service of `compose.yaml` on the VPS. If it runs
-differently (another compose project, a native install), set `DB_HOST` in `compose.cms.yaml` to that
-host / join its Docker network, and drop the `depends_on` block.
-
-1. **Backup**: `pg_dump -Fc` of the production DB → check it with `pg_restore --list <file> | head`. Keep it off the server too.
-2. **Rehearse on a clone** of production on the server: restore the dump into `daisy_prod_clone`, run the migrations there, `setup-db.sql`, start Directus with `DIRECTUS_DB_DATABASE=daisy_prod_clone`, `cms:configure`, run the checklist below.
-3. **Apply to production** (low-traffic time): `NODE_ENV=production npm run db:migrate` (both migrations are additive; rollback = `npm run db:rollback`), `setup-db.sql`, set `DIRECTUS_DB_DATABASE` to the production DB. Directus bootstraps a fresh `directus` schema there; then `setup-db.sql` again, restart, `cms:configure`.
-4. **Env on the VPS** (never in Git): `DIRECTUS_PUBLIC_URL=https://cms.daisy-jewellery.com.ua`, `DIRECTUS_URL=http://127.0.0.1:8055`,
-   `DIRECTUS_REVALIDATE_URL=https://daisy-jewellery.com.ua/api/catalog/revalidate` (the public URL works whether or not Next.js listens on the Docker bridge), and the same `DIRECTUS_PUBLIC_URL` + `CATALOG_REVALIDATE_SECRET` in the Next.js environment.
-5. **Nginx**: DNS `cms` A-record → VPS, `db/directus/nginx-cms.conf` → `sites-available`, add the `limit_req_zone` line, `certbot`, `nginx -t && systemctl reload nginx`.
-6. After the first login remove `DIRECTUS_ADMIN_PASSWORD` from the server env (only used on first bootstrap).
-7. Drop the clone database.
-8. Product images in Cloudflare R2 (existing photos + Directus uploads): `db/r2-images-production.md`.
+Step by step: **[production.md](production.md)** — native PostgreSQL on the VPS, Directus in Docker with
+host networking (`compose.cms.prod.yaml`; not `npm run cms:up`, which is for the local database container),
+rehearsal on a clone, Nginx/TLS, first login, checklist, rollback. Product images in R2: `db/r2-images-production.md`.
 
 Backups: the `directus` schema is inside the same database, so the existing DB dumps include it. New uploads go to Cloudflare R2 (`DIRECTUS_R2_*` env, see `.env.example`); files uploaded before that are in the Docker volume `daisy-jewellery-directus-uploads` — back it up too.
 

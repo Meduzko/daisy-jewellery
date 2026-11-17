@@ -2,6 +2,7 @@ import 'server-only';
 import { unstable_cache } from 'next/cache';
 import { getDb } from './db';
 import { sanitizeHtml, toBlogPost } from './blogPost';
+import { getHtmlPostBySlug } from './posts';
 
 // Blog articles edited in Directus (tables blog_posts / blog_post_translations), read directly
 // from PostgreSQL like the catalog. The static posts in src/content/ are still served by
@@ -35,9 +36,9 @@ const getPublishedPosts = unstable_cache(queryPublishedPosts, ['blog', 'publishe
   tags: [BLOG_CACHE_TAG],
 });
 
-/** Published Directus posts in `lang`, newest first. */
+/** Published Directus posts in `lang`, newest first. A static post with the same slug wins (as on the post page). */
 export async function getDbPosts(lang) {
-  return (await getPublishedPosts()).filter((p) => p.lang === lang);
+  return (await getPublishedPosts()).filter((p) => p.lang === lang && !getHtmlPostBySlug(p.slug, lang));
 }
 
 /** One published Directus post by its slug in `lang`, or null. */

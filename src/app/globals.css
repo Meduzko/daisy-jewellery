@@ -267,6 +267,7 @@ input, textarea, select {
 .blog-image-inside {
   aspect-ratio: 2 / 3;
   height: 512px;
+  object-fit: contain; /* product photos are 2:3, 3:4 or square — don't stretch them */
 }
 
 .blog-publish-date {

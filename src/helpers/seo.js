@@ -245,6 +245,8 @@ export const LOCALIZED_SEGMENTS = [
   ['yak-vyznachyty-rozmir-kabluchky', 'kak-uznat-razmer-kolca'],
   ['podarunok-divchyni-na-14-lyutoho', 'podarok-devushke-na-14-fevralya'],
   ['podarunok-na-8-bereznya', 'podarok-na-8-marta'],
+  ['shcho-podaruvaty-na-mykolaya', 'chto-podarit-na-nikolaya'],
+  ['shcho-podaruvaty-na-novyi-rik', 'chto-podarit-na-novyy-god'],
 ];
 
 /** The `lang` version of a URL segment from either locale ('kabluchki', 'ru' → 'koltsa'). */
