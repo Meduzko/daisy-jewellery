@@ -33,15 +33,32 @@ const STONES = [
 const GILDED_RE = /позолот/i;
 const LENGTH_RE = /(\d+(?:[.,]\d+)?)\s*см/i;
 
+const HEX_RE = /^#[0-9a-f]{6}$/i;
+/** Swatch dot from a '#RRGGBB' colour, shaded like the built-in stones. */
+export const swatchFromColor = (color) => (HEX_RE.test(color || '')
+  ? `radial-gradient(circle at 35% 30%, color-mix(in srgb, ${color}, #fff 30%) 0%, ${color} 70%)`
+  : null);
+
 /**
- * What distinguishes one card of a family from the others, derived only from
- * what its title states.
+ * What distinguishes one card of a family from the others: its «Вставка» values
+ * from the catalog (`product.insertions`, colour set in Directus) when it has any,
+ * otherwise the stone its title names. Plating and length always come from the title.
+ * @param {Array<{ slug: string, value: string, color?: string|null }>} [insertions]
  * @returns {{ label: string, stone: string|null, gilded: boolean, swatch: string|null }}
  */
-export function getVariantFacet(title, lang = 'uk') {
+export function getVariantFacet(title, lang = 'uk', insertions = []) {
   const text = String(title || '');
   const l = lang === 'ru' ? 'ru' : 'uk';
-  const stone = STONES.find((s) => s.re.test(text)) || null;
+  const titleStone = STONES.find((s) => s.re.test(text)) || null;
+  const own = (insertions || []).filter((v) => v?.slug);
+  const stone = own.length
+    ? {
+      key: own.map((v) => v.slug).join('+'),
+      [l]: own.map((v) => v.value).join(', '),
+      // no colour set yet → keep the title stone's colour (if it names one)
+      swatch: swatchFromColor(own.find((v) => v.color)?.color) || titleStone?.swatch || null,
+    }
+    : titleStone;
   const gilded = GILDED_RE.test(text);
   const length = text.match(LENGTH_RE)?.[1]?.replace(',', '.');
 

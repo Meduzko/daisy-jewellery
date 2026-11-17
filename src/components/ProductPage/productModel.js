@@ -100,7 +100,7 @@ export function toProductModel(product, { lang, category, sizes = [], t, family 
   const collection = getCollection(sourceText, config, lang, baseURL);
 
   // ---- variant swatches: this card + same-model cards of the category
-  const facet = getVariantFacet(sourceText, lang);
+  const facet = getVariantFacet(sourceText, lang, product.insertions);
   let swatches = [];
   const siblings = family?.variants || [];
   if (siblings.length) {
@@ -109,7 +109,7 @@ export function toProductModel(product, { lang, category, sizes = [], t, family 
       { href: getProductLink({ ...product, category }, lang), label: facet.label, swatch: facet.swatch, gilded: facet.gilded, byStone: facet.byStone, image: images[0] || null, current: true, code: String(product.code) },
     ];
     for (const sibling of siblings) {
-      const f = getVariantFacet(sibling.title, lang);
+      const f = getVariantFacet(sibling.title, lang, sibling.insertions);
       if (seen.has(f.label)) continue;
       seen.add(f.label);
       const siblingImages = (sibling.images?.length ? sibling.images : [sibling.image_path]).filter(Boolean);

@@ -70,6 +70,8 @@ export function mapProduct(row, { storeId = null } = {}) {
     // [{ code, name, values: [{ slug, value }] }] — filled for the product page only.
     attributes: Array.isArray(row.attributes) ? row.attributes : [],
     spec_terms: Array.isArray(row.spec_terms) ? row.spec_terms : [],
+    // [{ slug, value, color }] — «Вставка» values; drive the variant swatches.
+    insertions: Array.isArray(row.insertions) ? row.insertions : [],
     // Explicit sale price from the DB; productPricing.applyProductDiscount() prefers it.
     catalogSalePrice: row.sale_price == null ? null : String(row.sale_price),
     store_id: storeId || null,

@@ -282,6 +282,8 @@ await fields('attributes', [
 await fields('attribute_values', [
   ['id', 'ID', { hidden: true }], ['attribute_id', 'Атрибут', m2o('{{code}}')],
   ['slug', 'Slug (у URL фільтра)', { ...DB_LOCKED, note: 'Латиницею, напр. fianit' }], ['sort_order', 'Порядок', {}],
+  ['swatch_color', 'Колір кружечка', { interface: 'select-color', display: 'color', width: 'half',
+    note: 'Для «Вставки»: колір кружечка варіанта на сторінці товару. Порожньо — фото товару' }],
   ['legacy_id', 'DNTrade id', RO], ['created_at', 'Створено', { ...TS, hidden: true }],
   ['updated_at', 'Оновлено', { ...TS, hidden: true, special: ['date-updated'] }],
 ]);

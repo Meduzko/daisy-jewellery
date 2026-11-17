@@ -47,7 +47,7 @@ REVOKE INSERT, DELETE ON categories FROM directus; -- categories map to hard-cod
 -- product/language a text belongs to: set on insert, fixed afterwards.
 REVOKE UPDATE ON attributes, attribute_values, collections, product_translations FROM directus;
 GRANT UPDATE (is_filterable, sort_order, updated_at) ON attributes TO directus;
-GRANT UPDATE (attribute_id, sort_order, legacy_id, updated_at) ON attribute_values TO directus;
+GRANT UPDATE (attribute_id, sort_order, legacy_id, swatch_color, updated_at) ON attribute_values TO directus;
 GRANT UPDATE (is_active, sort_order, updated_at) ON collections TO directus;
 GRANT UPDATE (locale, title, slug, short_description, description, seo_title, seo_description, updated_at)
   ON product_translations TO directus; -- `locale` is sent by the translations form with every save

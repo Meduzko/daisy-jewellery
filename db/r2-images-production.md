@@ -12,7 +12,7 @@ Every step up to 5 leaves the website unchanged. Commands are run on the VPS in 
 ## 0. Before you start
 
 - [ ] The code is committed and pushed (migrations `20261116000001`, `20261116000002`, `scripts/map-r2-images.js`, `db/directus/*`, `compose.cms.yaml`, `src/lib/catalog/*`, `next.config.mjs`).
-- [ ] Directus already runs on the VPS (`db/directus/README.md` → *Production*). If not, do that first.
+- [ ] Directus already runs on the VPS (`db/directus/production.md`). If not, do that first: it also covers the database part of step 2 and step 4 below.
 - [ ] Cloudflare: bucket `daisy-jewellery-images`, custom domain `images.daisy-jewellery.com.ua` connected and public. Check: `curl -I https://images.daisy-jewellery.com.ua/100_7648/00_1414.10_1.jpg` → `200`, `content-type: image/jpeg`.
 - [ ] Two R2 API tokens scoped to this bucket only: **Object Read** (for `images:r2`) and **Object Read & Write** (for Directus). The ones tested locally can be reused.
 - [ ] A low-traffic time window (~30 min).
@@ -20,8 +20,9 @@ Every step up to 5 leaves the website unchanged. Commands are run on the VPS in 
 ## 1. Backup
 
 ```bash
-npm run db:backup                                   # dump in db/backups/
-pg_restore --list db/backups/<newest>.dump | head   # must list tables, no error
+DB=<production database>
+sudo -u postgres pg_dump -Fc -d "$DB" > /var/backups/daisy/before-r2-$(date +%F).dump
+pg_restore --list /var/backups/daisy/before-r2-*.dump | head   # must list tables, no error
 ```
 
 Copy the dump off the server too.
@@ -51,16 +52,16 @@ Database (both migrations only add columns/constraints; existing rows are untouc
 
 ```bash
 npm run db:migrate
-set -a; . ./.env.local; set +a       # POSTGRES_USER, POSTGRES_DB, DIRECTUS_DB_PASSWORD for the next command
-docker compose --env-file .env.local exec -T postgres psql -v ON_ERROR_STOP=1 \
-  -v directus_password="$DIRECTUS_DB_PASSWORD" -U "$POSTGRES_USER" -d "$POSTGRES_DB" < db/directus/setup-db.sql
+sudo -u postgres psql -v ON_ERROR_STOP=1 \
+  -v directus_password="$(grep -m1 '^DIRECTUS_DB_PASSWORD=' .env.local | cut -d= -f2-)" -d "$DB" < db/directus/setup-db.sql
+docker restart daisy-jewellery-directus-1   # Directus caches the schema
 ```
 
 `setup-db.sql` adds the `product_images.file` foreign key and the trigger that fills `r2_key` for
 Directus uploads. Check:
 
 ```bash
-docker compose --env-file .env.local exec -T postgres psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Atc \
+sudo -u postgres psql -d "$DB" -Atc \
   "select tgname from pg_trigger where tgname = 'product_images_directus_file'"   # → product_images_directus_file
 ```
 
@@ -109,7 +110,7 @@ Re-running `--apply` is safe (it changes nothing the second time).
 ## 4. Directus uploads → R2
 
 ```bash
-npm run cms:up              # recreates the container with STORAGE_LOCATIONS=r2,local
+docker compose -f compose.cms.yaml -f compose.cms.prod.yaml --env-file .env.local up -d --wait directus
 npm run cms:configure       # «Фото» upload field, "products" folder
 ```
 
@@ -154,7 +155,7 @@ done
 | What | How | Data |
 |---|---|---|
 | Website images | `PRODUCT_IMAGE_SOURCE=dntrade`, rebuild, restart, purge cache (step 5 commands) | none needed — `url` still holds every DNTrade address. Photos uploaded in Directus have no DNTrade copy and keep loading from R2. |
-| Directus uploads | `STORAGE_LOCATIONS: local,r2` in `compose.cms.yaml`, `npm run cms:up` | files already in R2 stay readable; new product photos are then refused by the trigger (by design) |
+| Directus uploads | `STORAGE_LOCATIONS: local,r2` in `compose.cms.yaml`, then the step-4 `docker compose … up` command | files already in R2 stay readable; new product photos are then refused by the trigger (by design) |
 | Database | `npm run db:rollback` (once per batch) or restore the step-1 dump | the `20261116000002` rollback refuses while Directus-only photos exist — delete them first |
 
 ## Notes for editors

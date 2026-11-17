@@ -42,7 +42,7 @@ const SET_ORDER = ['necklace', 'earring', 'bracer', 'ring'];
  */
 function pickSet(products, facet, lang) {
   const score = (p) => {
-    const f = getVariantFacet(p.title, lang);
+    const f = getVariantFacet(p.title, lang, p.insertions);
     return (f.stone && f.stone === facet.stone ? 2 : 0) + (f.gilded === facet.gilded ? 1 : 0);
   };
   const picked = [];
@@ -89,11 +89,11 @@ export default async function ProductPageNew({ item = {}, productSizes, t, lang 
     exclude: family.variants.map((p) => p.code),
     limit: 4,
   });
-  const facet = getVariantFacet(`${model.title} ${item.title || ''}`, locale);
+  const facet = getVariantFacet(`${model.title} ${item.title || ''}`, locale, item.insertions);
   const setProducts = pickSet(family.set, facet, locale);
-  const setMatchesStone = Boolean(facet.stone) && setProducts.every((p) => getVariantFacet(p.title, locale).stone === facet.stone);
+  const setMatchesStone = Boolean(facet.stone) && setProducts.every((p) => getVariantFacet(p.title, locale, p.insertions).stone === facet.stone);
   const [setCards, relatedCards] = await Promise.all([toCards(setProducts, locale), toCards(related, locale)]);
-  const setKicker = [copy.setKicker(model.collection?.name), setMatchesStone ? getVariantFacet(item.title, locale).label.split(' · ')[0].toLowerCase() : null]
+  const setKicker = [copy.setKicker(model.collection?.name), setMatchesStone ? getVariantFacet(item.title, locale, item.insertions).label.split(' · ')[0].toLowerCase() : null]
     .filter(Boolean)
     .join(' · ');
 
