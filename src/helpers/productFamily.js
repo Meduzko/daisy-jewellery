@@ -40,17 +40,19 @@ export const swatchFromColor = (color) => (HEX_RE.test(color || '')
   : null);
 
 /**
- * What distinguishes one card of a family from the others: its «Вставка» values
- * from the catalog (`product.insertions`, colour set in Directus) when it has any,
- * otherwise the stone its title names. Plating and length always come from the title.
- * @param {Array<{ slug: string, value: string, color?: string|null }>} [insertions]
+ * What distinguishes one card of a family from the others. Catalog attributes set in
+ * Directus win: «Вставка» (`product.insertions`, with the dot colour) and «Покриття»
+ * (`product.coatings`); without them, the stone / plating the title names. Length: title.
+ * @param {{ insertions?: Array<{ slug: string, value: string, color?: string|null }>,
+ *   coatings?: Array<{ slug: string, value: string }> }} [attrs]  usually the product itself
  * @returns {{ label: string, stone: string|null, gilded: boolean, swatch: string|null }}
  */
-export function getVariantFacet(title, lang = 'uk', insertions = []) {
+export function getVariantFacet(title, lang = 'uk', { insertions = [], coatings = [] } = {}) {
   const text = String(title || '');
   const l = lang === 'ru' ? 'ru' : 'uk';
   const titleStone = STONES.find((s) => s.re.test(text)) || null;
   const own = (insertions || []).filter((v) => v?.slug);
+  const plating = (coatings || []).filter((v) => v?.value).map((v) => v.value);
   const stone = own.length
     ? {
       key: own.map((v) => v.slug).join('+'),
@@ -59,12 +61,13 @@ export function getVariantFacet(title, lang = 'uk', insertions = []) {
       swatch: swatchFromColor(own.find((v) => v.color)?.color) || titleStone?.swatch || null,
     }
     : titleStone;
-  const gilded = GILDED_RE.test(text);
+  const gilded = plating.length ? plating.some((v) => GILDED_RE.test(v)) : GILDED_RE.test(text);
   const length = text.match(LENGTH_RE)?.[1]?.replace(',', '.');
 
   const parts = [];
   if (stone) parts.push(stone[l]);
-  if (gilded) parts.push(l === 'ru' ? 'позолота' : 'позолота');
+  if (plating.length) parts.push(...plating.map((v) => v.toLowerCase()));
+  else if (gilded) parts.push('позолота');
   if (!parts.length) parts.push(l === 'ru' ? 'Серебро' : 'Срібло');
   if (length) parts.push(`${length} см`);
   const label = parts.join(' · ');

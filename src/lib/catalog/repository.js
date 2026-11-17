@@ -46,6 +46,18 @@ function baseQuery(db, locale) {
     .whereNotNull('p.price');
 }
 
+// [{ slug, value, color }] of one attribute of the row's product, texts in the row's locale.
+const attributeJson = (db, code, alias) => db.raw(
+  `COALESCE((SELECT json_agg(json_build_object('slug', av.slug, 'value', avi.value, 'color', av.swatch_color)
+                ORDER BY av.sort_order, av.id)
+                FROM product_attribute_values pav
+                JOIN attribute_values av ON av.id = pav.attribute_value_id
+                JOIN attributes a ON a.id = av.attribute_id AND a.code = ?
+                JOIN attribute_value_i18n avi ON avi.attribute_value_id = av.id AND avi.locale = i.locale
+                WHERE pav.product_id = p.id), '[]') AS ??`,
+  [code, alias]
+);
+
 function selectProduct(db, qb) {
   return qb.select(
     'p.id', 'p.legacy_id', 'p.legacy_code', 'p.article', 'p.price', 'p.sale_price', 'p.avg_weight_g',
@@ -63,14 +75,10 @@ function selectProduct(db, qb) {
                   JOIN attributes a ON a.id = av.attribute_id AND a.code IN ('insertion', 'coating')
                   JOIN attribute_value_translations t ON t.attribute_value_id = av.id AND t.locale = 'uk'
                   WHERE pav.product_id = p.id ORDER BY a.sort_order, av.sort_order) AS spec_terms`),
-    // insertion values in the page locale with their swatch colour (productFamily.getVariantFacet)
-    db.raw(`COALESCE((SELECT json_agg(json_build_object('slug', av.slug, 'value', avi.value, 'color', av.swatch_color)
-                  ORDER BY av.sort_order, av.id)
-                  FROM product_attribute_values pav
-                  JOIN attribute_values av ON av.id = pav.attribute_value_id
-                  JOIN attributes a ON a.id = av.attribute_id AND a.code = 'insertion'
-                  JOIN attribute_value_i18n avi ON avi.attribute_value_id = av.id AND avi.locale = i.locale
-                  WHERE pav.product_id = p.id), '[]') AS insertions`),
+    // insertion (with swatch colour) / coating values in the page locale: variant swatches
+    // (productFamily.getVariantFacet), which also need them for sibling cards
+    attributeJson(db, 'insertion', 'insertions'),
+    attributeJson(db, 'coating', 'coatings'),
     db.raw(`ARRAY(SELECT co.code FROM collection_products cp
                   JOIN collections co ON co.id = cp.collection_id AND co.is_active
                   WHERE cp.product_id = p.id ORDER BY co.sort_order, co.id) AS collection_codes`)
