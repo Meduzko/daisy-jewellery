@@ -68,6 +68,8 @@ export function mapProduct(row) {
     insertions: Array.isArray(row.insertions) ? row.insertions : [],
     // [{ slug, value }] — «Покриття» values; plating part of the variant label.
     coatings: Array.isArray(row.coatings) ? row.coatings : [],
+    // [{ slug, value, color }] — «Колір вставки» values; matching set items (product page).
+    insertion_colors: Array.isArray(row.insertion_colors) ? row.insertion_colors : [],
     // Explicit sale price from the DB; productPricing.applyProductDiscount() prefers it.
     catalogSalePrice: row.sale_price == null ? null : String(row.sale_price),
     category,

@@ -104,17 +104,16 @@ export function toProductModel(product, { lang, category, sizes = [], t, family 
   let swatches = [];
   const siblings = family?.variants || [];
   if (siblings.length) {
-    const seen = new Set([facet.label]);
     swatches = [
-      { href: getProductLink({ ...product, category }, lang), label: facet.label, swatch: facet.swatch, gilded: facet.gilded, byStone: facet.byStone, current: true, code: String(product.code) },
+      { href: getProductLink({ ...product, category }, lang), label: facet.label, title, swatch: facet.swatch, gilded: facet.gilded, byStone: facet.byStone, current: true, code: String(product.code) },
     ];
     for (const sibling of siblings) {
+      if (String(sibling.code) === String(product.code)) continue;
       const f = getVariantFacet(sibling.title, lang, sibling);
-      if (seen.has(f.label)) continue;
-      seen.add(f.label);
       swatches.push({
         href: getProductLink({ ...sibling, category }, lang),
         label: f.label,
+        title: sibling.title,
         swatch: f.swatch,
         gilded: f.gilded,
         byStone: f.byStone,
@@ -125,6 +124,9 @@ export function toProductModel(product, { lang, category, sizes = [], t, family 
     }
     // stable order (by code, as in the catalog) so swatches don't jump between pages
     swatches.sort((a, b) => (Number(a.code) || 0) - (Number(b.code) || 0));
+    // same facet (e.g. several enamel colours all read «Емаль») → the card title tells them apart
+    const labelCount = swatches.reduce((m, s) => m.set(s.label, (m.get(s.label) || 0) + 1), new Map());
+    swatches = swatches.map(({ title: cardTitle, ...s }) => (labelCount.get(s.label) > 1 && cardTitle ? { ...s, label: cardTitle } : s));
     swatches = swatches.length < 2 ? [] : fillSwatchColors(swatches);
   }
   const swatchesByStone = swatches.length > 0 && swatches.every((s) => s.byStone);
@@ -212,7 +214,7 @@ export function toProductModel(product, { lang, category, sizes = [], t, family 
     sizeGuideHref: config?.sizeGuideHref ? config.sizeGuideHref(lang) : null,
     swatches,
     swatchKind: swatchesByStone ? 'insert' : 'variant',
-    currentLabel: facet.label,
+    currentLabel: swatches.find((s) => s.current)?.label || facet.label,
     description,
     specs,
     cartItem: toCartItem({ ...product, title }),

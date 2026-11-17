@@ -40,10 +40,14 @@ const SET_ORDER = ['necklace', 'earring', 'bracer', 'ring'];
  * same stone and plating as this product (e.g. the mother-of-pearl necklace for
  * the mother-of-pearl ring).
  */
-function pickSet(products, facet, lang) {
+function pickSet(products, facet, lang, colors = []) {
+  const colorSlugs = (p) => (p.insertion_colors || []).map((c) => c.slug).sort().join('+');
+  const ownColors = colors.map((c) => c.slug).sort().join('+');
   const score = (p) => {
     const f = getVariantFacet(p.title, lang, p);
-    return (f.stone && f.stone === facet.stone ? 2 : 0) + (f.gilded === facet.gilded ? 1 : 0);
+    return (f.stone && f.stone === facet.stone ? 4 : 0)
+      + (ownColors && colorSlugs(p) === ownColors ? 2 : 0)
+      + (f.gilded === facet.gilded ? 1 : 0);
   };
   const picked = [];
   for (const key of SET_ORDER) {
@@ -90,7 +94,7 @@ export default async function ProductPageNew({ item = {}, productSizes, t, lang 
     limit: 4,
   });
   const facet = getVariantFacet(`${model.title} ${item.title || ''}`, locale, item);
-  const setProducts = pickSet(family.set, facet, locale);
+  const setProducts = pickSet(family.set, facet, locale, item.insertion_colors);
   const setMatchesStone = Boolean(facet.stone) && setProducts.every((p) => getVariantFacet(p.title, locale, p).stone === facet.stone);
   const [setCards, relatedCards] = await Promise.all([toCards(setProducts, locale), toCards(related, locale)]);
   const setKicker = [copy.setKicker(model.collection?.name), setMatchesStone ? getVariantFacet(item.title, locale, item).label.split(' · ')[0].toLowerCase() : null]

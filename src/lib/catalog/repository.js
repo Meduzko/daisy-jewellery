@@ -77,6 +77,7 @@ function selectProduct(db, qb) {
     // (productFamily.getVariantFacet), which also need them for sibling cards
     attributeJson(db, 'insertion', 'insertions'),
     attributeJson(db, 'coating', 'coatings'),
+    attributeJson(db, 'insertion_color', 'insertion_colors'),
     db.raw(`ARRAY(SELECT co.code FROM collection_products cp
                   JOIN collections co ON co.id = cp.collection_id AND co.is_active
                   WHERE cp.product_id = p.id ORDER BY co.sort_order, co.id) AS collection_codes`)
