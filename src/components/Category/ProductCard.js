@@ -10,7 +10,6 @@ import { formatPrice, getCategoryCopy } from './copy';
 import { BagIcon } from './icons';
 import styles from './ProductCard.module.css';
 
-const RING_CATEGORY_ID = process.env.NEXT_PUBLIC_RING_CATEGORY_ID || '19752BCE-1FE4-4941-B53C-9A42DF10888B';
 const MAX_QUICK_SIZES = 6;
 
 /**
@@ -29,7 +28,7 @@ export default function ProductCard({ card, lang, showSizes, priority = false })
     if (!showSizes || sizes || loadingSizes.current || !card.sku) return;
     loadingSizes.current = true;
     try {
-      const result = await getProductSizes(card.sku, RING_CATEGORY_ID);
+      const result = await getProductSizes(card.sku);
       setSizes(Array.isArray(result) ? result : []);
     } catch {
       setSizes([]);

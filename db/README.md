@@ -90,23 +90,9 @@ Options: `--dir=<folder>` (default `db/products_csv/`), `--env=test`. Refuses `N
 - Source: one CSV per category (`Товари-<каблучки|сережки|кольє|браслети>-…csv`, `;`-separated): required `Код`, `Назва`, `Зображ.`, `Артикул`, `Веб`, `Створення`; optional `Роздрібна`, `#вставка`, `#виробник`, `#постачальник`, `#довжина`, `#розмір`, `#бейдж`, `Примітка`.
 - Mapping: `Код` → `products.legacy_code` (match key); `Назва` → `product_translations` (uk) title, slug = transliterated title + `-<code>`; `Артикул` → `article` (trimmed); `Зображ.` → `product_images`; `Створення` (Kyiv time) → `source_created_at`; `Веб = Так` → status `active` on first insert; `Роздрібна` → `price`; `#бейдж` `знижка/N` → `sale_price` = price − N %, `новинка` / `популярне` → collections `new` / `popular`; `#вставка` / `#виробник` → attribute values `insertion` / `manufacturer` (uk text as in source); `#постачальник` → `suppliers` (exact name match, case-insensitive — similar spellings are not merged); `#довжина` (else `#розмір`) → the default variant's `size_label`, plus numeric `size` when it is a single number (`16см`, `16,5см`). One default variant per product.
 - Reference data created if missing: locales `uk`/`ru`, 4 categories (+ uk/ru names and current URL prefixes), filter attributes (insertion, metal, coating, color, manufacturer).
-- Not in the CSV, left empty: DNTrade GUID, Russian texts (storefront falls back to Ukrainian via `product_i18n`), weight/stock/cost price, metal/coating/color values.
+- Not in the CSV, left empty: Russian texts (storefront falls back to Ukrainian via `product_i18n`), weight/stock/cost price, metal/coating/color values.
 - Idempotent: one transaction, a savepoint per row. Existing rows are never deleted and non-empty values are never overwritten — only empty fields are filled; differing values are listed as `conflicts` in the report. Images/variants are added only to products that have none.
 - Invalid rows (no/invalid code, no title, bad date, duplicate code, unknown category file) are skipped and listed in the report.
-
-## Completing the catalog from the DNTrade API
-
-Run after the CSV import. Fills what the CSV export lacks; same never-overwrite policy.
-
-```bash
-npm run db:import:dntrade -- --dry-run          # live DNTrade API (API_ROOT_URI, API_KEY, *_CATEGORY_ID)
-npm run db:import:dntrade                       # report in db/import/reports/dntrade-api-*.json
-npm run db:import:dntrade -- --file=dump.json   # or a saved snapshot: {"products":[…]} of API product objects
-```
-
-- Cards (`website_synch = 1`), matched by `code` → `products.legacy_code` (never created here): `legacy_id` (DNTrade GUID — orders are still uploaded to DNTrade by it), `price` if empty, uk `short_description` / `description` if empty, missing image URLs appended after the existing ones.
-- Ring pieces (`website_synch = 0`, ring category) → `product_variants` of the ring card with the same article (trimmed, case-insensitive; lowest code wins when several cards share it — listed as `ambiguous`): `size_label`/`size` from «розмір», `weight_g` from the title (`…2,40г`), `stock_qty` = balance (negative → 0, listed), `legacy_id`/`legacy_code`, barcode. A piece with several sizes gets one variant per size (`<GUID>#<size>`). Pieces whose article matches no ring are listed as `orphans`.
-- Never imported: purchase prices, suppliers, store ids.
 
 ## Russian product texts
 
@@ -132,7 +118,7 @@ Checked 2026-11-12 against the live site: all sheet prices match. The site's dis
 
 ```bash
 # new database
-npm run db:migrate && npm run db:import:products && npm run db:import:dntrade && npm run db:import:ru
+npm run db:migrate && npm run db:import:products && npm run db:import:ru
 # existing database (migrated before 2026-11-12)
 npm run db:patch:specs                    # adds products.avg_weight_g + attribute definitions (idempotent)
 npm run db:import:content -- --dry-run    # preview, rolled back
@@ -195,8 +181,7 @@ called with `--allow-production`, which only this command passes.
 
 ## Storefront catalog (PostgreSQL)
 
-- Source switch: `CATALOG_SOURCE=postgres` (default) or `dntrade` (rollback; the old DNTrade API code path is unchanged). Restart/rebuild after changing it.
-- Data layer: `src/lib/catalog/repository.js` (Knex queries: listing with category / collection / attribute / price / stock / size filters, sorting, pagination, search, product by code, sizes by article, related products, facets, sitemap refs), `mapper.js` (DB row → the product shape the UI already uses; no internal fields), `index.js` (`unstable_cache`, 900 s, tags `catalog` + `products`). Pages use `src/lib/dataCache.js`, which picks the source.
+- Data layer: `src/lib/catalog/repository.js` (Knex queries: listing with category / collection / attribute / price / stock / size filters, sorting, pagination, search, product by code, sizes by article, related products, facets, sitemap refs), `mapper.js` (DB row → the product shape the UI already uses; no internal fields), `index.js` (`unstable_cache`, 900 s, tags `catalog` + `products`). Pages use `src/lib/dataCache.js`.
 - Visible on the storefront: `products.status = 'active'`, active category, `price` set. Price shown = `sale_price ?? price`.
 - Cache purge after DB changes: set `CATALOG_REVALIDATE_SECRET`, then `curl -X POST http://localhost:3000/api/catalog/revalidate -H "Authorization: Bearer <secret>"`. Otherwise changes appear within 900 s.
 - Tests: `npm test` (needs `TEST_DATABASE_URL`; the test database is dropped and re-migrated — its name must contain `test`).

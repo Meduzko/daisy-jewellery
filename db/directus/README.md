@@ -64,7 +64,7 @@ Backups: the `directus` schema is inside the same database, so the existing DB d
 
 ## Editing notes
 
-- **Products**: the Ukrainian text is the fallback for Russian. `legacy_code` is the product URL; `legacy_id` (DNTrade GUID) is needed for an order to reach DNTrade — a product created only in Directus without it can't be fulfilled through the current checkout.
+- **Products**: the Ukrainian text is the fallback for Russian. `legacy_code` is the product code in its URL.
 - **Automation** (PostgreSQL triggers, migration `20261116000003_cms_product_automation.js` — work for Directus, importers and SQL alike):
   - *Код* is generated on create when left blank (`products_code_seq`, from 100000 — above every DNTrade code) and never changes.
   - *Slug* (per language, in «Тексти») is generated from the title when blank: transliteration (uk KMU-2010 / ru) + `-<код>`, `-2`… on a clash. Editing the title keeps the slug; clear the slug to regenerate it.
@@ -92,4 +92,4 @@ Directus 12 is under the *Monospace Sustainable Core License* (MSCL-1.0): free f
 - [ ] Blog: create uk + ru post with cover → `/uk/blog/<slug>` and `/ru/blog/<slug>` render, hreflang links point at each other, post is in `/sitemap.xml`; set to «Чернетка» → 404
 - [ ] Orders list shows orders with items and payments (once orders are written to PostgreSQL — see below)
 - [ ] `docker compose … rm -sf directus && npm run cms:up` → users, settings, posts and files still there
-- [ ] Checkout (LiqPay test), product/category pages, SEO URLs and DNTrade images unchanged
+- [ ] Checkout (LiqPay test), product/category pages, SEO URLs and R2 images unchanged

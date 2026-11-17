@@ -62,8 +62,7 @@ const OrderList = ({
         price,
         image_path,
         product_id,
-        quantity,
-        store_id
+        quantity
       } = item;
       const size = getItemSize(item);
       const baseItem = {
@@ -74,8 +73,7 @@ const OrderList = ({
         price,
         image_path,
         product_id,
-        quantity,
-        store_id
+        quantity
       };
 
       if (size) {

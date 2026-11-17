@@ -37,7 +37,7 @@ TO directus;
 REVOKE UPDATE ON products, categories, category_translations FROM directus;
 -- sale_price is computed from discount_percent by a trigger (migration 20261116000003), so it is
 -- not writable here; legacy_code is generated on insert when left blank.
-GRANT UPDATE (category_id, supplier_id, legacy_id, article, price, discount_percent, avg_weight_g, status, note, updated_at)
+GRANT UPDATE (category_id, supplier_id, article, price, discount_percent, avg_weight_g, status, note, updated_at)
   ON products TO directus;
 GRANT UPDATE (is_active, sort_order, updated_at) ON categories TO directus;
 -- `locale` is included because the Directus translations form sends it with every update.
@@ -47,7 +47,7 @@ REVOKE INSERT, DELETE ON categories FROM directus; -- categories map to hard-cod
 -- product/language a text belongs to: set on insert, fixed afterwards.
 REVOKE UPDATE ON attributes, attribute_values, collections, product_translations FROM directus;
 GRANT UPDATE (is_filterable, sort_order, updated_at) ON attributes TO directus;
-GRANT UPDATE (attribute_id, sort_order, legacy_id, swatch_color, updated_at) ON attribute_values TO directus;
+GRANT UPDATE (attribute_id, sort_order, swatch_color, updated_at) ON attribute_values TO directus;
 GRANT UPDATE (is_active, sort_order, updated_at) ON collections TO directus;
 GRANT UPDATE (locale, title, slug, short_description, description, seo_title, seo_description, updated_at)
   ON product_translations TO directus; -- `locale` is sent by the translations form with every save
@@ -108,11 +108,21 @@ BEGIN
         RAISE EXCEPTION 'Product photo must be JPEG, PNG or WebP (got %)', f.type;
       END IF;
       NEW.r2_key := 'cms/' || f.filename_disk;
-      NEW.url := NULL; -- a replaced DNTrade photo must not come back on PRODUCT_IMAGE_SOURCE=dntrade
+      NEW.url := NULL; -- the old DNTrade URL of a replaced photo is meaningless
       RETURN NEW;
     END $fn$;
     DROP TRIGGER IF EXISTS product_images_directus_file ON product_images;
     CREATE TRIGGER product_images_directus_file BEFORE INSERT OR UPDATE ON product_images
       FOR EACH ROW EXECUTE FUNCTION product_images_directus_file();
+  END IF;
+END $$;
+
+-- DNTrade id columns dropped by migration 20261117000002: forget their Directus field metadata.
+DO $$
+BEGIN
+  IF to_regclass('directus.directus_fields') IS NOT NULL THEN
+    DELETE FROM directus.directus_fields
+    WHERE (collection IN ('products', 'product_variants', 'suppliers', 'attribute_values') AND field = 'legacy_id')
+       OR (collection = 'product_variants' AND field = 'legacy_code');
   END IF;
 END $$;

@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import { sendFacebookEvent } from '../../lib/facebookCapi';
 import { getPendingOrder } from '../../lib/pendingOrderStore';
-import { uploadOrderToDntrade } from '../../lib/dntradeOrder';
 import { applyProductDiscount } from '../../helpers/productPricing';
 
 /** LiqPay posts x-www-form-urlencoded. Using querystring/URLSearchParams turns '+' into spaces and breaks base64 in `data`. */
@@ -117,15 +116,6 @@ export default async function handler(req, res) {
           console.log('orderData', { fromStore: Boolean(storedOrder), liqPayInfo: decodedDataInfo });
 
           const paidInfo = { order_id: decodedData.order_id };
-
-          try {
-            await uploadOrderToDntrade({
-              ...orderForFulfillment,
-              paidInfo
-            });
-          } catch (orderErr) {
-            console.error('payment-callback: DNTrade order upload failed', orderErr);
-          }
 
           await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/send-email`, {
             method: 'POST',

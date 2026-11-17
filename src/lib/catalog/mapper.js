@@ -38,21 +38,15 @@ export function buildBadgeTags(row) {
   return items.length ? [{ id: 'badge', title: 'бейдж', items }] : [];
 }
 
-/**
- * @param {object} row  product row joined with product_i18n (see repository.js)
- * @param {{ storeId?: string|null }} [options]
- */
-export function mapProduct(row, { storeId = null } = {}) {
+/** @param {object} row  product row joined with product_i18n (see repository.js) */
+export function mapProduct(row) {
   if (!row) return null;
-  const images = Array.isArray(row.images)
-    ? row.images.map((url, i) => productImageUrl(url, row.image_keys?.[i])).filter(Boolean)
-    : [];
+  const images = Array.isArray(row.image_keys) ? row.image_keys.map(productImageUrl).filter(Boolean) : [];
   const category = CATEGORY_KEY_BY_DB_CODE[row.category_code] || '';
 
   return {
     id: row.id,
-    // DNTrade GUID when known: orders are still uploaded to DNTrade by product_id.
-    product_id: row.legacy_id || `pg-${row.id}`,
+    product_id: `pg-${row.id}`,
     parent_id: null,
     code: toNumberOrString(row.legacy_code ?? row.id),
     sku: row.article || '',
@@ -76,7 +70,6 @@ export function mapProduct(row, { storeId = null } = {}) {
     coatings: Array.isArray(row.coatings) ? row.coatings : [],
     // Explicit sale price from the DB; productPricing.applyProductDiscount() prefers it.
     catalogSalePrice: row.sale_price == null ? null : String(row.sale_price),
-    store_id: storeId || null,
     category,
     tags: buildBadgeTags(row),
     collections: row.collection_codes || [],

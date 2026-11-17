@@ -66,21 +66,17 @@ test('planMappings maps only verified, unambiguous rows and never reorders', () 
   assert.equal(planMappings({ objects, manifest, products, rows: applied }).changes.length, 0);
 });
 
-test('productImageUrl uses R2 only when the flag is on and the key is known', () => {
+test('productImageUrl builds the R2 URL from the key', () => {
   const env = { ...process.env };
   try {
     process.env.NEXT_PUBLIC_IMAGE_BASE_URL = 'https://images.daisy-jewellery.com.ua/';
-    process.env.PRODUCT_IMAGE_SOURCE = 'dntrade';
-    assert.equal(productImageUrl(U('a'), '1_1/00_a.jpg'), U('a'));
-    // Directus upload: no DNTrade URL, so R2 even on the dntrade flag
-    assert.equal(productImageUrl(null, 'cms/abc.webp'), 'https://images.daisy-jewellery.com.ua/cms/abc.webp');
-    process.env.PRODUCT_IMAGE_SOURCE = 'r2';
-    assert.equal(productImageUrl(U('a'), null), U('a'));
-    assert.equal(productImageUrl(U('a'), '1_8829/00_508-нефрит Б+1.jpg'),
+    assert.equal(productImageUrl('cms/abc.webp'), 'https://images.daisy-jewellery.com.ua/cms/abc.webp');
+    assert.equal(productImageUrl(null), null);
+    assert.equal(productImageUrl('1_8829/00_508-нефрит Б+1.jpg'),
       'https://images.daisy-jewellery.com.ua/1_8829/00_508-%D0%BD%D0%B5%D1%84%D1%80%D0%B8%D1%82%20%D0%91%2B1.jpg');
 
-    const p = mapProduct({ id: 1, legacy_code: '1', category_code: 'rings', images: [U('a'), U('b'), null], image_keys: ['1_1/00_a.jpg', null, 'cms/c.png'] });
-    assert.deepEqual(p.images, ['https://images.daisy-jewellery.com.ua/1_1/00_a.jpg', U('b'), 'https://images.daisy-jewellery.com.ua/cms/c.png']);
+    const p = mapProduct({ id: 1, legacy_code: '1', category_code: 'rings', image_keys: ['1_1/00_a.jpg', null, 'cms/c.png'] });
+    assert.deepEqual(p.images, ['https://images.daisy-jewellery.com.ua/1_1/00_a.jpg', 'https://images.daisy-jewellery.com.ua/cms/c.png']);
     assert.equal(p.image_path, p.images[0]);
   } finally {
     process.env = env;

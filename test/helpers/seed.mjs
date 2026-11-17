@@ -31,7 +31,7 @@ export async function seedCatalog(db) {
   const ids = {};
   for (const [code, category, article, price, sale, status, uk, ru, created] of rows) {
     const [{ id }] = await db('products').insert({
-      category_id: cat[category], supplier_id: supplierId, legacy_code: code, legacy_id: code === '100' ? 'GUID-100' : null,
+      category_id: cat[category], supplier_id: supplierId, legacy_code: code,
       article, price, sale_price: sale, status, source_created_at: created,
     }).returning('id');
     ids[code] = id;
@@ -40,8 +40,8 @@ export async function seedCatalog(db) {
     });
     if (ru) await db('product_translations').insert({ product_id: id, locale: 'ru', title: ru, slug: `ru-${code}` });
     await db('product_images').insert([
-      { product_id: id, url: `https://cdn.example/${code}-b.jpg`, sort_order: 1 },
-      { product_id: id, url: `https://cdn.example/${code}-a.jpg`, sort_order: 0 },
+      { product_id: id, url: `https://cdn.example/${code}-b.jpg`, r2_key: `${code}-b.jpg`, sort_order: 1 },
+      { product_id: id, url: `https://cdn.example/${code}-a.jpg`, r2_key: `${code}-a.jpg`, sort_order: 0 },
     ]);
   }
 

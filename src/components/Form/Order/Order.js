@@ -177,28 +177,16 @@ const OrderForm = () => {
       const body = JSON.stringify({ ...orderData, paidInfo });
       const headers = { 'Content-Type': 'application/json' };
 
-      const [orderRes, emailRes] = await Promise.all([
-        fetch('/api/order', {
-          method: 'POST',
-          headers,
-          body
-        }),
-        fetch('/api/send-email', {
-          method: 'POST',
-          headers,
-          body
-        })
-      ]);
+      const emailRes = await fetch('/api/send-email', {
+        method: 'POST',
+        headers,
+        body
+      });
 
-      if (orderRes.ok || emailRes.ok) {
+      if (emailRes.ok) {
         handleOrderSuccess();
-        if (!orderRes.ok) {
-          console.error('Failed to create DNTrade order', await orderRes.json().catch(() => ({})));
-        }
-        if (!emailRes.ok) {
-          console.error('Failed to send order email', await emailRes.json().catch(() => ({})));
-        }
       } else {
+        console.error('Failed to send order email', await emailRes.json().catch(() => ({})));
         setStatusMessage('Не вдалося оформити замовлення. Спробуйте ще раз.');
       }
     } catch (error) {

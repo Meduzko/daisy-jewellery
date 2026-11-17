@@ -4,6 +4,8 @@ import { createTestDb, resetSchema } from '../helpers/db.mjs';
 import { seedCatalog } from '../helpers/seed.mjs';
 import * as repo from '../../src/lib/catalog/repository.js';
 
+process.env.NEXT_PUBLIC_IMAGE_BASE_URL = 'https://images.example';
+
 let db;
 let seed;
 
@@ -119,8 +121,8 @@ describe('product detail', () => {
 
   test('images are ordered, variants are public-only', async () => {
     const p = await repo.getProductByCode(db, { code: '100' });
-    assert.equal(p.image_path, 'https://cdn.example/100-a.jpg');
-    assert.deepEqual(p.images, ['https://cdn.example/100-a.jpg', 'https://cdn.example/100-b.jpg']);
+    assert.equal(p.image_path, 'https://images.example/100-a.jpg');
+    assert.deepEqual(p.images, ['https://images.example/100-a.jpg', 'https://images.example/100-b.jpg']);
     assert.equal(p.variants.length, 3);
     for (const v of p.variants) {
       assert.deepEqual(Object.keys(v).sort(), ['id', 'in_stock', 'price', 'size', 'size_label', 'weight_g']);
@@ -128,19 +130,17 @@ describe('product detail', () => {
     assert.deepEqual(p.variants.map((v) => v.in_stock), [true, true, false]); // 16.5 (untracked), 17 (1), 17.5 (0)
   });
 
-  test('photos uploaded in Directus (R2 only) keep their gallery position', async () => {
-    const env = { ...process.env };
-    process.env.NEXT_PUBLIC_IMAGE_BASE_URL = 'https://images.example';
-    process.env.PRODUCT_IMAGE_SOURCE = 'dntrade';
-    const [row] = await db('product_images')
-      .insert({ product_id: seed.ids['100'], url: null, r2_key: 'cms/0f0e.webp', sort_order: -1 }).returning('id');
+  test('photos uploaded in Directus keep their gallery position; photos without an R2 key are not shown', async () => {
+    const rows = await db('product_images').insert([
+      { product_id: seed.ids['100'], url: null, r2_key: 'cms/0f0e.webp', sort_order: -1 },
+      { product_id: seed.ids['100'], url: 'https://cdn.example/100-old.jpg', r2_key: null, sort_order: 5 },
+    ]).returning('id');
     try {
       const p = await repo.getProductByCode(db, { code: '100' });
-      assert.deepEqual(p.images, ['https://images.example/cms/0f0e.webp', 'https://cdn.example/100-a.jpg', 'https://cdn.example/100-b.jpg']);
+      assert.deepEqual(p.images, ['https://images.example/cms/0f0e.webp', 'https://images.example/100-a.jpg', 'https://images.example/100-b.jpg']);
       await assert.rejects(db('product_images').insert({ product_id: seed.ids['100'], sort_order: 9 }), /product_images_source_check/);
     } finally {
-      await db('product_images').where({ id: row.id }).del();
-      process.env = env;
+      await db('product_images').whereIn('id', rows.map((r) => r.id)).del();
     }
   });
 

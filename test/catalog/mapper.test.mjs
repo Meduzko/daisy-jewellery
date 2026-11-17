@@ -2,27 +2,25 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { mapProduct, mapVariant, buildBadgeTags, salePercent } from '../../src/lib/catalog/mapper.js';
 import { applyProductDiscount, getDisplayPrices, getLinePrices } from '../../src/helpers/productPricing.js';
-import { getCatalogSource } from '../../src/lib/catalog/source.js';
 import { toCategoryKey, toCategoryDbCode } from '../../src/lib/catalog/categories.js';
 
 const row = (over = {}) => ({
-  id: 7, legacy_id: null, legacy_code: '7723', article: '0647.10 р', price: '4200.00', sale_price: '3780.00',
+  id: 7, legacy_code: '7723', article: '0647.10 р', price: '4200.00', sale_price: '3780.00',
   category_code: 'bracelets', locale: 'uk', title: 'Браслет', slug: 'braslet-7723', short_description: null,
-  description: null, is_fallback: false, images: ['a.jpg', 'b.jpg'], collection_codes: ['popular'], ...over,
+  description: null, is_fallback: false, image_keys: ['7_1/a.jpg', 'b.jpg'], collection_codes: ['popular'], ...over,
 });
 
-test('maps to the DNTrade-compatible storefront shape', () => {
-  const p = mapProduct(row(), { storeId: 'store-1' });
+test('maps to the storefront product shape', () => {
+  process.env.NEXT_PUBLIC_IMAGE_BASE_URL = 'https://images.example';
+  const p = mapProduct(row());
   assert.equal(p.code, 7723);
   assert.equal(p.product_id, 'pg-7');
   assert.equal(p.sku, '0647.10 р');
   assert.equal(p.category, 'bracer');
-  assert.equal(p.image_path, 'a.jpg');
+  assert.equal(p.image_path, 'https://images.example/7_1/a.jpg');
   assert.equal(p.short_description, ''); // never null: ProductPage calls .replace() on it
-  assert.equal(p.store_id, 'store-1');
   assert.equal(p.price, '4200.00');
-  assert.equal(mapProduct(row({ legacy_id: 'GUID' })).product_id, 'GUID');
-  assert.equal(mapProduct(row({ images: [] })).image_path, null);
+  assert.equal(mapProduct(row({ image_keys: [] })).image_path, null);
   assert.equal(mapProduct(null), null);
 });
 
@@ -56,14 +54,8 @@ test('badges: sale percent and collections', () => {
 });
 
 test('variants expose public fields only', () => {
-  const v = mapVariant({ id: 1, size: '17.50', size_label: '17,5', weight_g: '2.400', price: null, stock_qty: 0, cost_price: '1', legacy_id: 'x' });
+  const v = mapVariant({ id: 1, size: '17.50', size_label: '17,5', weight_g: '2.400', price: null, stock_qty: 0, cost_price: '1' });
   assert.deepEqual(v, { id: 1, size: 17.5, size_label: '17,5', weight_g: 2.4, price: null, in_stock: false });
-});
-
-test('catalog source flag defaults to postgres, dntrade for rollback', () => {
-  assert.equal(getCatalogSource({}), 'postgres');
-  assert.equal(getCatalogSource({ CATALOG_SOURCE: 'DNTrade ' }), 'dntrade');
-  assert.equal(getCatalogSource({ CATALOG_SOURCE: 'something' }), 'postgres');
 });
 
 test('category key mapping', () => {

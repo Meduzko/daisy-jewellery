@@ -5,23 +5,11 @@ import * as repo from './repository.js';
 import { CATALOG_CACHE_TAGS, CATALOG_REVALIDATE_SECONDS } from './tags.js';
 
 // Server-side catalog API backed by PostgreSQL, for Server Components, Route
-// Handlers and API routes. Results are cached with unstable_cache (same 900 s
-// window the DNTrade cache used) and tagged so they can be purged on demand:
+// Handlers and API routes. Results are cached with unstable_cache (900 s)
+// and tagged so they can be purged on demand:
 //   POST /api/catalog/revalidate  (see src/app/api/catalog/revalidate/route.js)
 
 export { CATALOG_CACHE_TAGS, CATALOG_REVALIDATE_SECONDS };
-
-// DNTrade store id, still needed by the DNTrade order upload (src/lib/dntradeOrder.js)
-// while orders keep going to DNTrade. Optional; not a secret.
-let warnedStoreId = false;
-const storeId = () => {
-  const id = process.env.DNTRADE_STORE_ID || null;
-  if (!id && !warnedStoreId) {
-    warnedStoreId = true;
-    console.warn('[catalog] DNTRADE_STORE_ID is not set: cart items have no store_id and DNTrade may reject order uploads.');
-  }
-  return id;
-};
 
 const cached = (name, fn) =>
   unstable_cache(fn, ['catalog', name], {
@@ -30,19 +18,19 @@ const cached = (name, fn) =>
   });
 
 export const listCatalogProducts = cached('list', (options = {}) =>
-  repo.listProducts(getDb(), { ...options, storeId: storeId() })
+  repo.listProducts(getDb(), options)
 );
 
 export const getAllCatalogProducts = cached('all', (category, locale = 'uk') =>
-  repo.listAllProducts(getDb(), { category, locale, storeId: storeId() })
+  repo.listAllProducts(getDb(), { category, locale })
 );
 
 export const getCatalogProduct = cached('by-code', (category, code, locale = 'uk') =>
-  repo.getProductByCode(getDb(), { category, code, locale, storeId: storeId() })
+  repo.getProductByCode(getDb(), { category, code, locale })
 );
 
 export const getCatalogProductsByCodes = cached('by-codes', (codes, locale = 'uk') =>
-  repo.getProductsByCodes(getDb(), { codes, locale, storeId: storeId() })
+  repo.getProductsByCodes(getDb(), { codes, locale })
 );
 
 export const getCatalogSizes = cached('sizes', (article, category = 'ring') =>
@@ -50,11 +38,11 @@ export const getCatalogSizes = cached('sizes', (article, category = 'ring') =>
 );
 
 export const getRelatedCatalogProducts = cached('related', (productId, locale = 'uk', limit = 8) =>
-  repo.getRelatedProducts(getDb(), { productId, locale, limit, storeId: storeId() })
+  repo.getRelatedProducts(getDb(), { productId, locale, limit })
 );
 
 export const getCatalogProductFamily = cached('family', (productId, locale = 'uk') =>
-  repo.getProductFamily(getDb(), { productId, locale, storeId: storeId() })
+  repo.getProductFamily(getDb(), { productId, locale })
 );
 
 export const getCatalogFacets =cached('facets', (category, locale = 'uk', collection = null) =>
@@ -76,7 +64,7 @@ export const countCatalogProducts = cached('count', (category) =>
 /** Search is per-query and cheap; cached briefly to absorb typing bursts. */
 export const searchCatalog = unstable_cache(
   (q, { limit = 20, offset = 0, locale = 'uk' } = {}) =>
-    repo.listProducts(getDb(), { q, limit, offset, locale, storeId: storeId() }),
+    repo.listProducts(getDb(), { q, limit, offset, locale }),
   ['catalog', 'search'],
   { revalidate: 60, tags: CATALOG_CACHE_TAGS }
 );

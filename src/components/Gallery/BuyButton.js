@@ -16,7 +16,6 @@ export default function BuyButton({ item, showSizes, lang, variant = 'button', c
   const buyButtonLabel = lang === 'ru' ? 'Купить' : 'Купити';
   const cancelLabel = lang === 'ru' ? 'Отмена' : 'Скасувати';
   const confirmLabel = lang === 'ru' ? 'Добавить в корзину' : 'Додати до кошика';
-  const RING_CATEGORY_ID = process.env.NEXT_PUBLIC_RING_CATEGORY_ID || '19752BCE-1FE4-4941-B53C-9A42DF10888B';
   const { addToCart, setCartOpen } = useContext(CartContext);
   const [open, setOpen] = useState(false);
   const [sizes, setSizes] = useState([]);
@@ -25,7 +24,7 @@ export default function BuyButton({ item, showSizes, lang, variant = 'button', c
 
   const getSizes = async () => {
     try {
-      const sizes = await getProductSizes(item.sku, RING_CATEGORY_ID);
+      const sizes = await getProductSizes(item.sku);
       if (!sizes || sizes.length === 0) {
         console.warn('No sizes found for this product.');
         return;

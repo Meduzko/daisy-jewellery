@@ -243,13 +243,6 @@ export const generateCategoryMetadata = ({
   };
 }
 
-export const categoryMap = {
-  ring: process.env.RING_CATEGORY_ID,
-  necklace: process.env.NECKLACE_CATEGORY_ID,
-  earring: process.env.EARING_CATEGORY_ID,
-  bracer: process.env.BRACER_CATEGORY_ID
-};
-
 /**
  * Metadata of a static page that exists at /uk/{pagePath} and /ru/{pagePath}.
  * Icons, manifest, robots and the twitter card come from the [lang] layout.

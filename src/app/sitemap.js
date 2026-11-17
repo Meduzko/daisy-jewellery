@@ -1,7 +1,5 @@
-import { fetchProduct } from '../actions/fetchProduct';
 import { getAllHtmlPosts } from '../lib/posts';
 import { getDbPosts } from '../lib/blog';
-import { getCatalogSource } from '../lib/catalog/source';
 import { PRODUCT_URL_SLUGS, CATEGORY_SLUGS, absoluteUrl, buildAlternates, localizeSegment } from '../helpers/seo';
 
 // Regenerate sitemap every 24 hours to pick up new products
@@ -9,48 +7,16 @@ export const revalidate = 86400;
 
 const CATEGORY_TYPES = ['ring', 'earring', 'necklace', 'bracer'];
 
-async function fetchAllByCategory(categoryId, categoryName, pageLimit = 100, categoryKey) {
-  if (getCatalogSource() === 'postgres') {
-    try {
-      const { getCatalogProductRefs } = await import('../lib/catalog');
-      const refs = await getCatalogProductRefs(categoryKey);
-      console.log(`[Sitemap] Loaded ${refs.length} products for ${categoryName} from PostgreSQL`);
-      return refs;
-    } catch (error) {
-      console.error(`[Sitemap] Error loading ${categoryName} from PostgreSQL:`, error.message);
-      return [];
-    }
-  }
-
-  if (!categoryId) {
-    console.warn(`[Sitemap] Missing category ID for ${categoryName}`);
+async function fetchAllByCategory(categoryName, categoryKey) {
+  try {
+    const { getCatalogProductRefs } = await import('../lib/catalog');
+    const refs = await getCatalogProductRefs(categoryKey);
+    console.log(`[Sitemap] Loaded ${refs.length} products for ${categoryName}`);
+    return refs;
+  } catch (error) {
+    console.error(`[Sitemap] Error loading ${categoryName}:`, error.message);
     return [];
   }
-
-  const allProducts = [];
-  let offset = 0;
-  let hasMore = true;
-  let attempts = 0;
-  const maxAttempts = 3;
-
-  while (hasMore && attempts < maxAttempts) {
-    try {
-      const page = await fetchProduct({ categoryId, limit: pageLimit, offset, paginated: true });
-      const products = page?.products || [];
-      allProducts.push(...products);
-      hasMore = Boolean(page?.hasMore) && products.length > 0;
-      offset += pageLimit;
-      attempts = 0; // Reset on success
-    } catch (error) {
-      attempts++;
-      console.error(`[Sitemap] Error fetching ${categoryName} (attempt ${attempts}):`, error.message);
-      if (attempts >= maxAttempts) break;
-      await new Promise((r) => setTimeout(r, 1000 * attempts));
-    }
-  }
-
-  console.log(`[Sitemap] Fetched ${allProducts.length} products for ${categoryName}`);
-  return allProducts;
 }
 
 /**
@@ -76,10 +42,10 @@ const postDate = (date) => {
 
 export default async function sitemap() {
   const productsByCategory = await Promise.all([
-    fetchAllByCategory(process.env.RING_CATEGORY_ID, 'rings', 100, 'ring'),
-    fetchAllByCategory(process.env.EARING_CATEGORY_ID, 'earrings', 100, 'earring'),
-    fetchAllByCategory(process.env.NECKLACE_CATEGORY_ID, 'necklaces', 100, 'necklace'),
-    fetchAllByCategory(process.env.BRACER_CATEGORY_ID, 'bracelets', 100, 'bracer'),
+    fetchAllByCategory('rings', 'ring'),
+    fetchAllByCategory('earrings', 'earring'),
+    fetchAllByCategory('necklaces', 'necklace'),
+    fetchAllByCategory('bracelets', 'bracer'),
   ]);
 
   // oferta (the public contract) exists in Ukrainian only.

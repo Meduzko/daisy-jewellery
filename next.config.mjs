@@ -8,11 +8,6 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn.dntrade.com.ua',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
         hostname: 'images.daisy-jewellery.com.ua',
         pathname: '/**',
       },

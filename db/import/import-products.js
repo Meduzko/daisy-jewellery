@@ -73,7 +73,7 @@ const ATTRIBUTE_COLUMNS = { manufacturer: 'manufacturer' }; // raw single value:
 const SPEC_COLUMNS = ['insertion', 'insertion_color', 'metal', 'coating', 'clasp'];
 // Target fields with no source column in this export (reported, never invented).
 const NOT_IN_SOURCE = [
-  'products.legacy_id', 'product_translations(ru)', 'product_translations.short_description',
+  'product_translations(ru)', 'product_translations.short_description',
   'product_variants.weight_g/stock_qty/cost_price', 'attribute_values(color)',
 ];
 const { cleanText, parseWeight, normSizeLabel, parseValues } = require('./lib/catalog-values');

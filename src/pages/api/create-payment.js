@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import { savePendingOrder } from '../../lib/pendingOrderStore';
 import { getDb } from '../../lib/db';
 import { quoteCart } from '../../lib/catalog/repository';
-import { isPostgresCatalog } from '../../lib/catalog/source';
 
 /**
  * LiqPay: amount, currency, description, order_id, urls, payer email/phone go in signed `params`.
@@ -34,17 +33,14 @@ export default async function handler(req, res) {
       }
 
       // The amount is charged as the server prices it (sale price from PostgreSQL), never as sent.
-      let chargedAmount = Number(amount).toFixed(2);
-      if (isPostgresCatalog()) {
-        const total = await quoteCart(getDb(), cartItems);
-        if (total == null) {
-          return res.status(400).json({ message: 'Unknown product in cart', error: 'Товар у кошику недоступний — оновіть кошик' });
-        }
-        if (Math.abs(total - Number(amount)) >= 0.01) {
-          return res.status(409).json({ message: 'Cart total changed', error: 'Ціни змінилися — оновіть сторінку кошика', total });
-        }
-        chargedAmount = total.toFixed(2);
+      const total = await quoteCart(getDb(), cartItems);
+      if (total == null) {
+        return res.status(400).json({ message: 'Unknown product in cart', error: 'Товар у кошику недоступний — оновіть кошик' });
       }
+      if (Math.abs(total - Number(amount)) >= 0.01) {
+        return res.status(409).json({ message: 'Cart total changed', error: 'Ціни змінилися — оновіть сторінку кошика', total });
+      }
+      const chargedAmount = total.toFixed(2);
 
       const orderId = Math.floor(100000 + Math.random() * 900000);
       await savePendingOrder(orderId, orderData);

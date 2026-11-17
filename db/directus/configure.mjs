@@ -203,7 +203,6 @@ const PRODUCT_FORM = [
   ['group_more', ...group('Додатково', 'closed')],
   ['collections', 'Колекції (новинки, популярне…)', { special: ['m2m'], interface: 'list-m2m', options: { template: '{{collection_id.code}}', enableCreate: false } }],
   ['supplier_id', 'Постачальник', { ...m2o('{{name}}'), width: 'half' }],
-  ['legacy_id', 'DNTrade GUID', { width: 'half', note: 'Потрібен, щоб замовлення товару передавалось у DNTrade', ...DB_LOCKED }],
   ['note', 'Примітка (внутрішня)', { interface: 'input-multiline' }],
   ['source_created_at', 'Створено в DNTrade', TS],
   ['updated_at', 'Оновлено', { ...TS, special: ['date-updated'] }],
@@ -247,7 +246,7 @@ await fields('product_variants', [
   ['product_id', 'Товар', { ...m2o('{{legacy_code}} · {{article}}'), hidden: true }],
   ['size_id', 'Розмір', m2o('{{label}}')],
   ...[['size_label', 'Розмір (як на сайті)'], ['size', 'Розмір (число)'], ['weight_g', 'Вага, г'], ['price', 'Ціна (якщо інша)'],
-    ['cost_price', 'Закупівельна ціна'], ['stock_qty', 'Залишок'], ['legacy_id', 'DNTrade GUID'], ['legacy_code', 'DNTrade код'],
+    ['cost_price', 'Закупівельна ціна'], ['stock_qty', 'Залишок'],
     ['barcode', 'Штрихкод'], ['created_at', 'Створено'], ['updated_at', 'Оновлено']].map(([f, l]) => [f, l, { hidden: true }]),
 ]);
 await fields('sizes', [
@@ -270,7 +269,7 @@ await fields('product_images', [
 ]);
 await fields('suppliers', [
   ['id', 'ID', { hidden: true }], ['name', 'Назва', { required: true }], ['contact', 'Контакт', { interface: 'input-multiline' }],
-  ['legacy_id', 'DNTrade id', RO], ['created_at', 'Створено', { ...TS, hidden: true }],
+  ['created_at', 'Створено', { ...TS, hidden: true }],
   ['updated_at', 'Оновлено', { ...TS, hidden: true, special: ['date-updated'] }],
 ]);
 await fields('attributes', [
@@ -284,7 +283,7 @@ await fields('attribute_values', [
   ['slug', 'Slug (у URL фільтра)', { ...DB_LOCKED, note: 'Латиницею, напр. fianit' }], ['sort_order', 'Порядок', {}],
   ['swatch_color', 'Колір кружечка', { interface: 'select-color', display: 'color', width: 'half',
     note: 'Для «Вставки»: колір кружечка варіанта на сторінці товару. Порожньо — колір каменя з назви або вільний колір із палітри' }],
-  ['legacy_id', 'DNTrade id', RO], ['created_at', 'Створено', { ...TS, hidden: true }],
+  ['created_at', 'Створено', { ...TS, hidden: true }],
   ['updated_at', 'Оновлено', { ...TS, hidden: true, special: ['date-updated'] }],
 ]);
 await fields('collections', [

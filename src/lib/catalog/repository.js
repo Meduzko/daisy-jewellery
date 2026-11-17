@@ -60,14 +60,12 @@ const attributeJson = (db, code, alias) => db.raw(
 
 function selectProduct(db, qb) {
   return qb.select(
-    'p.id', 'p.legacy_id', 'p.legacy_code', 'p.article', 'p.price', 'p.sale_price', 'p.avg_weight_g',
+    'p.id', 'p.legacy_code', 'p.article', 'p.price', 'p.sale_price', 'p.avg_weight_g',
     'p.source_created_at', 'p.updated_at', 'c.code as category_code',
     'i.locale', 'i.title', 'i.slug', 'i.short_description', 'i.description',
     'i.seo_title', 'i.seo_description', 'i.is_fallback',
-    db.raw(`ARRAY(SELECT pi.url FROM product_images pi WHERE pi.product_id = p.id
-                  ORDER BY pi.sort_order, pi.id) AS images`),
-    // same order as `images`; mapper.js picks R2 or DNTrade per image
-    db.raw(`ARRAY(SELECT pi.r2_key FROM product_images pi WHERE pi.product_id = p.id
+    // R2 keys; mapper.js turns them into URLs
+    db.raw(`ARRAY(SELECT pi.r2_key FROM product_images pi WHERE pi.product_id = p.id AND pi.r2_key IS NOT NULL
                   ORDER BY pi.sort_order, pi.id) AS image_keys`),
     // uk insertion / coating values: keywords for the card descriptor (cardModel.getDescriptor)
     db.raw(`ARRAY(SELECT t.value FROM product_attribute_values pav
@@ -187,7 +185,7 @@ export async function listProducts(db, options = {}) {
 
   const count = Number(total);
   return {
-    products: rows.map((r) => mapProduct(r, options)),
+    products: rows.map((r) => mapProduct(r)),
     total: count,
     hasMore: offset + rows.length < count,
     limit,
@@ -196,10 +194,10 @@ export async function listProducts(db, options = {}) {
 }
 
 /** Every visible product of a category (or all), default order. */
-export async function listAllProducts(db, { category, locale, sort, storeId } = {}) {
+export async function listAllProducts(db, { category, locale, sort } = {}) {
   const qb = applySort(db, selectProduct(db, applyFilters(db, baseQuery(db, normalizeLocale(locale)), { category })), sort);
   const rows = await qb;
-  return rows.map((r) => mapProduct(r, { storeId }));
+  return rows.map((r) => mapProduct(r));
 }
 
 export async function countProducts(db, filters = {}) {
@@ -211,13 +209,13 @@ export async function countProducts(db, filters = {}) {
  * One product by its public code (the number in current URLs), optionally
  * restricted to a category so /kabluchki/…/<earring code> stays a 404.
  */
-export async function getProductByCode(db, { code, category, locale, storeId, withVariants = true } = {}) {
+export async function getProductByCode(db, { code, category, locale, withVariants = true } = {}) {
   const value = String(code ?? '').trim();
   if (!/^[0-9A-Za-z-]{1,40}$/.test(value)) return null;
   const qb = applyFilters(db, baseQuery(db, normalizeLocale(locale)), { category });
   const row = await selectProduct(db, qb.where('p.legacy_code', value)).first();
   if (!row) return null;
-  const product = mapProduct(row, { storeId });
+  const product = mapProduct(row);
   if (withVariants) product.variants = await getVariants(db, row.id);
   product.attributes = await getProductAttributes(db, { productId: row.id, locale: row.locale });
   return product;
@@ -242,11 +240,11 @@ export async function getProductAttributes(db, { productId, locale } = {}) {
 }
 
 /** Products by codes, returned in the order of `codes` (missing ones skipped). */
-export async function getProductsByCodes(db, { codes = [], locale, storeId } = {}) {
+export async function getProductsByCodes(db, { codes = [], locale } = {}) {
   const list = codes.map((c) => String(c)).filter(Boolean);
   if (!list.length) return [];
   const rows = await selectProduct(db, applyFilters(db, baseQuery(db, normalizeLocale(locale)), { codes: list }));
-  const byCode = new Map(rows.map((r) => [String(r.legacy_code), mapProduct(r, { storeId })]));
+  const byCode = new Map(rows.map((r) => [String(r.legacy_code), mapProduct(r)]));
   return list.map((c) => byCode.get(c)).filter(Boolean);
 }
 
@@ -285,7 +283,7 @@ export async function getSizesByArticle(db, { article, category = 'ring', inStoc
  * Related products: same category, ranked by shared collections + attribute
  * values, then by closeness of the code (neighbouring models).
  */
-export async function getRelatedProducts(db, { productId, locale, limit = 8, storeId } = {}) {
+export async function getRelatedProducts(db, { productId, locale, limit = 8 } = {}) {
   const base = await db('products').select('id', 'category_id', 'legacy_code').where('id', productId).first();
   if (!base) return [];
   const qb = baseQuery(db, normalizeLocale(locale))
@@ -305,7 +303,7 @@ export async function getRelatedProducts(db, { productId, locale, limit = 8, sto
       [/^\d+$/.test(base.legacy_code || '') ? Number(base.legacy_code) : 0]
     )
     .limit(clampLimit(limit, 8));
-  return rows.map((r) => mapProduct(r, { storeId }));
+  return rows.map((r) => mapProduct(r));
 }
 
 /**
@@ -314,7 +312,7 @@ export async function getRelatedProducts(db, { productId, locale, limit = 8, sto
  * page shows those of the same category as variant swatches and those of other
  * categories as the matching set.
  */
-export async function getProductFamily(db, { productId, locale, storeId, limit = 24 } = {}) {
+export async function getProductFamily(db, { productId, locale, limit = 24 } = {}) {
   const base = await db('products').select('id', 'article').where('id', productId).first();
   const articleBase = getArticleBase(base?.article);
   if (!articleBase) return [];
@@ -325,7 +323,7 @@ export async function getProductFamily(db, { productId, locale, storeId, limit =
   return rows
     .filter((r) => getArticleBase(r.article) === articleBase)
     .slice(0, clampLimit(limit, 24))
-    .map((r) => mapProduct(r, { storeId }));
+    .map((r) => mapProduct(r));
 }
 
 /** Filter options for a listing: attribute values with counts, price range, sizes. */

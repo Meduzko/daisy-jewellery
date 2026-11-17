@@ -49,21 +49,8 @@ export const CartProvider = ({ children }) => {
     sessionStorage.setItem('itemSize', JSON.stringify(itemSize));
   }, [itemSize, loaded]);
 
-  const getProductStoreId = (product) => {
-    if (product?.store_id) {
-      return product.store_id;
-    }
-
-    const prices = product?.prices || product?.pices || [];
-    const retail = prices.find((price) => Number(price.price_id) === 2 && price.store_id);
-    const any = prices.find((price) => price.store_id);
-
-    return retail?.store_id || any?.store_id || null;
-  };
-
   const addToCart = (product, quantity = 1) => {
     const { pices, ...restOfProduct } = applyProductDiscount(product);
-    const store_id = getProductStoreId(product);
 
     setCartItems((prevItems) => {
       const itemExists = prevItems.find(
@@ -72,11 +59,11 @@ export const CartProvider = ({ children }) => {
       if (itemExists) {
         return prevItems.map((item) =>
           item.product_id === product.product_id
-            ? { ...item, quantity: item.quantity + quantity, store_id: item.store_id || store_id }
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       } else {
-        return [...prevItems, { ...restOfProduct, quantity, store_id }];
+        return [...prevItems, { ...restOfProduct, quantity }];
       }
     });
   };
@@ -113,7 +100,7 @@ export const CartProvider = ({ children }) => {
         );
       } else {
         const { pices, ...restOfProduct } = applyProductDiscount(product);
-        return [...prevItems, { ...restOfProduct, quantity, store_id: getProductStoreId(product) }];
+        return [...prevItems, { ...restOfProduct, quantity }];
       }
     });
   };
