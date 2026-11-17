@@ -5,7 +5,7 @@
 import { decode } from 'html-entities';
 import { getDisplayPrices } from '../../helpers/productPricing';
 import { getProductLink } from '../../helpers/getProductLink';
-import { getVariantFacet } from '../../helpers/productFamily';
+import { getVariantFacet, fillSwatchColors } from '../../helpers/productFamily';
 import { isProductAvailable } from '../../helpers/productAvailability';
 import { toCartItem } from '../Category/cardModel';
 import { QUICK, getCategoryConfig, getCategoryUrls } from '../Category/config';
@@ -106,20 +106,18 @@ export function toProductModel(product, { lang, category, sizes = [], t, family 
   if (siblings.length) {
     const seen = new Set([facet.label]);
     swatches = [
-      { href: getProductLink({ ...product, category }, lang), label: facet.label, swatch: facet.swatch, gilded: facet.gilded, byStone: facet.byStone, image: images[0] || null, current: true, code: String(product.code) },
+      { href: getProductLink({ ...product, category }, lang), label: facet.label, swatch: facet.swatch, gilded: facet.gilded, byStone: facet.byStone, current: true, code: String(product.code) },
     ];
     for (const sibling of siblings) {
       const f = getVariantFacet(sibling.title, lang, sibling);
       if (seen.has(f.label)) continue;
       seen.add(f.label);
-      const siblingImages = (sibling.images?.length ? sibling.images : [sibling.image_path]).filter(Boolean);
       swatches.push({
         href: getProductLink({ ...sibling, category }, lang),
         label: f.label,
         swatch: f.swatch,
         gilded: f.gilded,
         byStone: f.byStone,
-        image: siblingImages[0] || null,
         current: false,
         code: String(sibling.code),
         price: Number(getDisplayPrices(sibling).price) || null,
@@ -127,7 +125,7 @@ export function toProductModel(product, { lang, category, sizes = [], t, family 
     }
     // stable order (by code, as in the catalog) so swatches don't jump between pages
     swatches.sort((a, b) => (Number(a.code) || 0) - (Number(b.code) || 0));
-    if (swatches.length < 2) swatches = [];
+    swatches = swatches.length < 2 ? [] : fillSwatchColors(swatches);
   }
   const swatchesByStone = swatches.length > 0 && swatches.every((s) => s.byStone);
 

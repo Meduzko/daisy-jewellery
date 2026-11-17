@@ -39,6 +39,23 @@ export const swatchFromColor = (color) => (HEX_RE.test(color || '')
   ? `radial-gradient(circle at 35% 30%, color-mix(in srgb, ${color}, #fff 30%) 0%, ${color} 70%)`
   : null);
 
+// Dots for variants with no colour of their own (no insertion colour / known stone):
+// muted jewel tones, distinct from the built-in stone colours.
+const FALLBACK_COLORS = ['#B8A07A', '#8C9DB5', '#B58C9D', '#9DB58C', '#A08CB5', '#B5A88C', '#7FA7A3', '#C29A86'];
+
+/**
+ * Gives every swatch without a colour one from FALLBACK_COLORS that no other swatch
+ * of the group uses. Keeps the order of `swatches` (sort them first so a card gets
+ * the same colour on every page of its family).
+ */
+export function fillSwatchColors(swatches) {
+  const used = new Set(swatches.map((s) => s.swatch).filter(Boolean));
+  const free = FALLBACK_COLORS.map(swatchFromColor).filter((c) => !used.has(c));
+  let i = 0;
+  // shortcut: palette repeats past 8 colourless variants in one family; extend the list if that happens
+  return swatches.map((s) => (s.swatch ? s : { ...s, swatch: free[i++ % free.length] }));
+}
+
 /**
  * What distinguishes one card of a family from the others. Catalog attributes set in
  * Directus win: «Вставка» (`product.insertions`, with the dot colour) and «Покриття»

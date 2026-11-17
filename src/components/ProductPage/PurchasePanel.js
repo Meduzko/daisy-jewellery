@@ -180,9 +180,7 @@ export default function PurchasePanel({ model, lang }) {
                     className={`${styles.dot} ${s.gilded ? styles.dotGilded : ''}`}
                     style={s.swatch ? { background: s.swatch } : undefined}
                     aria-hidden="true"
-                  >
-                    {!s.swatch && s.image ? <Image src={s.image} alt="" fill sizes="30px" className={styles.dotImage} /> : null}
-                  </span>
+                  />
                 </Link>
               </li>
             ))}

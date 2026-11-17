@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { getVariantFacet } from '../src/helpers/productFamily.js';
+import { getVariantFacet, fillSwatchColors } from '../src/helpers/productFamily.js';
 
 test('catalog insertion with a colour drives label and swatch', () => {
   const f = getVariantFacet('Каблучка з топазом', 'uk', { insertions: [{ slug: 'topaz', value: 'Топаз', color: '#3FA9D6' }] });
@@ -28,4 +28,12 @@ test('no attributes → title fallback (DNTrade source)', () => {
   assert.equal(f.stone, 'jade');
   assert.equal(f.gilded, true);
   assert.equal(f.label, 'Нефрит · позолота');
+});
+
+test('swatches without a colour get distinct palette colours, not used by the group', () => {
+  const stone = getVariantFacet('Каблучка оникс', 'uk').swatch;
+  const out = fillSwatchColors([{ code: '1', swatch: stone }, { code: '2', swatch: null }, { code: '3', swatch: null }]);
+  assert.equal(out[0].swatch, stone);
+  assert.ok(out[1].swatch && out[2].swatch);
+  assert.equal(new Set(out.map((s) => s.swatch)).size, 3);
 });

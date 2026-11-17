@@ -224,10 +224,6 @@
     box-shadow: 0 0 0 2px #C2A05A;
 }
 
-.dotImage {
-    object-fit: cover;
-}
-
 /* ---- sizes */
 .sizeBlock {
     margin-top: 20px;
