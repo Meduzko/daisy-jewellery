@@ -1,4 +1,4 @@
-import Hero from '../../components/Home/Hero/Hero';
+import HeroSlider from '../../components/Home/HeroSlider/HeroSlider';
 import NewArrivals from '../../components/Home/NewArrivals/NewArrivals';
 import Categories from '../../components/Home/Categories/Categories';
 import CollectionSet from '../../components/Home/CollectionSet/CollectionSet';
@@ -35,7 +35,7 @@ export default async function Home(props) {
   return (
     <>
       <main className="main">
-        <Hero lang={lang} />
+        <HeroSlider lang={lang} />
         <NewArrivals lang={lang} />
         <Categories lang={lang} />
         <CollectionSet lang={lang} />

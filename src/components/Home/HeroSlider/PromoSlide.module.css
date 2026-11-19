@@ -1,0 +1,364 @@
+/* Promo slide of the hero slider — mirrors the original hero (Hero.module.css):
+   mobile-first tall photo with a bottom scrim and ivory copy; from 900px the editorial
+   layout with copy on the #E9EAE5 backdrop and the photo fading in from the right. */
+
+.slide {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: var(--dj-graphite);
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--pos-m, 50% 50%);
+}
+
+.scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: min(500px, 72%);
+  z-index: -1;
+  /* a little denser than the original hero's: the promo photos are light and busy */
+  background: linear-gradient(180deg, rgba(30, 28, 26, 0) 0%, rgba(30, 28, 26, 0.55) 38%, rgba(30, 28, 26, 0.84) 100%);
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  padding: 0 24px 36px;
+  max-width: 600px;
+  color: var(--dj-ivory);
+}
+
+/* Copy settles in when its slide becomes active */
+:global([data-active='true']) > .slide .content {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+}
+
+:global([data-active='false']) > .slide .content {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.3s ease, transform 0s linear 0.9s;
+}
+
+.content .eyebrow {
+  color: var(--dj-beige);
+  margin-bottom: 14px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--dj-serif);
+  font-weight: 300;
+  letter-spacing: -0.015em;
+  font-size: clamp(46px, 14.87vw, 88px);
+  line-height: 0.92;
+  color: var(--dj-ivory);
+}
+
+.title em {
+  font-style: italic;
+}
+
+/* «DAISY JEWELLERY – інтернет-магазин срібних прикрас» */
+.statement .title {
+  font-size: clamp(30px, 8.2vw, 48px);
+  line-height: 1.04;
+  letter-spacing: 0;
+}
+
+.titleBrand {
+  display: block;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.titleTag {
+  display: block;
+  margin-top: 4px;
+  font-weight: 300;
+}
+
+.text {
+  margin: 16px 0 24px;
+  font-family: var(--dj-sans);
+  font-size: 14px;
+  line-height: 22px;
+  color: #EFE9E0;
+  max-width: 420px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  height: 52px;
+  padding: 0 36px;
+  background: var(--dj-ivory);
+  color: var(--dj-graphite);
+  font-family: var(--dj-sans);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.cta:hover {
+  background: #fff;
+}
+
+.secondary {
+  color: var(--dj-ivory);
+}
+
+.cta:focus-visible,
+.secondary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* «Чорна п'ятниця» — dark theme; on mobile the photo sits above the copy instead of under it */
+.dark {
+  background: #141414;
+}
+
+.sale .media {
+  bottom: 34%;
+}
+
+.sale .image {
+  -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+}
+
+.sale .scrim {
+  display: none;
+}
+
+.sale .title {
+  font-size: clamp(40px, 11.5vw, 60px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.sale .title em {
+  display: block;
+}
+
+.highlight {
+  margin: 14px 0 0;
+  font-family: var(--dj-serif);
+  font-weight: 400;
+  font-size: clamp(24px, 6.6vw, 34px);
+  line-height: 1.15;
+  color: var(--dj-ivory);
+}
+
+.sale .text {
+  margin-top: 6px;
+}
+
+@media (min-width: 600px) and (max-width: 899.98px) {
+  .content {
+    padding: 0 40px 48px;
+  }
+
+  .cta {
+    align-self: flex-start;
+  }
+}
+
+/* ---------- Desktop editorial layout ---------- */
+@media (min-width: 900px) {
+  .slide {
+    --copy-w: clamp(340px, 29.167vw, 520px);
+    --copy-x: max(var(--dj-gutter), calc((100% - var(--dj-max)) / 2));
+    background: #E9EAE5;
+    justify-content: center;
+  }
+
+  .statement {
+    --copy-w: clamp(360px, 31vw, 560px);
+  }
+
+  /* Photo panel on the right; its left edge fades into the backdrop behind the copy */
+  .media {
+    left: max(25%, calc(var(--copy-x) + var(--copy-w) - 2vw));
+  }
+
+  .image {
+    object-position: var(--pos-d, 50% 50%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 12%);
+  }
+
+  .scrim {
+    display: none;
+  }
+
+  .content {
+    padding: 0;
+    margin: 0 0 0 var(--copy-x);
+    width: var(--copy-w);
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(28px, 2.778vw, 48px);
+    color: #141414;
+  }
+
+  .content .eyebrow {
+    color: #5B5B57;
+    margin: 0;
+  }
+
+  .title {
+    font-size: clamp(76px, 8.889vw, 150px);
+    line-height: 0.9;
+    color: #141414;
+  }
+
+  .statement .title {
+    font-size: clamp(40px, 3.889vw, 66px);
+    line-height: 1.08;
+  }
+
+  .titleTag {
+    margin-top: 6px;
+  }
+
+  .text {
+    margin: 0;
+    max-width: 380px;
+    font-size: 15px;
+    line-height: 26px;
+    color: #4A4A47;
+  }
+
+  .actions {
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+    margin-top: 8px;
+  }
+
+  .cta {
+    align-self: auto;
+    height: 56px;
+    background: #141414;
+    color: #F3F2EE;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    white-space: nowrap;
+  }
+
+  .cta:hover {
+    background: var(--dj-graphite);
+  }
+
+  .secondary {
+    color: #141414;
+  }
+
+  /* sale layout / dark theme */
+  .sale {
+    --copy-w: clamp(380px, 34vw, 600px);
+  }
+
+  .slide.dark {
+    background: #141414;
+  }
+
+  .sale .media {
+    bottom: 0;
+  }
+
+  .sale .image {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 12%);
+  }
+
+  .sale .title {
+    font-size: clamp(52px, 4.722vw, 84px);
+    line-height: 0.98;
+  }
+
+  .highlight {
+    margin: 0;
+    font-size: clamp(30px, 2.5vw, 44px);
+  }
+
+  .sale .text {
+    margin-top: 0;
+  }
+
+  .dark .content {
+    color: var(--dj-ivory);
+  }
+
+  .dark .content .eyebrow {
+    color: #B9B7B2;
+  }
+
+  .dark .title {
+    color: var(--dj-ivory);
+  }
+
+  .dark .text {
+    color: #CFCBC4;
+  }
+
+  .dark .cta {
+    background: var(--dj-ivory);
+    color: #141414;
+  }
+
+  .dark .cta:hover {
+    background: #fff;
+  }
+
+  .dark .secondary {
+    color: var(--dj-ivory);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global([data-active]) > .slide .content {
+    transform: none;
+    transition: none;
+  }
+}

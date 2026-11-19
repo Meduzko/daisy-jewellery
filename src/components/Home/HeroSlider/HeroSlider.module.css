@@ -1,0 +1,214 @@
+/* Hero slider shell. The height formulas are the original hero's (Hero.module.css),
+   so every slide is exactly the size of the original banner at each breakpoint. */
+
+.root {
+  position: relative;
+  overflow: hidden;
+  background: var(--dj-graphite);
+  height: calc(100svh - var(--dj-header-h, 94px));
+  min-height: 560px;
+  max-height: 1100px;
+  touch-action: pan-y;
+}
+
+.track {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 0;
+  transition: opacity 0.9s ease, visibility 0s linear 0.9s;
+}
+
+.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 1;
+  transition: opacity 0.9s ease, visibility 0s linear 0s;
+}
+
+/* Every slide fills the shell (the original Hero section sets its own height). */
+.root .slide > * {
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+}
+
+/* Until the page is loaded and idle, images of hidden slides are not rendered,
+   so their lazy images aren't requested and don't compete with the first slide. */
+.root:not([data-warm]) .slide:not(.active) img {
+  display: none;
+}
+
+/* ---------- Controls ---------- */
+.controls {
+  position: absolute;
+  z-index: 3;
+  left: 24px;
+  right: 24px;
+  bottom: 8px;
+  display: flex;
+  align-items: center;
+  color: var(--dj-ivory);
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: auto;
+}
+
+.dot {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 4px;
+  margin: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.dotTrack {
+  position: relative;
+  display: block;
+  width: 28px;
+  height: 2px;
+  overflow: hidden;
+  background: rgba(245, 245, 244, 0.38);
+  transition: background-color 0.25s ease;
+}
+
+.dot:hover .dotTrack {
+  background: rgba(245, 245, 244, 0.65);
+}
+
+.dotFill {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  transform-origin: left center;
+}
+
+.dotFillRunning {
+  animation: dj-slide-progress var(--slide-ms, 10000ms) linear both;
+}
+
+@keyframes dj-slide-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.arrow {
+  display: none;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: 0 -8px 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  opacity: 0.8;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.toggle:hover {
+  opacity: 1;
+}
+
+.dot:focus-visible,
+.arrow:focus-visible,
+.toggle:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+@media (min-width: 600px) and (max-width: 899.98px) {
+  .controls {
+    left: 40px;
+    right: 40px;
+    bottom: 12px;
+  }
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 900px) {
+  .root {
+    --hero-h: clamp(680px, 66.667vw, 1180px);
+    height: var(--hero-h);
+    min-height: 0;
+    max-height: none;
+    background: #E9EAE5;
+  }
+
+  /* A small frosted pill over the photo keeps the controls legible on any image */
+  .controls {
+    left: auto;
+    right: max(var(--dj-gutter), calc((100% - var(--dj-max)) / 2));
+    bottom: clamp(20px, 2.222vw, 40px);
+    gap: 4px;
+    padding: 4px 10px;
+    background: rgba(28, 27, 25, 0.34);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .dots {
+    margin: 0 4px;
+  }
+
+  .dotTrack {
+    width: 36px;
+  }
+
+  .arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+  }
+
+  .arrow:hover {
+    opacity: 1;
+  }
+
+  .toggle {
+    width: 36px;
+    height: 36px;
+    margin: 0 0 0 2px;
+    border-left: 1px solid rgba(245, 245, 244, 0.3);
+    padding-left: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .active {
+    transition: none;
+  }
+
+  .dotFillRunning {
+    animation: none;
+  }
+}

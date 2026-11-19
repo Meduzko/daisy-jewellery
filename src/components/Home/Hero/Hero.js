@@ -5,7 +5,8 @@ import { getCachedCategoryLinks } from '../../../lib/dataCache';
 import ui from '../ui.module.css';
 import styles from './Hero.module.css';
 
-export default async function Hero({ lang = 'uk' }) {
+// `preload`: true when this banner is the first (LCP) slide; otherwise its photo loads lazily at low priority.
+export default async function Hero({ lang = 'uk', preload = true }) {
   const t = getHomeCopy(lang).hero;
   const nav = getHomeCopy(lang).nav;
   const links = await getCachedCategoryLinks(lang === 'ru' ? 'ru' : 'uk');
@@ -17,7 +18,7 @@ export default async function Hero({ lang = 'uk' }) {
           src="/banner.webp"
           alt={t.imageAlt}
           fill
-          priority
+          {...(preload ? { preload: true } : { loading: 'lazy', fetchPriority: 'low' })}
           quality={85}
           sizes="(max-width: 899px) 100vw, 105vw"
           className={styles.image}
