@@ -1,10 +1,10 @@
 import { decode } from 'html-entities';
 import { getItemTranslations } from '../dictionaries';
-import { getCategoryConfig } from '../components/Category/config';
+import { getCategoryExtras } from '../components/Category/config';
 import { SOCIAL } from '../components/Home/copy';
 import { getDisplayPrices } from './productPricing';
 import { isProductAvailable } from './productAvailability';
-import { absoluteUrl, SITE_NAME, SLUG_TO_CATEGORY_TYPE } from './seo';
+import { absoluteUrl, SITE_NAME } from './seo';
 
 // JSON-LD builders (schema.org). Only real data: catalog fields, the shop's own
 // contact details and copy that is shown on the site. No ratings, reviews or
@@ -60,17 +60,19 @@ export const getCategoryJsonLd = ({ name, description, path, lang, items = [] })
   getBreadcrumbJsonLd([homeCrumb(lang), { name, path }]),
 ];
 
-export const getProductJsonLd = async (product, categoryUrl, options = {}) => {
+/** @param {object} category  DB category of the product (getCachedCategories) */
+export const getProductJsonLd = async (product, category, options = {}) => {
   const { title, code } = product;
   const { price } = getDisplayPrices(product);
-  const { lang, categoryName } = options;
-  const locale = lang === 'ru' ? 'ru' : 'uk';
+  const locale = options.lang === 'ru' ? 'ru' : 'uk';
+  const categoryText = category[locale];
 
   // Content-sheet products have only `description` (short_description cleared).
-  const tk = await getItemTranslations({ lang: locale, categoryName, code });
+  const dictionaryKey = getCategoryExtras(category.key).dictionaryKey[locale];
+  const tk = dictionaryKey ? await getItemTranslations({ lang: locale, categoryName: dictionaryKey, code }) : undefined;
   const name = tk?.title || title;
   const description = plainText(tk?.description || product.short_description || product.description);
-  const path = `${locale}/${categoryUrl}/${code}`;
+  const path = `${locale}/${categoryText.urlPrefix}/${code}`;
   const url = absoluteUrl(path);
   const images = (product.images?.length ? product.images : [product.image_path]).filter(Boolean);
   const metals = (product.attributes || []).find((a) => a.code === 'metal')?.values?.map((v) => v.value).filter(Boolean) || [];
@@ -101,10 +103,7 @@ export const getProductJsonLd = async (product, categoryUrl, options = {}) => {
     };
   }
 
-  const categoryConfig = getCategoryConfig(SLUG_TO_CATEGORY_TYPE[String(categoryUrl).split('/')[0]]);
-  const crumbs = [homeCrumb(locale)];
-  if (categoryConfig) crumbs.push({ name: categoryConfig.name[locale], path: `${locale}/${categoryConfig.slugs[locale]}` });
-  crumbs.push({ name, path });
+  const crumbs = [homeCrumb(locale), { name: categoryText.name, path: `${locale}/${categoryText.slug}` }, { name, path }];
   const { '@context': _context, ...breadcrumbJsonLd } = getBreadcrumbJsonLd(crumbs);
 
   return { '@context': 'https://schema.org', '@graph': [productJsonLd, breadcrumbJsonLd] };

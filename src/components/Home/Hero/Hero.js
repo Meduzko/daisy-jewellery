@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getHomeCopy, getCategoryLinks } from '../copy';
+import { getHomeCopy } from '../copy';
+import { getCachedCategoryLinks } from '../../../lib/dataCache';
 import ui from '../ui.module.css';
 import styles from './Hero.module.css';
 
-export default function Hero({ lang = 'uk' }) {
+export default async function Hero({ lang = 'uk' }) {
   const t = getHomeCopy(lang).hero;
   const nav = getHomeCopy(lang).nav;
-  const links = getCategoryLinks(lang);
+  const links = await getCachedCategoryLinks(lang === 'ru' ? 'ru' : 'uk');
 
   return (
     <section className={styles.hero} aria-label={t.label}>

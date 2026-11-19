@@ -7,16 +7,14 @@ import CartDrawler from '../Cart/Cart';
 import LanguageSwitcher from '../LanguageSwitcher';
 import Search from './Search/Search';
 import MobileMenu from '../Menu/MobileMenu';
-import { getMenuItems } from '../../helpers/menuItems';
 import { getHomeCopy } from '../Home/copy';
 
 import styles from './styles.module.css';
 
-export default function Header({ lang }) {
+export default function Header({ lang, menuItems = [] }) {
   const locale = lang === 'ru' ? 'ru' : 'uk';
   const pathname = usePathname();
   const copy = getHomeCopy(locale);
-  const menuItems = getMenuItems(locale);
   const navItems = [
     ...menuItems,
     { title: copy.nav.about, link: `/${locale}/about`, muted: true },
@@ -38,7 +36,7 @@ export default function Header({ lang }) {
       <header className={styles.header}>
         <div className={styles.bar}>
           <div className={styles.menu}>
-            <MobileMenu lang={locale} />
+            <MobileMenu lang={locale} menuItems={menuItems} />
           </div>
 
           <Link href={`/${locale}`} className={styles.logo} aria-label={copy.header.home}>

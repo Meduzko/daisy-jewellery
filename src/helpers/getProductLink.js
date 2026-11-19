@@ -1,28 +1,11 @@
-import { resolveProductCategory } from './resolveProductCategory';
-
+/**
+ * Product page URL: /{lang}/{category URL prefix}/{code}. The prefix comes from the product's
+ * category in PostgreSQL (`category_paths`, set by src/lib/catalog/mapper.js), so it follows
+ * category slugs edited in Directus. Without it (e.g. an old cart item) → the home page.
+ */
 export const getProductLink = (product, lang) => {
-  const { code } = product;
-  const category = product.category || resolveProductCategory(product);
   const locale = lang === 'ru' ? 'ru' : 'uk';
-  const categoryMap = {
-    uk: {
-      ring: 'kabluchki/kupyty-sribnu-kabluchku',
-      earring: 'serezhky/kupyty-serezhky-sribni',
-      necklace: 'kolye/kupyty-sribne-kolye',
-      bracer: 'braslety/kupyty-sribnyy-braslet',
-    },
-    ru: {
-      ring: 'koltsa/kupit-serebryanoye-koltso',
-      earring: 'sergi/kupit-serebryanyye-sergi',
-      necklace: 'kolye/kupit-serebryanoye-kolye',
-      bracer: 'braslety/kupit-serebryanyy-braslet',
-    }
-  };
-  const cat = categoryMap[locale][category];
-
-  if (!cat || code == null) {
-    return `/${locale}`;
-  }
-
-  return `/${locale}/${cat}/${code}`;
+  const prefix = product?.category_paths?.[locale];
+  if (!prefix || product.code == null) return `/${locale}`;
+  return `/${locale}/${prefix}/${product.code}`;
 };

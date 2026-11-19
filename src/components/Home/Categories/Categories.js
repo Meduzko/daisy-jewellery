@@ -1,21 +1,35 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getHomeCopy, getCategoryLinks } from '../copy';
+import { getHomeCopy } from '../copy';
+import { getCachedCategories } from '../../../lib/dataCache';
+import { categoryHref } from '../../../lib/catalog/categories';
 import ui from '../ui.module.css';
 import styles from './Categories.module.css';
 
-export default function Categories({ lang = 'uk' }) {
+// Photos of the original categories (until a photo is uploaded in Directus).
+const STATIC_IMAGES = {
+  ring: { src: '/home/category-rings.webp', position: '50% 50%' },
+  earring: { src: '/home/category-earrings.webp', position: '60% 50%' },
+  necklace: { src: '/categories/neclackle.webp', position: '50% 55%' },
+  bracer: { src: '/categories/bracer.webp', position: '55% 50%' },
+};
+
+export default async function Categories({ lang = 'uk' }) {
   const copy = getHomeCopy(lang);
   const t = copy.categories;
-  const links = getCategoryLinks(lang);
   const locale = lang === 'ru' ? 'ru' : 'uk';
 
-  // Four CMS categories + two curated collections (approved design, «Категорії»).
+  // Categories with «show on homepage» (Directus; a photo and active products are required) + two curated collections
+  // (approved design, «Категорії»).
+  const categories = (await getCachedCategories())
+    .filter((c) => c.showOnHomepage && c.productCount > 0)
+    .map((c) => {
+      const image = c.image ? { src: c.image, position: '50% 50%' } : STATIC_IMAGES[c.key];
+      return image ? { key: c.key, title: c[locale].name, href: categoryHref(c, locale), ...image } : null;
+    })
+    .filter(Boolean);
   const items = [
-    { key: 'ring', title: copy.nav.ring, href: links.ring, src: '/home/category-rings.webp', position: '50% 50%' },
-    { key: 'earring', title: copy.nav.earring, href: links.earring, src: '/home/category-earrings.webp', position: '60% 50%' },
-    { key: 'necklace', title: copy.nav.necklace, href: links.necklace, src: '/categories/neclackle.webp', position: '50% 55%' },
-    { key: 'bracer', title: copy.nav.bracer, href: links.bracer, src: '/categories/bracer.webp', position: '55% 50%' },
+    ...categories,
     { key: 'clover', title: t.clover, href: `/${locale}/search?q=${encodeURIComponent(copy.set.search)}`, src: '/home/category-clover.webp', position: '50% 45%' },
     { key: 'new', title: t.new, href: '#novynky', src: '/home/category-new.webp', position: '55% 45%' },
   ];

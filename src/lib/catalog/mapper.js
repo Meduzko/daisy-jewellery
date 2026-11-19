@@ -5,7 +5,7 @@
 // Never put internal data here (cost_price, supplier, contacts): the result is
 // rendered into pages and stored in the visitor's cart.
 
-import { CATEGORY_KEY_BY_DB_CODE } from './categories.js';
+import { toCategoryKey } from './categories.js';
 import { productImageUrl } from './images.js';
 
 // Collections that the storefront shows as badges (DNTrade tag «бейдж» items).
@@ -42,7 +42,7 @@ export function buildBadgeTags(row) {
 export function mapProduct(row) {
   if (!row) return null;
   const images = Array.isArray(row.image_keys) ? row.image_keys.map(productImageUrl).filter(Boolean) : [];
-  const category = CATEGORY_KEY_BY_DB_CODE[row.category_code] || '';
+  const category = toCategoryKey(row.category_code) || '';
 
   return {
     id: row.id,
@@ -73,6 +73,8 @@ export function mapProduct(row) {
     // Explicit sale price from the DB; productPricing.applyProductDiscount() prefers it.
     catalogSalePrice: row.sale_price == null ? null : String(row.sale_price),
     category,
+    // product URL prefix of the category per locale ({ uk: 'kabluchki/kupyty-sribnu-kabluchku', ru: … }), see getProductLink
+    category_paths: row.category_paths || null,
     tags: buildBadgeTags(row),
     collections: row.collection_codes || [],
     locale: row.locale,
@@ -80,6 +82,39 @@ export function mapProduct(row) {
     website_synch: 1,
     status: 1,
     source: 'postgres',
+  };
+}
+
+/**
+ * Rows of category_i18n joined with categories (one per locale) → one category:
+ * { id, code, key, parentId, sortOrder, image, showInNavigation, showOnHomepage, updatedAt, uk: {…}, ru: {…} }.
+ */
+export function mapCategory(rows) {
+  const [first] = rows;
+  const texts = (locale) => {
+    const r = rows.find((row) => row.locale === locale) || first;
+    return {
+      name: r.name, h1: r.h1 || r.name, slug: r.slug, urlPrefix: r.url_prefix,
+      description: r.description || '', seoBottomText: r.seo_bottom_text || '',
+      seoTitle: r.seo_title || '', seoDescription: r.seo_description || '',
+      isFallback: Boolean(r.is_fallback),
+    };
+  };
+  return {
+    id: first.id,
+    code: first.code,
+    key: toCategoryKey(first.code),
+    parentId: first.parent_id ?? null,
+    sortOrder: first.sort_order,
+    image: productImageUrl(first.image_r2_key),
+    showInNavigation: Boolean(first.show_in_navigation),
+    showOnHomepage: Boolean(first.show_on_homepage),
+    productCount: Number(first.product_count ?? 0),
+    // shows this collection's products instead of its own (product pages stay under their own category)
+    collectionId: first.collection_id ?? null,
+    updatedAt: first.updated_at instanceof Date ? first.updated_at.toISOString() : first.updated_at ?? null,
+    uk: texts('uk'),
+    ru: texts('ru'),
   };
 }
 

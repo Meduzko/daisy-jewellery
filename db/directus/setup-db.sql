@@ -39,10 +39,14 @@ REVOKE UPDATE ON products, categories, category_translations FROM directus;
 -- not writable here; legacy_code is generated on insert when left blank.
 GRANT UPDATE (category_id, supplier_id, article, price, discount_percent, avg_weight_g, status, note, updated_at)
   ON products TO directus;
-GRANT UPDATE (is_active, sort_order, updated_at) ON categories TO directus;
+-- Categories (migration 20261119000001): created and deleted in the CMS; `code` is generated on insert
+-- and fixed afterwards. A category with products, sizes or subcategories cannot be deleted (FK RESTRICT).
+-- Slugs are editable on purpose (the owner decides; the URL changes with it); url_prefix follows by trigger.
+GRANT UPDATE (status, sort_order, parent_id, image, show_in_navigation, show_on_homepage, collection_id, updated_at)
+  ON categories TO directus;
 -- `locale` is included because the Directus translations form sends it with every update.
-GRANT UPDATE (locale, name, description, seo_title, seo_description, updated_at) ON category_translations TO directus;
-REVOKE INSERT, DELETE ON categories FROM directus; -- categories map to hard-coded routes
+GRANT UPDATE (locale, name, slug, h1, description, seo_bottom_text, seo_title, seo_description, updated_at)
+  ON category_translations TO directus;
 -- Filter URL keys (?insertion=fianit) and collection codes used in code (new, popular), and the
 -- product/language a text belongs to: set on insert, fixed afterwards.
 REVOKE UPDATE ON attributes, attribute_values, collections, product_translations FROM directus;
@@ -117,12 +121,44 @@ BEGIN
   END IF;
 END $$;
 
+-- Category photo → Directus file in R2, like product photos: image_r2_key is derived from the file.
+DO $$
+BEGIN
+  IF to_regclass('directus.directus_files') IS NOT NULL THEN
+    IF NOT EXISTS (SELECT FROM pg_constraint WHERE conname = 'categories_image_foreign') THEN
+      ALTER TABLE categories ADD CONSTRAINT categories_image_foreign
+        FOREIGN KEY (image) REFERENCES directus.directus_files (id) ON DELETE SET NULL;
+    END IF;
+    CREATE OR REPLACE FUNCTION categories_directus_image() RETURNS trigger LANGUAGE plpgsql AS $fn$
+    DECLARE f record;
+    BEGIN
+      IF NEW.image IS NULL THEN NEW.image_r2_key := NULL; RETURN NEW; END IF;
+      SELECT storage, filename_disk, type INTO f FROM directus.directus_files WHERE id = NEW.image;
+      IF NOT FOUND OR f.filename_disk IS NULL THEN
+        RAISE EXCEPTION 'Category photo % is not uploaded', NEW.image;
+      END IF;
+      IF f.storage IS DISTINCT FROM 'r2' THEN
+        RAISE EXCEPTION 'Category photo % is in storage "%", not in R2 — upload it again', NEW.image, f.storage;
+      END IF;
+      IF f.type NOT IN ('image/jpeg', 'image/png', 'image/webp') THEN
+        RAISE EXCEPTION 'Category photo must be JPEG, PNG or WebP (got %)', f.type;
+      END IF;
+      NEW.image_r2_key := 'cms/' || f.filename_disk;
+      RETURN NEW;
+    END $fn$;
+    DROP TRIGGER IF EXISTS categories_directus_image ON categories;
+    CREATE TRIGGER categories_directus_image BEFORE INSERT OR UPDATE OF image ON categories
+      FOR EACH ROW EXECUTE FUNCTION categories_directus_image();
+  END IF;
+END $$;
+
 -- DNTrade id columns dropped by migration 20261117000002: forget their Directus field metadata.
 DO $$
 BEGIN
   IF to_regclass('directus.directus_fields') IS NOT NULL THEN
     DELETE FROM directus.directus_fields
     WHERE (collection IN ('products', 'product_variants', 'suppliers', 'attribute_values') AND field = 'legacy_id')
-       OR (collection = 'product_variants' AND field = 'legacy_code');
+       OR (collection = 'product_variants' AND field = 'legacy_code')
+       OR (collection = 'categories' AND field = 'is_active'); -- replaced by status (20261119000001)
   END IF;
 END $$;

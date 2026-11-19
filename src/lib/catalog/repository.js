@@ -7,7 +7,7 @@
 // Texts come from product_i18n / category_i18n / attribute*_i18n, which fall back
 // to the default locale (uk) when a translation or a single field is missing.
 
-import { mapAttributes, mapProduct, mapVariant } from './mapper.js';
+import { mapAttributes, mapCategory, mapProduct, mapVariant } from './mapper.js';
 import { toCategoryDbCode } from './categories.js';
 import { getArticleBase } from '../../helpers/productFamily.js';
 
@@ -37,7 +37,7 @@ const CODE_ORDER = "CASE WHEN p.legacy_code ~ '^[0-9]+$' THEN p.legacy_code::big
 function baseQuery(db, locale) {
   return db({ p: 'products' })
     .join({ c: 'categories' }, function joinCategory() {
-      this.on('c.id', 'p.category_id').andOn(db.raw('c.is_active'));
+      this.on('c.id', 'p.category_id').andOn(db.raw("c.status = 'published'"));
     })
     .join({ i: 'product_i18n' }, function joinI18n() {
       this.on('i.product_id', 'p.id').andOn('i.locale', db.raw('?', [locale]));
@@ -62,6 +62,7 @@ function selectProduct(db, qb) {
   return qb.select(
     'p.id', 'p.legacy_code', 'p.article', 'p.price', 'p.sale_price', 'p.avg_weight_g',
     'p.source_created_at', 'p.updated_at', 'c.code as category_code',
+    db.raw('(SELECT json_object_agg(ci.locale, ci.url_prefix) FROM category_i18n ci WHERE ci.category_id = c.id) AS category_paths'),
     'i.locale', 'i.title', 'i.slug', 'i.short_description', 'i.description',
     'i.seo_title', 'i.seo_description', 'i.is_fallback',
     // R2 keys; mapper.js turns them into URLs
@@ -99,9 +100,24 @@ function selectProduct(db, qb) {
  */
 function applyFilters(db, qb, f = {}) {
   if (f.category) {
-    const code = toCategoryDbCode(f.category);
-    qb.where('c.code', code || '__none__');
+    // Listing of a category: its own products, or — when it shows a collection (categories.collection_id,
+    // migration 20261119000004) — that collection's products, which keep their own category and URLs.
+    qb.whereExists(
+      db.select(1).from({ fc: 'categories' })
+        .where('fc.code', toCategoryDbCode(f.category) || '__none__')
+        .where(function ownOrCollection() {
+          this.where(function own() { this.whereNull('fc.collection_id').whereRaw('fc.id = p.category_id'); })
+            .orWhereExists(
+              db.select(1).from({ fcp: 'collection_products' })
+                .join({ fco: 'collections' }, 'fco.id', 'fcp.collection_id')
+                .whereRaw('fcp.collection_id = fc.collection_id AND fcp.product_id = p.id')
+                .where('fco.is_active', true)
+            );
+        })
+    );
   }
+  // The product's own category (product pages, sitemap): never a collection shown by another category.
+  if (f.ownCategory) qb.where('c.code', toCategoryDbCode(f.ownCategory) || '__none__');
   if (f.collection) {
     qb.whereExists(
       db.select(1).from({ cp: 'collection_products' })
@@ -213,7 +229,7 @@ export async function countProducts(db, filters = {}) {
 export async function getProductByCode(db, { code, category, locale, withVariants = true } = {}) {
   const value = String(code ?? '').trim();
   if (!/^[0-9A-Za-z-]{1,40}$/.test(value)) return null;
-  const qb = applyFilters(db, baseQuery(db, normalizeLocale(locale)), { category });
+  const qb = applyFilters(db, baseQuery(db, normalizeLocale(locale)), { ownCategory: category });
   const row = await selectProduct(db, qb.where('p.legacy_code', value)).first();
   if (!row) return null;
   const product = mapProduct(row);
@@ -365,14 +381,33 @@ export async function getFacets(db, { category, collection, locale } = {}) {
   };
 }
 
-/** Localized category texts (name, slug, url_prefix, SEO) by storefront key. */
-export async function getCategory(db, { category, locale } = {}) {
-  const row = await db({ c: 'categories' })
-    .join({ ci: 'category_i18n' }, function onCi() { this.on('ci.category_id', 'c.id').andOn('ci.locale', db.raw('?', [normalizeLocale(locale)])); })
-    .where('c.code', toCategoryDbCode(category) || '__none__')
-    .where('c.is_active', true)
-    .first('c.code', 'ci.name', 'ci.slug', 'ci.url_prefix', 'ci.description', 'ci.seo_title', 'ci.seo_description', 'ci.is_fallback');
-  return row || null;
+/**
+ * Published categories with their uk and ru texts (uk fallback), in display order.
+ * Drafts are left out, so every storefront lookup treats them as missing (404).
+ * @returns {Promise<object[]>} see mapper.mapCategory
+ */
+export async function listCategories(db) {
+  const rows = await db({ c: 'categories' })
+    .join({ ci: 'category_i18n' }, 'ci.category_id', 'c.id')
+    .where('c.status', 'published')
+    .whereIn('ci.locale', LOCALES)
+    .orderBy([{ column: 'c.sort_order' }, { column: 'c.id' }])
+    .select('c.id', 'c.code', 'c.parent_id', 'c.sort_order', 'c.image_r2_key', 'c.show_in_navigation',
+      'c.show_on_homepage', 'c.collection_id', 'c.updated_at', 'ci.locale', 'ci.name', 'ci.h1', 'ci.slug', 'ci.url_prefix',
+      'ci.description', 'ci.seo_bottom_text', 'ci.seo_title', 'ci.seo_description', 'ci.is_fallback',
+      // products its page lists (same rules as baseQuery + applyFilters): an empty category's page is 404,
+      // so it is not linked
+      db.raw(`(SELECT count(*) FROM products p
+                 JOIN categories pc ON pc.id = p.category_id AND pc.status = 'published'
+                WHERE p.status = 'active' AND p.price IS NOT NULL
+                  AND CASE WHEN c.collection_id IS NULL THEN p.category_id = c.id
+                      ELSE EXISTS (SELECT 1 FROM collection_products cp
+                                     JOIN collections co ON co.id = cp.collection_id AND co.is_active
+                                    WHERE cp.collection_id = c.collection_id AND cp.product_id = p.id) END
+              )::int AS product_count`));
+  const byId = new Map();
+  for (const row of rows) byId.set(row.id, [...(byId.get(row.id) || []), row]);
+  return [...byId.values()].map(mapCategory);
 }
 
 /**
@@ -400,7 +435,7 @@ export async function quoteCart(db, items = []) {
 export async function listProductRefs(db, { category } = {}) {
   // product_i18n has a row per locale for every product; the ru row tells whether a
   // real Russian translation exists (is_fallback = only the Ukrainian text).
-  const rows = await applyFilters(db, baseQuery(db, 'ru'), { category })
+  const rows = await applyFilters(db, baseQuery(db, 'ru'), { ownCategory: category })
     .select('p.legacy_code', 'c.code as category_code', 'p.updated_at', 'i.is_fallback')
     .orderByRaw(`${CODE_ORDER} ASC NULLS LAST, p.id`);
   return rows.map((r) => ({

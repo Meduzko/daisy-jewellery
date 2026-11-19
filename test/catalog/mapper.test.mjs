@@ -61,7 +61,8 @@ test('variants expose public fields only', () => {
 test('category key mapping', () => {
   assert.equal(toCategoryKey('rings'), 'ring');
   assert.equal(toCategoryKey('ring'), 'ring');
-  assert.equal(toCategoryKey('x'), null);
+  assert.equal(toCategoryKey('category-7'), 'category-7'); // categories created in Directus: key = code
+  assert.equal(toCategoryKey(''), null);
   assert.equal(toCategoryDbCode('bracer'), 'bracelets');
 });
 

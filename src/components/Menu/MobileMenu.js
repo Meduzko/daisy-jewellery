@@ -6,7 +6,6 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getMenuItems } from '../../helpers/menuItems';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { getHomeCopy, SOCIAL } from '../Home/copy';
 
@@ -16,12 +15,12 @@ const HOME_LABEL = { uk: 'Головна', ru: 'Главная' };
 const TAGLINE = { uk: 'Вишукані срібні прикраси', ru: 'Изысканные серебряные украшения' };
 
 // Visibility is controlled by the header CSS (hidden from 1024px).
-const MobileMenu = ({ lang = 'uk' } = {}) => {
+const MobileMenu = ({ lang = 'uk', menuItems: categoryItems = [] } = {}) => {
   const locale = lang === 'ru' ? 'ru' : 'uk';
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const copy = getHomeCopy(locale);
   const menuItems = [
-    ...getMenuItems(locale),
+    ...categoryItems,
     { title: copy.nav.about, link: `/${locale}/about` },
   ];
 

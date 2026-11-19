@@ -98,12 +98,12 @@ describe('localization', () => {
   });
 
   test('category texts fall back too', async () => {
-    const ru = await repo.getCategory(db, { category: 'necklace', locale: 'ru' });
-    assert.equal(ru.name, 'Кольє');
-    assert.equal(ru.is_fallback, true);
-    const ok = await repo.getCategory(db, { category: 'ring', locale: 'ru' });
-    assert.equal(ok.name, 'Кольца');
-    assert.equal(await repo.getCategory(db, { category: 'bracer' }), null); // inactive
+    const categories = await repo.listCategories(db);
+    const necklace = categories.find((c) => c.key === 'necklace');
+    assert.equal(necklace.ru.name, 'Кольє');
+    assert.equal(necklace.ru.isFallback, true);
+    assert.equal(categories.find((c) => c.key === 'ring').ru.name, 'Кольца');
+    assert.equal(categories.find((c) => c.key === 'bracer'), undefined); // draft
   });
 });
 

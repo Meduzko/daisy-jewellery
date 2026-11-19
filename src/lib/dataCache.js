@@ -1,9 +1,22 @@
-import { toCategoryKey } from './catalog/categories';
+import { CATEGORY_KEYS, toCategoryKey, categoryHref } from './catalog/categories';
 
 // Storefront product access used by pages (PostgreSQL catalog, ./catalog).
 // `category` is a storefront key: 'ring' | 'earring' | 'necklace' | 'bracer'.
 
 // ---------------------------------------------------------------- public API
+/** Published categories with uk/ru texts and URLs (src/lib/catalog/categories.js has the helpers). */
+export async function getCachedCategories() {
+  const { getCatalogCategories } = await import('./catalog');
+  return getCatalogCategories();
+}
+
+/** { [storefront key]: '/uk/kabluchki' } for links written into page copy; an unpublished category links home. */
+export async function getCachedCategoryLinks(lang = 'uk') {
+  const links = Object.fromEntries(CATEGORY_KEYS.map((key) => [key, `/${lang}`]));
+  for (const c of await getCachedCategories()) links[c.key] = categoryHref(c, lang);
+  return links;
+}
+
 export async function getCachedAllProducts(category, locale = 'uk') {
   const { getAllCatalogProducts } = await import('./catalog');
   const products = await getAllCatalogProducts(toCategoryKey(category), locale);

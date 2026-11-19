@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import CategoryCatalog from './CategoryCatalog';
-import { CATEGORIES, getCategoryUrls } from './config';
 import { getCategoryCopy } from './copy';
 import styles from './CategoryPage.module.css';
 
@@ -10,7 +9,7 @@ import styles from './CategoryPage.module.css';
  * filter instead of collections and attribute filters. No editorial, service or SEO
  * blocks (search pages are not landing pages).
  */
-export default function SearchResults({ lang, query, total, hasMore, cards, categoryOptions }) {
+export default function SearchResults({ lang, query, total, hasMore, cards, categoryOptions, categoryLinks = [] }) {
   const copy = getCategoryCopy(lang);
   const baseURL = `/${lang}/search`;
   const searchable = query.length >= 2;
@@ -60,10 +59,10 @@ export default function SearchResults({ lang, query, total, hasMore, cards, cate
           <p>{searchable ? copy.searchEmpty : copy.searchShort}</p>
           {searchable ? (
             <ul>
-              {Object.values(CATEGORIES).map((config) => (
-                <li key={config.key}>
-                  <Link className={styles.btnOutline} href={getCategoryUrls(config, lang).baseURL}>
-                    {config.name[lang]}
+              {categoryLinks.map((link) => (
+                <li key={link.key}>
+                  <Link className={styles.btnOutline} href={link.href}>
+                    {link.label}
                   </Link>
                 </li>
               ))}

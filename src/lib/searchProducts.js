@@ -17,6 +17,7 @@ const toSearchResult = (product) => {
     images: discounted.images,
     short_description: discounted.short_description,
     category: resolveProductCategory(product),
+    category_paths: product.category_paths,
     tags: discounted.tags,
     badges: discounted.badges
   };

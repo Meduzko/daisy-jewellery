@@ -221,7 +221,37 @@ describe('sizes', () => {
     await assert.rejects(db('product_variants').insert({ product_id: p.id, size_id: s.id }), /іншому типу товару/);
     const [v] = await db('product_variants').insert({ product_id: p.id, size_id: (await db('sizes').where({ category_id: seed.cat.rings }).first()).id }).returning('id');
     assert.ok(v);
-    await assert.rejects(db('products').where({ id: p.id }).update({ category_id: seed.cat.necklaces }), /іншого типу товару/);
+  });
+
+  test('moving a product to another category carries its sizes over (migration 20261119000002)', async () => {
+    const p = await insertProduct();
+    const [s23] = await db('sizes').insert({ category_id: seed.cat.rings, label: '23,5' }).returning('*');
+    const [v] = await db('product_variants').insert({ product_id: p.id, size_id: s23.id, weight_g: '2.10', stock_qty: 3 }).returning('*');
+    const [newCat] = await db('categories').insert({ sort_order: 9 }).returning('id');
+    await db('sizes').insert({ category_id: newCat.id, label: '23.5' }); // same size, other spelling: reused
+
+    await db('products').where({ id: p.id }).update({ category_id: newCat.id });
+    const moved = await db('product_variants').where({ id: v.id }).first();
+    const target = await db('sizes').where({ id: moved.size_id }).first();
+    assert.equal(target.category_id, newCat.id);
+    assert.equal(target.label, '23.5');
+    assert.deepEqual([moved.weight_g, moved.stock_qty], ['2.100', 3]); // variant row kept
+    assert.equal(await db('sizes').where({ category_id: newCat.id }).count().then(([r]) => Number(r.count)), 1);
+
+    // a size missing in the target category is created; moving back reuses the old one
+    const [s25] = await db('sizes').insert({ category_id: seed.cat.rings, label: '25' }).returning('*');
+    await db('products').where({ id: p.id }).update({ category_id: seed.cat.rings });
+    await db('product_variants').insert({ product_id: p.id, size_id: s25.id });
+    await db('products').where({ id: p.id }).update({ category_id: newCat.id });
+    const labels = await db('product_variants as v').join('sizes as s', 's.id', 'v.size_id')
+      .where('v.product_id', p.id).orderBy('s.label').select('s.label', 's.category_id');
+    assert.deepEqual(labels, [{ label: '23.5', category_id: newCat.id }, { label: '25', category_id: newCat.id }]);
+    await db('products').where({ id: p.id }).update({ category_id: seed.cat.rings });
+    assert.equal((await db('product_variants').where({ id: v.id }).first()).size_id, s23.id);
+
+    // its products gone, the category can be deleted although sizes were created in it
+    await db('categories').where({ id: newCat.id }).del();
+    assert.equal(await db('sizes').where({ category_id: newCat.id }).first(), undefined);
   });
 });
 

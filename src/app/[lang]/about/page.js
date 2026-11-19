@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getDefaultMetaData } from '../../../helpers';
-import { getCategoryLinks } from '../../../components/Home/copy';
+import { getCachedCategoryLinks } from '../../../lib/dataCache';
 import styles from './styles.module.css';
 
 export async function generateMetadata(props) {
@@ -18,7 +18,7 @@ export async function generateMetadata(props) {
 export default async function AboutPage(props) {
   const params = await props.params;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
-  const links = getCategoryLinks(lang);
+  const links = await getCachedCategoryLinks(lang);
   if (lang === 'ru') {
     return (
       <div className={styles.container}>

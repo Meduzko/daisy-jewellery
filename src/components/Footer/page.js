@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { getMenuItems } from '../../helpers/menuItems';
 import { getHomeCopy, SOCIAL } from '../Home/copy';
 import styles from './styles.module.css';
 
@@ -44,7 +43,7 @@ function Socials({ className }) {
   );
 }
 
-export default function Footer({ lang }) {
+export default function Footer({ lang, menuItems = [] }) {
   const locale = lang === 'ru' ? 'ru' : 'uk';
   const pathname = usePathname();
   const [openGroup, setOpenGroup] = useState(null);
@@ -57,7 +56,6 @@ export default function Footer({ lang }) {
     `/${locale}/contact`
   ];
   const isFooterHidden = pagesWithoutFooter.includes(pathname);
-  const menuItems = getMenuItems(locale);
 
   if (isFooterHidden) {
     return null;

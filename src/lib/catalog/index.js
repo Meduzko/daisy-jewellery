@@ -49,9 +49,8 @@ export const getCatalogFacets =cached('facets', (category, locale = 'uk', collec
   repo.getFacets(getDb(), { category, locale, collection })
 );
 
-export const getCatalogCategory = cached('category', (category, locale = 'uk') =>
-  repo.getCategory(getDb(), { category, locale })
-);
+/** Published categories (navigation, routes, sitemap). Purged with the catalog tags. */
+export const getCatalogCategories = cached('categories', () => repo.listCategories(getDb()));
 
 export const getCatalogProductRefs = cached('refs', (category) =>
   repo.listProductRefs(getDb(), { category })

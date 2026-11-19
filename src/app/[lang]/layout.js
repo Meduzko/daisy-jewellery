@@ -7,6 +7,8 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
 import { CartProvider } from '../../context/CartContext';
 import PopupManager from '../../components/Popups/PopupManager';
 import { getSiteUrl, SITE_NAME, OG_LOCALE, DEFAULT_OG_IMAGE } from '../../helpers/seo';
+import { getCachedCategories } from '../../lib/dataCache';
+import { navigationItems } from '../../lib/catalog/categories';
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ['400'] });
 
@@ -67,6 +69,8 @@ export default async function RootLayout(props) {
   const params = await props.params;
   const { children } = props;
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
+  // Categories with «show in navigation» (Directus), cached with the catalog.
+  const menuItems = navigationItems(await getCachedCategories(), lang);
 
   return (
     <html lang={lang} className={`${serif.variable} ${sans.variable}`}>
@@ -131,9 +135,9 @@ export default async function RootLayout(props) {
       <body className={montserrat.className}>
         <AppRouterCacheProvider>
           <CartProvider>
-            <Header lang={lang} />
+            <Header lang={lang} menuItems={menuItems} />
             {children}
-            <Footer lang={lang} />
+            <Footer lang={lang} menuItems={menuItems} />
             <PopupManager />
           </CartProvider>
         </AppRouterCacheProvider>

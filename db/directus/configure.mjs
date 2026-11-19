@@ -102,6 +102,8 @@ let [blogFolder] = await get('/folders?filter[name][_eq]=blog&limit=1');
 blogFolder ??= await api('POST', '/folders', { name: 'blog' });
 let [productsFolder] = await get('/folders?filter[name][_eq]=products&limit=1');
 productsFolder ??= await api('POST', '/folders', { name: 'products' });
+let [categoriesFolder] = await get('/folders?filter[name][_eq]=categories&limit=1');
+categoriesFolder ??= await api('POST', '/folders', { name: 'categories' });
 
 // Navigation: Товари › (тексти, розміри, постачальники, атрибути, колекції), Категорії,
 // Замовлення › (платежі), Блог. Everything else is edited inside its parent form.
@@ -115,7 +117,9 @@ const nav = [
   ['attributes', 'Атрибути (фільтри)', { icon: 'tune', group: 'products', sort: 4, display_template: '{{code}}' }],
   ['attribute_values', 'Значення атрибутів', { icon: 'label', group: 'products', sort: 5, display_template: '{{attribute_id.code}}: {{slug}}' }],
   ['collections', 'Колекції', { icon: 'collections_bookmark', group: 'products', sort: 6, display_template: '{{code}}' }],
-  ['categories', 'Категорії', { icon: 'category', sort: 2, display_template: '{{code}}' }],
+  // sort_field: drag rows in the list to reorder (menu / homepage order); archive = draft (hidden from the site)
+  ['categories', 'Категорії', { icon: 'category', sort: 2, display_template: '{{code}}', sort_field: 'sort_order',
+    archive_field: 'status', archive_value: 'draft', unarchive_value: 'published', archive_app_filter: false }],
   ['orders', 'Замовлення', { icon: 'receipt_long', sort: 3, display_template: '№ {{number}} · {{buyer_last_name}} · {{total}} грн' }],
   ['payments', 'Платежі LiqPay', { icon: 'payments', group: 'orders', sort: 1, display_template: '{{liqpay_order_id}} · {{status}}' }],
   ['blog_posts', 'Блог', { icon: 'article', sort: 4, archive_field: 'status', archive_value: 'draft', unarchive_value: 'published', archive_app_filter: false }],
@@ -155,6 +159,14 @@ for (const [slot, alias] of ATTRIBUTE_FIELDS) {
   await relation('product_attribute_values', `${slot}_product_id`, { one_field: alias, junction_field: `${slot}_value_id`, one_deselect_action: 'delete' });
   await relation('product_attribute_values', `${slot}_value_id`, { junction_field: `${slot}_product_id` });
 }
+// Category ↔ products stays one-to-many (products.category_id): the category form lists its products.
+await relation('products', 'category_id', { one_field: 'products' });
+await relation('categories', 'parent_id', {});
+await relation('categories', 'collection_id', {}); // the category page lists this collection's products
+if (!(await get('/relations/categories')).some((r) => r.field === 'image')) {
+  throw new Error('categories.image has no foreign key yet: re-run db/directus/setup-db.sql now that Directus has started, then restart Directus');
+}
+await relation('categories', 'image', {});
 await relation('collection_products', 'product_id', { one_field: 'collections', junction_field: 'collection_id' });
 await relation('collection_products', 'collection_id', { one_field: 'products', junction_field: 'product_id', sort_field: 'position' });
 await relation('order_items', 'order_id', { one_field: 'items' });
@@ -208,19 +220,22 @@ const PRODUCT_FORM = [
   ['updated_at', 'Оновлено', { ...TS, special: ['date-updated'] }],
   ['id', 'ID', { ...RO, hidden: true }],
   ['created_at', 'Створено', { ...TS, hidden: true }],
+  ['previous_category_id', 'Попередня категорія', { ...RO, hidden: true }], // where ✕ in a category's list returns it
 ];
-{
+/** Form of a collection in sections: every field after a group_* field goes into that group, in list order. */
+async function form(c, defs) {
   let section = null;
-  const defs = PRODUCT_FORM.map(([f, label, meta], i) => {
+  const placed = defs.map(([f, label, meta], i) => {
     if (f.startsWith('group_')) section = f;
     const extra = { sort: i + 1, ...(f.startsWith('group_') || meta.hidden ? {} : { group: section }) };
     return [f, label, { ...meta, ...extra }];
   });
   // translations keeps the label/interface from translations(); only its place is set here
-  const [, , tMeta] = defs.find(([f]) => f === 'translations');
-  await api('PATCH', '/fields/products/translations', { meta: tMeta });
-  await fields('products', defs.filter(([f]) => f !== 'translations'));
+  const t = placed.find(([f]) => f === 'translations');
+  if (t) await api('PATCH', `/fields/${c}/translations`, { meta: t[2] });
+  await fields(c, placed.filter(([f]) => f !== 'translations'));
 }
+await form('products', PRODUCT_FORM);
 await fields('product_attribute_values', [
   ['id', 'ID', { hidden: true }], ['product_id', 'Товар', { hidden: true }],
   ...ATTRIBUTE_FIELDS.flatMap(([slot]) => [[`${slot}_product_id`, 'Товар', { hidden: true }], [`${slot}_value_id`, 'Значення', { hidden: true }]]),
@@ -292,15 +307,48 @@ await fields('collections', [
   ['products', 'Товари', { special: ['m2m'], interface: 'list-m2m', options: { template: '{{product_id.legacy_code}} · {{product_id.article}}', enableCreate: false } }],
   ['created_at', 'Створено', { ...TS, hidden: true }], ['updated_at', 'Оновлено', { ...TS, hidden: true, special: ['date-updated'] }],
 ]);
-await fields('categories', [
-  ['id', 'ID', { hidden: true }], ['code', 'Код', { ...RO, note: 'Категорії прив’язані до сторінок сайту — нові додаються розробником' }],
-  ['is_active', 'Активна', { interface: 'boolean', width: 'half' }], ['sort_order', 'Порядок', { width: 'half' }],
-  ['created_at', 'Створено', { ...TS, hidden: true }], ['updated_at', 'Оновлено', { ...TS, special: ['date-updated'] }],
+// Categories (migration 20261119000001): a new category is a draft until published; its page is
+// /{uk|ru}/{slug}, products at /{uk|ru}/{slug}/kupyty-{slug}/{code}. Shown on the site only with active products.
+const CATEGORY_STATUS = choices({ published: 'Опубліковано (на сайті)', draft: 'Чернетка (не на сайті)' });
+const toggle = (label, note) => [label, { interface: 'boolean', display: 'boolean', width: 'half', note }];
+await form('categories', [
+  ['group_main', ...group('Основне')],
+  ['status', 'Статус', { interface: 'select-dropdown', options: CATEGORY_STATUS, display: 'labels', display_options: CATEGORY_STATUS, width: 'half' }],
+  ['sort_order', 'Порядок', { width: 'half', note: 'Менше = вище в меню й на головній. Або перетягніть рядки у списку' }],
+  ['show_in_navigation', ...toggle('У меню сайту', 'Шапка, мобільне меню, футер — коли в категорії є активні товари')],
+  ['show_on_homepage', ...toggle('На головній', 'Блок «Категорії»; потрібні фото й активні товари')],
+  ['image', 'Фото', { special: ['file'], interface: 'file-image', options: { folder: categoriesFolder.id }, display: 'image',
+    note: 'JPEG, PNG або WebP, квадратне — зберігається в Cloudflare R2' }],
+  ['group_texts', ...group('Тексти, URL і SEO (uk / ru)')],
+  ['translations', null, {}], // label/interface set by translations()
+  ['group_products', ...group('Товари', 'closed')],
+  ['collection_id', 'Показувати колекцію', { ...m2o('{{code}}'),
+    note: 'Необов’язково. Якщо обрано, сторінка категорії показує товари цієї колекції («Товари › Колекції»), а не власні; '
+      + 'категорія товарів не змінюється, сторінки товарів лишаються у їхніх категоріях. Порожньо = власні товари' }],
+  ['products', 'Товари категорії', { special: ['o2m'], interface: 'list-o2m', options: { template: '{{legacy_code}} · {{article}}', enableCreate: false, enableSelect: true },
+    // ✕ = category_id NULL → the DB returns the product to its previous category (migration 20261119000003)
+    note: '«Додати наявний» переносить товар у цю категорію; ✕ повертає його в попередню категорію (разом із розмірами). '
+      + 'Перенести в іншу категорію — у картці товару або в списку «Товари» (виділіть кілька → ✎ → Категорія)' }],
+  ['group_more', ...group('Додатково', 'closed')],
+  ['code', 'Код', { width: 'half', required: false, note: 'Внутрішній ключ латиницею. Порожньо = згенерується; після створення не змінюється', ...DB_LOCKED }],
+  ['parent_id', 'Батьківська категорія', { ...m2o('{{code}}'), width: 'half', note: 'Необов’язково, на майбутнє — поки не впливає на сайт' }],
+  ['updated_at', 'Оновлено', { ...TS, special: ['date-updated'] }],
+  ['image_r2_key', 'Ключ фото в R2', { hidden: true }],
+  ['id', 'ID', { ...RO, hidden: true }],
+  ['created_at', 'Створено', { ...TS, hidden: true }],
 ]);
-await fields('category_translations', [
-  ['name', 'Назва', {}], ['slug', 'Slug (URL)', RO], ['url_prefix', 'Префікс URL', RO],
-  ['description', 'Опис (SEO-блок)', { interface: 'input-multiline' }], ['seo_title', 'SEO title', {}],
-  ['seo_description', 'SEO description', { interface: 'input-multiline' }],
+const SLUG_RULE = { validation: { _and: [{ slug: { _regex: '^([a-z0-9]+(-[a-z0-9]+)*)?$' } }] }, validation_message: 'Лише малі латинські літери, цифри й дефіси' };
+await form('category_translations', [
+  ['group_page', ...group('Сторінка')],
+  ['name', 'Назва (меню, хлібні крихти)', { required: true }],
+  ['h1', 'Заголовок H1', { note: 'Порожньо = назва' }],
+  ['description', 'Вступ під заголовком', { interface: 'input-multiline' }],
+  ['slug', 'Slug (URL)', { ...SLUG_RULE, note: 'Порожньо = з назви. Зміна назви slug не змінює. Зміна slug змінює URL категорії та її товарів — старі посилання дадуть 404' }],
+  ['group_seo', ...group('SEO')],
+  ['seo_title', 'Meta title', { note: 'Порожньо = «H1 | Daisy Jewellery»' }],
+  ['seo_description', 'Meta description', { interface: 'input-multiline', note: 'Порожньо = вступ' }],
+  ['seo_bottom_text', 'SEO-текст унизу сторінки', { interface: 'input-multiline', note: 'Перший абзац видно одразу, решта — під «Читати далі». Абзаци — через порожній рядок' }],
+  ['url_prefix', 'URL товарів', { hidden: true }],
 ]);
 await fields('attribute_translations', [['name', 'Назва', {}]]);
 await fields('attribute_value_translations', [['value', 'Значення', {}]]);
@@ -366,7 +414,7 @@ await layout('products', ['legacy_code', 'translations', 'category_id', 'price',
 await layout('sizes', ['category_id', 'label'], ['category_id', 'sort_value', 'label']);
 await layout('product_translations', ['product_id', 'locale', 'title', 'seo_title'], ['product_id']);
 await layout('product_variants', ['product_id', 'size_id'], ['product_id']);
-await layout('categories', ['code', 'translations', 'is_active', 'sort_order'], ['sort_order']);
+await layout('categories', ['translations', 'status', 'show_in_navigation', 'show_on_homepage', 'code'], ['sort_order']);
 await layout('orders', ['number', 'status', 'buyer_last_name', 'buyer_phone', 'payment_method', 'total', 'created_at'], ['-created_at'],
   [['Нові', { _and: [{ status: { _eq: 'new' } }] }], ['Очікують оплати', { _and: [{ status: { _eq: 'pending_payment' } }] }]]);
 await layout('payments', ['liqpay_order_id', 'order_id', 'status', 'amount', 'created_at'], ['-created_at']);
@@ -386,10 +434,10 @@ const allow = (collections, actions, extra = {}) => {
   for (const collection of collections) for (const action of actions) perms.push({ policy: policy.id, collection, action, fields: ['*'], ...extra });
 };
 allow(['products', 'suppliers', 'attributes', 'attribute_translations', 'attribute_values', 'attribute_value_translations',
-  'collections', 'collection_translations', 'category_translations'], ['create', 'read', 'update']);
+  'collections', 'collection_translations'], ['create', 'read', 'update']);
 allow(['product_translations', 'product_variants', 'product_images', 'product_attribute_values', 'collection_products', 'sizes',
-  'blog_posts', 'blog_post_translations'], ['create', 'read', 'update', 'delete']);
-allow(['categories', 'orders'], ['read', 'update']); // DB allows only status/TTN/comment/dates on orders
+  'blog_posts', 'blog_post_translations', 'categories', 'category_translations'], ['create', 'read', 'update', 'delete']);
+allow(['orders'], ['read', 'update']); // DB allows only status/TTN/comment/dates on orders
 allow(['locales', 'order_items', 'payments', 'payment_events'], ['read']);
 allow(['directus_files'], ['create', 'read', 'update']);
 allow(['directus_folders'], ['read']);

@@ -1,7 +1,5 @@
-const CATEGORY_KEYS = ['ring', 'earring', 'necklace', 'bracer'];
-
 export const resolveProductCategory = (product) => {
-  if (product?.category && CATEGORY_KEYS.includes(product.category)) {
+  if (product?.category) {
     return product.category;
   }
 

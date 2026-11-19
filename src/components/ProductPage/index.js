@@ -4,7 +4,7 @@ import { getCachedProductFamily, getCachedRelatedProducts } from '../../lib/data
 import { getCategoryTranslations } from '../../dictionaries';
 import ProductCard from '../Category/ProductCard';
 import { toCardModel } from '../Category/cardModel';
-import { getCategoryConfig } from '../Category/config';
+import { getCategoryExtras } from '../Category/config';
 import ClientViewContent from './ClientViewContent';
 import ProductGallery from './ProductGallery';
 import PurchasePanel from './PurchasePanel';
@@ -63,7 +63,7 @@ async function toCards(products, lang) {
   const dictionaries = {};
   await Promise.all(
     keys.map(async (key) => {
-      const dictionaryKey = getCategoryConfig(key)?.dictionaryKey?.[lang];
+      const dictionaryKey = getCategoryExtras(key).dictionaryKey[lang];
       dictionaries[key] = dictionaryKey ? await getCategoryTranslations({ lang, categoryName: dictionaryKey }).catch(() => undefined) : undefined;
     })
   );
@@ -76,15 +76,16 @@ async function toCards(products, lang) {
  * its sizes and dictionary overrides; family, set and related cards are loaded here.
  * Header and footer come from the [lang] layout.
  *
- * @param {{ item: object, productSizes?: number[], t?: object, lang?: 'uk'|'ru', category: string }} props
+ * @param {{ item: object, productSizes?: number[], t?: object, lang?: 'uk'|'ru', category: string,
+ *   categoryInfo?: { name: string, href: string } }} props  categoryInfo: breadcrumb / «all …» link
  */
-export default async function ProductPageNew({ item = {}, productSizes, t, lang = 'uk', category }) {
+export default async function ProductPageNew({ item = {}, productSizes, t, lang = 'uk', category, categoryInfo }) {
   const locale = lang === 'ru' ? 'ru' : 'uk';
   const categoryKey = category || item.category || 'ring';
   const copy = getProductCopy(locale);
 
   const family = await loadFamily(categoryKey, item, locale);
-  const model = toProductModel(item, { lang: locale, category: categoryKey, sizes: productSizes || [], t, family });
+  const model = toProductModel(item, { lang: locale, category: categoryKey, categoryInfo, sizes: productSizes || [], t, family });
   const related = await loadRelated({
     category: categoryKey,
     product: item,
@@ -145,7 +146,7 @@ export default async function ProductPageNew({ item = {}, productSizes, t, lang 
           <div className={styles.setRow}>
             {setCards.map(({ card, category: cardCategory }) => (
               <div key={card.id} className={styles.setItem}>
-                <ProductCard card={card} lang={locale} showSizes={Boolean(getCategoryConfig(cardCategory)?.showSizes)} />
+                <ProductCard card={card} lang={locale} showSizes={getCategoryExtras(cardCategory).showSizes === true} />
               </div>
             ))}
           </div>
@@ -162,7 +163,7 @@ export default async function ProductPageNew({ item = {}, productSizes, t, lang 
           </div>
           <div className={styles.relatedGrid}>
             {relatedCards.map(({ card, category: cardCategory }) => (
-              <ProductCard key={card.id} card={card} lang={locale} showSizes={Boolean(getCategoryConfig(cardCategory)?.showSizes)} />
+              <ProductCard key={card.id} card={card} lang={locale} showSizes={getCategoryExtras(cardCategory).showSizes === true} />
             ))}
           </div>
           {model.categoryName ? (

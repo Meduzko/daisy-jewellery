@@ -8,7 +8,7 @@ import { getProductLink } from '../../helpers/getProductLink';
 import { getVariantFacet, fillSwatchColors } from '../../helpers/productFamily';
 import { isProductAvailable } from '../../helpers/productAvailability';
 import { toCartItem } from '../Category/cardModel';
-import { QUICK, getCategoryConfig, getCategoryUrls } from '../Category/config';
+import { QUICK, getCategoryExtras } from '../Category/config';
 import { getProductCopy } from './copy';
 import { formatSize } from './sizeFormat';
 
@@ -83,13 +83,14 @@ function getWeight(variants, lang, unit) {
 
 /**
  * @param {object} product   storefront product (catalog mapper / DNTrade shape)
- * @param {{ lang: 'uk'|'ru', category: string, sizes?: number[], t?: {title?: string, description?: string},
+ * @param {{ lang: 'uk'|'ru', category: string, categoryInfo?: { name: string, href: string },
+ *   sizes?: number[], t?: {title?: string, description?: string},
  *   family?: { variants: object[] } }} options
  */
-export function toProductModel(product, { lang, category, sizes = [], t, family }) {
+export function toProductModel(product, { lang, category, categoryInfo, sizes = [], t, family }) {
   const copy = getProductCopy(lang);
-  const config = getCategoryConfig(category);
-  const { baseURL } = config ? getCategoryUrls(config, lang) : { baseURL: `/${lang}` };
+  const config = getCategoryExtras(category);
+  const baseURL = categoryInfo?.href || `/${lang}`;
 
   const title = String(t?.title || product.title || '').trim();
   const sourceText = `${title} ${product.title || ''}`;
@@ -207,11 +208,11 @@ export function toProductModel(product, { lang, category, sizes = [], t, family 
     soldOut: !isProductAvailable(product),
     priceKnown,
     category,
-    categoryName: config?.name?.[lang] || '',
+    categoryName: categoryInfo?.name || '',
     categoryHref: baseURL,
     collection,
     sizes: sizeList,
-    sizeGuideHref: config?.sizeGuideHref ? config.sizeGuideHref(lang) : null,
+    sizeGuideHref: config.sizeGuideHref ? config.sizeGuideHref(lang) : null,
     swatches,
     swatchKind: swatchesByStone ? 'insert' : 'variant',
     currentLabel: swatches.find((s) => s.current)?.label || facet.label,

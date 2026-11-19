@@ -1,6 +1,7 @@
-import { getCachedListing, getCachedSearchListing } from '../../../../lib/dataCache';
+import { getCachedCategories, getCachedListing, getCachedSearchListing } from '../../../../lib/dataCache';
+import { findCategoryByKey } from '../../../../lib/catalog/categories';
 import { getCategoryTranslations } from '../../../../dictionaries';
-import { getCategoryConfig, getCategoryUrls } from '../../../../components/Category/config';
+import { getCategoryExtras } from '../../../../components/Category/config';
 import { toCardModel } from '../../../../components/Category/cardModel';
 import { PAGE_SIZE, parseListingParams, toRepositoryFilters } from '../../../../components/Category/listingParams';
 
@@ -21,8 +22,9 @@ const MAX_PAGE = 200;
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const search = String(searchParams.get('search') || '').trim();
-  const config = getCategoryConfig(searchParams.get('category'));
-  if (!config && search.length < 2) {
+  // only published categories (drafts are not in the list)
+  const category = findCategoryByKey(await getCachedCategories(), searchParams.get('category'));
+  if (!category && search.length < 2) {
     return Response.json({ message: 'Unknown category' }, { status: 400 });
   }
   const lang = searchParams.get('lang') === 'ru' ? 'ru' : 'uk';
@@ -33,20 +35,20 @@ export async function GET(request) {
   const limit = countOnly ? 1 : PAGE_SIZE;
 
   try {
-    const { products, total, hasMore } = config
-      ? await getCachedListing({ category: config.key, offset, limit, locale: lang, filters })
+    const { products, total, hasMore } = category
+      ? await getCachedListing({ category: category.key, offset, limit, locale: lang, filters })
       : await getCachedSearchListing({ search, category: filterCategory, offset, limit, locale: lang, filters });
 
     const headers = { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=600' };
     if (countOnly) return Response.json({ total }, { headers });
 
-    const translations = config?.dictionaryKey[lang]
-      ? await getCategoryTranslations({ lang, categoryName: config.dictionaryKey[lang] }).catch(() => undefined)
+    const dictionaryKey = category ? getCategoryExtras(category.key).dictionaryKey[lang] : '';
+    const translations = dictionaryKey
+      ? await getCategoryTranslations({ lang, categoryName: dictionaryKey }).catch(() => undefined)
       : undefined;
-    const itemBaseURL = config ? getCategoryUrls(config, lang).itemBaseURL : undefined;
     const cards = products
       .filter((p) => p.image_path)
-      .map((p) => toCardModel(p, { lang, translations, itemBaseURL }));
+      .map((p) => toCardModel(p, { lang, translations }));
 
     return Response.json({ cards, total, hasMore, page }, { headers });
   } catch (error) {

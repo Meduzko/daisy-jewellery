@@ -8,7 +8,7 @@ import styles from './CategoryPage.module.css';
 const NUMERALS = ['i.', 'ii.', 'iii.', 'iv.', 'v.'];
 
 /**
- * Shared layout of the four category pages (approved design, Desktop 1440 / Mobile 390):
+ * Shared layout of the category pages (approved design, Desktop 1440 / Mobile 390):
  * breadcrumb → title → collection links → toolbar → grid (+ editorial) → load more →
  * service band → SEO copy. Header and footer come from the [lang] layout.
  */
@@ -91,7 +91,7 @@ export default function CategoryPage({
         </div>
       </section>
 
-      <SeoBlock lang={lang} title={seoBlock.title} lead={seoBlock.lead} more={seoBlock.more} />
+      {seoBlock ? <SeoBlock lang={lang} title={seoBlock.title} lead={seoBlock.lead} more={seoBlock.more} /> : null}
     </main>
   );
 }

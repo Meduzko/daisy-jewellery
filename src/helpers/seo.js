@@ -141,91 +141,6 @@ export function getRobotsConfig({ hasTrackingParams = false, hasFacetParams = fa
 }
 
 /**
- * Category slug mappings between locales
- */
-export const CATEGORY_SLUGS = {
-  uk: {
-    ring: 'kabluchki',
-    earring: 'serezhky',
-    necklace: 'kolye',
-    bracer: 'braslety',
-  },
-  ru: {
-    ring: 'koltsa',
-    earring: 'sergi',
-    necklace: 'kolye',
-    bracer: 'braslety',
-  }
-};
-
-/**
- * Product URL slugs (category + subcategory) by locale
- * Supports both category types (ring, earring) and URL slugs (kabluchki, serezhky)
- */
-export const PRODUCT_URL_SLUGS = {
-  uk: {
-    ring: 'kabluchki/kupyty-sribnu-kabluchku',
-    earring: 'serezhky/kupyty-serezhky-sribni',
-    necklace: 'kolye/kupyty-sribne-kolye',
-    bracer: 'braslety/kupyty-sribnyy-braslet',
-    // Also support URL slugs as keys
-    kabluchki: 'kabluchki/kupyty-sribnu-kabluchku',
-    serezhky: 'serezhky/kupyty-serezhky-sribni',
-    kolye: 'kolye/kupyty-sribne-kolye',
-    braslety: 'braslety/kupyty-sribnyy-braslet',
-  },
-  ru: {
-    ring: 'koltsa/kupit-serebryanoye-koltso',
-    earring: 'sergi/kupit-serebryanyye-sergi',
-    necklace: 'kolye/kupit-serebryanoye-kolye',
-    bracer: 'braslety/kupit-serebryanyy-braslet',
-    // Also support URL slugs as keys
-    koltsa: 'koltsa/kupit-serebryanoye-koltso',
-    sergi: 'sergi/kupit-serebryanyye-sergi',
-    kolye: 'kolye/kupit-serebryanoye-kolye',
-    braslety: 'braslety/kupit-serebryanyy-braslet',
-  }
-};
-
-/**
- * Map category type to both locale URL slugs for hreflang
- * @param {string} categoryType - Category type (ring, earring, necklace, bracer)
- * @param {string} productCode - Product code
- * @returns {object} Object with uk and ru full paths
- */
-export function getProductHreflangPaths(categoryType, productCode) {
-  return {
-    uk: `uk/${PRODUCT_URL_SLUGS.uk[categoryType]}/${productCode}`,
-    ru: `ru/${PRODUCT_URL_SLUGS.ru[categoryType]}/${productCode}`,
-  };
-}
-
-/**
- * Map category slug to category type
- */
-export const SLUG_TO_CATEGORY_TYPE = {
-  kabluchki: 'ring',
-  koltsa: 'ring',
-  serezhky: 'earring',
-  sergi: 'earring',
-  kolye: 'necklace',
-  braslety: 'bracer',
-};
-
-/**
- * Get category hreflang paths
- * @param {string} categoryType - Category type (ring, earring, necklace, bracer)
- * @param {number} pageNumber - Page number
- * @returns {object} Object with uk and ru full paths
- */
-export function getCategoryHreflangPaths(categoryType, pageNumber) {
-  return {
-    uk: `uk/${CATEGORY_SLUGS.uk[categoryType]}/${pageNumber}`,
-    ru: `ru/${CATEGORY_SLUGS.ru[categoryType]}/${pageNumber}`,
-  };
-}
-
-/**
  * Get site URL constant
  * @returns {string}
  */
@@ -233,8 +148,10 @@ export function getSiteUrl() {
   return SITE_URL;
 }
 
-// URL segments that differ between locales: [uk, ru]. Category, product-path and
-// blog-post slugs (src/content/{uk,ru}/<slug>.html). Add a pair for every new post.
+// URL segments that differ between locales: [uk, ru], fixed in one 301 by the middleware (Edge,
+// no DB): the original categories' slugs and blog-post slugs (src/content/{uk,ru}/<slug>.html).
+// Add a pair for every new post. Categories created in Directus need no entry: their pages 301
+// a slug of the other locale themselves (src/app/[lang]/[category]).
 export const LOCALIZED_SEGMENTS = [
   ['kabluchki', 'koltsa'],
   ['serezhky', 'sergi'],
@@ -318,14 +235,9 @@ const seoHelpers = {
   stripTrackingParams,
   getBaseUrlPath,
   getRobotsConfig,
-  getProductHreflangPaths,
-  getCategoryHreflangPaths,
   getSiteUrl,
   TRACKING_PARAMS,
   FACET_PARAMS,
-  CATEGORY_SLUGS,
-  PRODUCT_URL_SLUGS,
-  SLUG_TO_CATEGORY_TYPE,
 };
 
 export default seoHelpers;

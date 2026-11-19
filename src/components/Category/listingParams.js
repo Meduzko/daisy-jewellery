@@ -8,12 +8,11 @@
 //   insertion=a,b   coating=a,b             attribute value slugs
 //   size=16.5,17                            ring/bracelet sizes (in-stock variants)
 //   price_min=550  price_max=2000           effective (sale) price, UAH
-//   cat=ring|earring|necklace|bracer        category (search results page only)
+//   cat=ring|earring|necklace|bracer|<code> category (search results page only)
 
 export const SORT_KEYS = ['default', 'newest', 'price_asc', 'price_desc'];
 export const ATTRIBUTE_KEYS = ['insertion', 'coating'];
 export const PAGE_SIZE = 16;
-export const CATEGORY_KEYS = ['ring', 'earring', 'necklace', 'bracer'];
 
 const MAX_LIST = 20;
 const cleanList = (value) =>
@@ -60,7 +59,8 @@ export function parseListingParams(input) {
   state.priceMin = cleanNumber(get('price_min'));
   state.priceMax = cleanNumber(get('price_max'));
   const category = get('cat');
-  if (CATEGORY_KEYS.includes(category)) state.category = category;
+  // storefront key (ring) or the code of a category created in Directus; unknown ones match nothing
+  if (/^[a-z0-9]+(-[a-z0-9]+)*$/.test(category || '') && category.length <= 60) state.category = category;
   return state;
 }
 

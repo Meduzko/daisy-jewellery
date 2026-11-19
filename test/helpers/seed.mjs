@@ -1,6 +1,9 @@
 // Small deterministic catalog used by the tests (independent of the real import data).
 
 export async function seedCatalog(db) {
+  // also seeds schemas older than migration 20261119000001 (is_active → status)
+  const hasStatus = await db.schema.hasColumn('categories', 'status');
+  const visibility = (active) => (hasStatus ? { status: active ? 'published' : 'draft' } : { is_active: active });
   const cat = {};
   for (const [code, sort, uk, ru, active] of [
     ['rings', 1, ['Каблучки', 'kabluchki'], ['Кольца', 'koltsa'], true],
@@ -8,7 +11,7 @@ export async function seedCatalog(db) {
     ['necklaces', 3, ['Кольє', 'kolye'], null, true],
     ['bracelets', 4, ['Браслети', 'braslety'], ['Браслеты', 'braslety'], false],
   ]) {
-    const [{ id }] = await db('categories').insert({ code, sort_order: sort, is_active: active }).returning('id');
+    const [{ id }] = await db('categories').insert({ code, sort_order: sort, ...visibility(active) }).returning('id');
     cat[code] = id;
     await db('category_translations').insert({ category_id: id, locale: 'uk', name: uk[0], slug: uk[1] });
     if (ru) await db('category_translations').insert({ category_id: id, locale: 'ru', name: ru[0], slug: ru[1] });

@@ -1,7 +1,7 @@
 import { getDefaultMetaData } from '../../../helpers';
-import { getCachedSearchListing } from '../../../lib/dataCache';
+import { getCachedCategories, getCachedSearchListing } from '../../../lib/dataCache';
+import { categoryHref } from '../../../lib/catalog/categories';
 import SearchResults from '../../../components/Category/SearchResults';
-import { CATEGORIES } from '../../../components/Category/config';
 import { toCardModel } from '../../../components/Category/cardModel';
 import { PAGE_SIZE } from '../../../components/Category/listingParams';
 
@@ -34,6 +34,7 @@ export default async function SearchPage(props) {
 
   let result = { products: [], total: 0, hasMore: false };
   let categoryOptions = [];
+  const categories = await getCachedCategories();
 
   if (query.length >= 2) {
     const [first, counts] = await Promise.all([
@@ -42,10 +43,10 @@ export default async function SearchPage(props) {
         return result;
       }),
       Promise.all(
-        Object.values(CATEGORIES).map((config) =>
-          getCachedSearchListing({ search: query, category: config.key, limit: 1, locale: lang })
-            .then((r) => ({ key: config.key, label: config.name[lang], count: r.total }))
-            .catch(() => ({ key: config.key, label: config.name[lang], count: 0 }))
+        categories.map((c) =>
+          getCachedSearchListing({ search: query, category: c.key, limit: 1, locale: lang })
+            .then((r) => ({ key: c.key, label: c[lang].name, count: r.total }))
+            .catch(() => ({ key: c.key, label: c[lang].name, count: 0 }))
         )
       ),
     ]);
@@ -67,6 +68,7 @@ export default async function SearchPage(props) {
       hasMore={result.hasMore}
       cards={cards}
       categoryOptions={categoryOptions}
+      categoryLinks={categories.map((c) => ({ key: c.key, label: c[lang].name, href: categoryHref(c, lang) }))}
     />
   );
 }

@@ -72,13 +72,13 @@ export function toCartItem(product) {
 
 /**
  * @param {object} product  storefront product (src/lib/catalog/mapper.js shape or DNTrade)
- * @param {{ lang: 'uk'|'ru', translations?: Record<string, {title?: string}>, itemBaseURL?: string }} options
+ * @param {{ lang: 'uk'|'ru', translations?: Record<string, {title?: string}> }} options
  */
-export function toCardModel(product, { lang, translations, itemBaseURL } = {}) {
+export function toCardModel(product, { lang, translations } = {}) {
   const override = translations?.[String(product.code)];
   const title = String(override?.title || product.title || '').trim();
   const display = getDisplayPrices(product);
-  const href = product.category && lang ? getProductLink(product, lang) : `${itemBaseURL}/${product.code}`;
+  const href = getProductLink(product, lang);
   const images = (product.images?.length ? product.images : [product.image_path]).filter(Boolean);
 
   return {

@@ -1,8 +1,9 @@
 import { headers } from 'next/headers';
 import { getItemTranslations } from '../dictionaries';
 import { getDisplayPrices } from './productPricing';
+import { categoryPaths } from '../lib/catalog/categories';
+import { getCategoryExtras } from '../components/Category/config';
 import {
-  PRODUCT_URL_SLUGS,
   SITE_NAME,
   OG_LOCALE,
   DEFAULT_OG_IMAGE,
@@ -26,68 +27,11 @@ export async function getIsMobile() {
   return deviceType === 'mobile';
 }
 
-const tralslatedCat = {
-  uk: {
-    ring: 'koltsa',
-    earring: 'sergi',
-    necklace: 'kolye',
-    bracer: 'braslety',
-    // Also support URL slugs as keys
-    kabluchki: 'koltsa',
-    serezhky: 'sergi',
-    kolye: 'kolye',
-    braslety: 'braslety',
-  },
-  ru: {
-    koltsa: 'ring',
-    sergi: 'earring',
-    kolye: 'necklace',
-    braslety: 'bracer',
-    // Also support URL slugs as keys (maps to UK slugs)
-    koltsa: 'kabluchki',
-    sergi: 'serezhky',
-    kolye: 'kolye',
-    braslety: 'braslety',
-  }
-};
-
-const translatedCategorySlug = {
-  uk: {
-    kabluchki: 'koltsa',
-    serezhky: 'sergi',
-    kolye: 'kolye',
-    braslety: 'braslety'
-  },
-  ru: {
-    koltsa: 'kabluchki',
-    sergi: 'serezhky',
-    kolye: 'kolye',
-    braslety: 'braslety'
-  }
-}
-
-const getTralslatedCategorySlugs = ({ lang, categoryName, translatedMap }) => {
-  const translationMap = translatedMap || tralslatedCat;
-  const translatedCat = translationMap[lang][categoryName];
-
-  if (lang === 'uk') {
-    return {
-      uk: categoryName,
-      ru: translatedCat
-    }
-  } else {
-    return {
-      uk: translatedCat,
-      ru: categoryName
-    }
-  }
-};
-
 /**
- * Product keywords, meta-description suffix and the uk/ru site paths of a product.
- * @param {{ categoryName: string, code: number|string, lang: 'uk'|'ru' }} options
+ * Product keywords and meta-description suffix.
+ * @param {{ categoryName: string, lang: 'uk'|'ru' }} options  categoryName: category slug in that locale
  */
-const getItemMetaData = ({ categoryName, code, lang }) => {
+const getItemMetaData = ({ categoryName, lang }) => {
   const keywords = {
     uk: {
       ring: 'срібні каблучки, каблучка срібло 925, купити каблучку срібну, жіночі каблучки, каблучки Україна',
@@ -133,17 +77,11 @@ const getItemMetaData = ({ categoryName, code, lang }) => {
     : 'серебряные украшения, ювелирные изделия серебро 925, купить украшения Украина, Daisy Jewellery';
   const keywordsRes = keywords[lang][categoryName] || defaultKeywords;
   
-  const translatedSlugs = getTralslatedCategorySlugs({ lang, categoryName });
-  // Use the correct key for each locale's lookup
-  const ukSlug = PRODUCT_URL_SLUGS.uk[translatedSlugs.uk];
-  const ruSlug = PRODUCT_URL_SLUGS.ru[translatedSlugs.ru];
-  
   const descriptionSuffix = descriptionMap[lang][categoryName] || (lang === 'ru' ? 'Купить в Daisy Jewellery' : 'Купити в Daisy Jewellery');
 
   return {
     keywords: keywordsRes,
     descriptionSuffix,
-    paths: { uk: `uk/${ukSlug}/${code}`, ru: `ru/${ruSlug}/${code}` },
   };
 };
 
@@ -168,10 +106,15 @@ export const toMetaSummary = (html, max = 160) => {
   return `${cut.slice(0, cut.lastIndexOf(' ') > 0 ? cut.lastIndexOf(' ') : max).trim()}…`;
 };
 
-export const getProductMetadata = async ({ product, categoryName, lang = 'uk' }) => {
+/**
+ * Product page metadata.
+ * @param {{ product: object, category: object, lang?: 'uk'|'ru' }} options  category: DB category (getCachedCategories)
+ */
+export const getProductMetadata = async ({ product, category, lang = 'uk' }) => {
   const { title, short_description, code } = product;
 
-  const tk = await getItemTranslations({ lang, categoryName, code });
+  const dictionaryKey = getCategoryExtras(category.key).dictionaryKey[lang];
+  const tk = dictionaryKey ? await getItemTranslations({ lang, categoryName: dictionaryKey, code }) : undefined;
   const tkTitle = tk?.title || title;
   // DB products whose text came from the content sheets have only `description`
   // (short_description cleared) — use its opening sentences for the meta description.
@@ -182,14 +125,18 @@ export const getProductMetadata = async ({ product, categoryName, lang = 'uk' })
   // meta description stays entirely Ukrainian (no mixed-language snippet).
   const hasOwnLocale = !(lang === 'ru' && product.is_fallback);
   const textLang = hasOwnLocale ? lang : 'uk';
-  const { keywords, descriptionSuffix, paths } = getItemMetaData({ categoryName: hasOwnLocale ? categoryName : product.category || categoryName, code, lang: textLang });
+  const { keywords, descriptionSuffix } = getItemMetaData({ categoryName: category[textLang].slug, lang: textLang });
+  const paths = {
+    uk: `uk/${category.uk.urlPrefix}/${code}`,
+    ru: hasOwnLocale && !category.ru.isFallback ? `ru/${category.ru.urlPrefix}/${code}` : null,
+  };
   const { price } = getDisplayPrices(product);
   const priceText = Number(price) > 0 ? (textLang === 'ru' ? `Цена ${price} грн.` : `Ціна ${price} грн.`) : '';
   const generatedDescription = [toMetaSummary(tkDescription, 110), priceText, `${descriptionSuffix}.`].filter(Boolean).join(' ');
   // Explicit SEO texts from the PostgreSQL catalog (product_translations.seo_*) win when set.
   const description = product.seo_description || generatedDescription;
   const pageTitle = product.seo_title || `${tkTitle} | ${SITE_NAME}`;
-  const alternates = buildAlternates(lang, { uk: paths.uk, ru: hasOwnLocale ? paths.ru : null });
+  const alternates = buildAlternates(lang, paths);
   const images = (product.images?.length ? product.images : [product.image_path]).filter(Boolean).slice(0, 4);
 
   return {
@@ -210,27 +157,22 @@ export const getProductMetadata = async ({ product, categoryName, lang = 'uk' })
 };
 
 /**
- * Category page metadata. Each category has a single URL (/{lang}/{slug});
- * there are no numbered listing pages.
- * @param {object} options - Metadata options
+ * Category page metadata from the DB category. Each category has a single URL (/{lang}/{slug});
+ * there are no numbered listing pages. A ru page without a Russian text canonicalizes to uk.
+ * @param {{ category: object, lang?: 'uk'|'ru' }} options
  * @returns {object} Next.js metadata object
  */
-export const generateCategoryMetadata = ({
-  title,
-  description,
-  categorySlug,
-  keywords,
-  image,
-  lang = 'uk'
-}) => {
-  const translatedSlugs = getTralslatedCategorySlugs({ lang, categoryName: categorySlug, translatedMap: translatedCategorySlug });
-  const alternates = buildAlternates(lang, { uk: `uk/${translatedSlugs.uk}`, ru: `ru/${translatedSlugs.ru}` });
+export const generateCategoryMetadata = ({ category, lang = 'uk' }) => {
+  const t = category[lang];
+  const title = t.seoTitle || `${t.h1} | ${SITE_NAME}`;
+  const description = t.seoDescription || toMetaSummary(t.description);
+  const alternates = buildAlternates(lang, categoryPaths(category));
+  const image = category.image ? { url: category.image, alt: t.h1 } : null;
 
   return {
     title,
     description,
     alternates,
-    keywords,
     openGraph: {
       title,
       description,

@@ -1,11 +1,11 @@
 import { getAllHtmlPosts } from '../lib/posts';
 import { getDbPosts } from '../lib/blog';
-import { PRODUCT_URL_SLUGS, CATEGORY_SLUGS, absoluteUrl, buildAlternates, localizeSegment } from '../helpers/seo';
+import { absoluteUrl, buildAlternates, localizeSegment } from '../helpers/seo';
+import { getCachedCategories } from '../lib/dataCache';
+import { categoryPaths } from '../lib/catalog/categories';
 
 // Regenerate sitemap every 24 hours to pick up new products
 export const revalidate = 86400;
-
-const CATEGORY_TYPES = ['ring', 'earring', 'necklace', 'bracer'];
 
 async function fetchAllByCategory(categoryName, categoryKey) {
   try {
@@ -41,27 +41,27 @@ const postDate = (date) => {
 };
 
 export default async function sitemap() {
-  const productsByCategory = await Promise.all([
-    fetchAllByCategory('rings', 'ring'),
-    fetchAllByCategory('earrings', 'earring'),
-    fetchAllByCategory('necklaces', 'necklace'),
-    fetchAllByCategory('bracelets', 'bracer'),
-  ]);
+  // Published categories only (drafts are 404); empty ones are left out (their page is 404 too).
+  // Product URLs come from each product's own category (refs), never from a collection category.
+  const categories = await getCachedCategories();
+  const productsByCategory = await Promise.all(categories.map((c) => fetchAllByCategory(c.code, c.key)));
 
   // oferta (the public contract) exists in Ukrainian only.
   const staticRoutes = ['', 'about', 'contact', 'delivery', 'oferta', 'returns', 'blog'].flatMap((route) =>
     entries(route ? `uk/${route}` : 'uk', route === 'oferta' ? null : route ? `ru/${route}` : 'ru', { priority: route ? 0.5 : 1.0 })
   );
 
-  const categoryRoutes = CATEGORY_TYPES.flatMap((type) =>
-    entries(`uk/${CATEGORY_SLUGS.uk[type]}`, `ru/${CATEGORY_SLUGS.ru[type]}`, { priority: 0.9 })
-  );
+  const categoryRoutes = categories.flatMap((category) => {
+    if (!category.productCount) return []; // its page is 404 (a collection category lists other categories' products)
+    const paths = categoryPaths(category);
+    return entries(paths.uk, paths.ru, { priority: 0.9 });
+  });
 
-  const productRoutes = CATEGORY_TYPES.flatMap((type, index) =>
+  const productRoutes = categories.flatMap((category, index) =>
     productsByCategory[index].map((product) => entries(
-      `uk/${PRODUCT_URL_SLUGS.uk[type]}/${product.code}`,
-      // products without a Russian translation canonicalize their ru URL to uk
-      product.hasRu === false ? null : `ru/${PRODUCT_URL_SLUGS.ru[type]}/${product.code}`,
+      `uk/${category.uk.urlPrefix}/${product.code}`,
+      // products (or categories) without a Russian translation canonicalize their ru URL to uk
+      product.hasRu === false || category.ru.isFallback ? null : `ru/${category.ru.urlPrefix}/${product.code}`,
       { priority: 0.8, lastModified: product.updatedAt }
     )).flat()
   );

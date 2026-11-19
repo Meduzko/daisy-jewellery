@@ -1,16 +1,6 @@
 // Static copy of the redesigned homepage (approved design «Фінальний дизайн»).
 // Product names, prices and links come from the CMS; only editorial text lives here.
 
-export const getCategoryLinks = (lang = 'uk') => {
-  const ru = lang === 'ru';
-  return {
-    ring: ru ? '/ru/koltsa' : '/uk/kabluchki',
-    earring: ru ? '/ru/sergi' : '/uk/serezhky',
-    necklace: `/${ru ? 'ru' : 'uk'}/kolye`,
-    bracer: `/${ru ? 'ru' : 'uk'}/braslety`,
-  };
-};
-
 const COPY = {
   uk: {
     topBar: [
