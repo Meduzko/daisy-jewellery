@@ -29,6 +29,8 @@ export default function Header({ lang, menuItems = [] }) {
             <span>{copy.topBar[0]}</span>
             <span className={styles.topBarDot} aria-hidden="true" />
             <span>{copy.topBar[1]}</span>
+            <span className={styles.topBarDot} aria-hidden="true" />
+            <span>{copy.topBar[2]}</span>
           </p>
         </div>
       </div>
