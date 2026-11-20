@@ -107,7 +107,7 @@ export default function ProductCard({ card, lang, showSizes, priority = false })
           {card.hasDiscount ? (
             <>
               <s className={styles.oldPrice}>{`${formatPrice(card.originalPrice)} ${copy.currency}`}</s>
-              {`${formatPrice(card.price)} ${copy.currency}`}
+              <span className={styles.salePrice}>{`${formatPrice(card.price)} ${copy.currency}`}</span>
             </>
           ) : (
             `${formatPrice(card.price)} ${copy.currency}`

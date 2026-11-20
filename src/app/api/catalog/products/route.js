@@ -11,7 +11,7 @@ import { PAGE_SIZE, parseListingParams, toRepositoryFilters } from '../../../../
 //
 //   GET /api/catalog/products?category=ring&lang=uk&page=2&sort=price_asc&insertion=oniks
 //   GET /api/catalog/products?category=ring&lang=uk&count=1&…   → { total } only
-//   GET /api/catalog/products?search=клевер&lang=uk&cat=ring&sort=… → search results page
+//   GET /api/catalog/products?search=клевер&lang=uk&cat=ring,earring&sort=… → search results page
 //
 // Responses are the card view models of cardModel.js (no internal product data).
 
@@ -30,14 +30,14 @@ export async function GET(request) {
   const lang = searchParams.get('lang') === 'ru' ? 'ru' : 'uk';
   const page = Math.min(Math.max(Number.parseInt(searchParams.get('page'), 10) || 1, 1), MAX_PAGE);
   const countOnly = searchParams.get('count') === '1';
-  const { category: filterCategory, ...filters } = toRepositoryFilters(parseListingParams(searchParams));
+  const filters = toRepositoryFilters(parseListingParams(searchParams));
   const offset = countOnly ? 0 : (page - 1) * PAGE_SIZE;
   const limit = countOnly ? 1 : PAGE_SIZE;
 
   try {
     const { products, total, hasMore } = category
       ? await getCachedListing({ category: category.key, offset, limit, locale: lang, filters })
-      : await getCachedSearchListing({ search, category: filterCategory, offset, limit, locale: lang, filters });
+      : await getCachedSearchListing({ search, offset, limit, locale: lang, filters });
 
     const headers = { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=600' };
     if (countOnly) return Response.json({ total }, { headers });

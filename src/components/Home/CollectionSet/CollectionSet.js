@@ -22,7 +22,7 @@ export default async function CollectionSet({ lang = 'uk' }) {
       <div className={styles.inner}>
         <div className={styles.feature}>
           <Image
-            src="/home/clover-set.webp"
+            src="/home/setMainImage.jpg"
             alt={t.imageAlt}
             fill
             sizes="(max-width: 899px) 100vw, 46vw"

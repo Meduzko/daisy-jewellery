@@ -6,14 +6,14 @@ import ProductCard from '../ProductCard/ProductCard';
 import ui from '../ui.module.css';
 import styles from './NewArrivals.module.css';
 
-const FILTERS = ['all', 'ring', 'earring'];
+const FILTERS = ['all', 'new', 'popular']; // collections.code
 const MAX_ITEMS = 8;
 
 export default function NewArrivalsGrid({ products, labels, currency, heading }) {
   const [filter, setFilter] = useState('all');
 
   const visible = useMemo(() => {
-    const list = filter === 'all' ? products : products.filter((p) => p.category === filter);
+    const list = filter === 'all' ? products : products.filter((p) => p.collections.includes(filter));
     return list.slice(0, MAX_ITEMS);
   }, [filter, products]);
 

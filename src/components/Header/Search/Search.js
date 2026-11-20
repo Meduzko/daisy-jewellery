@@ -199,7 +199,7 @@ const Search = ({ lang = 'uk' }) => {
                             {hasDiscount ? (
                               <>
                                 <span className={styles.oldPrice}>{originalPrice} грн</span>
-                                <span>{price} грн</span>
+                                <span className={styles.salePrice}>{price} грн</span>
                               </>
                             ) : (
                               `${price} грн`

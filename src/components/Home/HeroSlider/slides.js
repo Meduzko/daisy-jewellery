@@ -13,6 +13,18 @@ export const HERO_INTERVAL_MS = 10000;
 
 export const HERO_SLIDES = [
   {
+    id: 'blackFriday',
+    type: 'promo',
+    layout: 'sale',
+    theme: 'dark',
+    image: {
+      // portrait 853×1280 original (the only size supplied) — used at both breakpoints
+      desktop: { src: '/home/hero/black-friday.webp', width: 853, height: 1280, position: '50% 56%' },
+      mobile: { src: '/home/hero/black-friday.webp', width: 853, height: 1280, position: '50% 40%' },
+    },
+    cta: { href: { uk: '/uk/rozprodazh', ru: '/ru/rasprodazha' } }, // per-locale href: { uk, ru }
+  },
+  {
     id: 'collection',
     type: 'promo',
     layout: 'statement',
@@ -34,18 +46,6 @@ export const HERO_SLIDES = [
       desktop: { src: '/home/hero/gift-desktop.webp', width: 2400, height: 1600, position: '50% 45%' },
       // 2:3 portrait crop centred on the DAISY box, 1080×1620
       mobile: { src: '/home/hero/gift-mobile.webp', width: 1080, height: 1620, position: '50% 30%' },
-    },
-    cta: { href: '#kategorii' },
-  },
-  {
-    id: 'blackFriday',
-    type: 'promo',
-    layout: 'sale',
-    theme: 'dark',
-    image: {
-      // portrait 853×1280 original (the only size supplied) — used at both breakpoints
-      desktop: { src: '/home/hero/black-friday.webp', width: 853, height: 1280, position: '50% 56%' },
-      mobile: { src: '/home/hero/black-friday.webp', width: 853, height: 1280, position: '50% 40%' },
     },
     cta: { href: '#kategorii' },
   },

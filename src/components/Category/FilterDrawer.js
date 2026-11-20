@@ -151,8 +151,8 @@ function FilterPanel({
 
   // Removable chips of the draft (drawer header).
   const chips = [];
-  if (draft.category) {
-    chips.push({ key: 'cat', label: labels.category?.[draft.category] || draft.category, remove: () => set({ category: '' }) });
+  for (const key of draft.categories) {
+    chips.push({ key: `cat:${key}`, label: labels.category?.[key] || key, remove: () => set({ categories: draft.categories.filter((k) => k !== key) }) });
   }
   if (selection) chips.push({ key: 'sel', label: selectionLabel, remove: () => set({ q: '', collection: '' }) });
   for (const attribute of attributes) {
@@ -217,23 +217,25 @@ function FilterPanel({
         </fieldset>
 
         {categoryOptions.length > 0 ? (
-          <Section title={copy.category} value={draft.category ? labels.category?.[draft.category] : null} defaultOpen>
+          <Section
+            title={copy.category}
+            value={draft.categories.length ? draft.categories.map((key) => labels.category?.[key] || key).join(', ') : null}
+            defaultOpen
+          >
             <fieldset className={styles.options}>
               <legend className={styles.srOnly}>{copy.category}</legend>
-              <label className={styles.option}>
-                <input type="radio" name="dj-category" checked={!draft.category} onChange={() => set({ category: '' })} />
-                <span className={styles.radioBox} aria-hidden="true" />
-                {copy.allCategories}
-              </label>
               {categoryOptions.map((option) => (
                 <label key={option.key} className={styles.option}>
                   <input
-                    type="radio"
-                    name="dj-category"
-                    checked={draft.category === option.key}
-                    onChange={() => set({ category: option.key })}
+                    type="checkbox"
+                    checked={draft.categories.includes(option.key)}
+                    onChange={() => set({ categories: toggleIn(draft.categories, option.key) })}
                   />
-                  <span className={styles.radioBox} aria-hidden="true" />
+                  <span className={styles.box} aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6">
+                      <path d="M2 6.2l2.6 2.6L10 3.4" />
+                    </svg>
+                  </span>
                   {option.label}
                   <span className={styles.count}>{option.count}</span>
                 </label>

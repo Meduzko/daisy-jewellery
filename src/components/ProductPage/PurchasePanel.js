@@ -150,7 +150,7 @@ export default function PurchasePanel({ model, lang }) {
           ) : model.hasDiscount ? (
             <>
               <s className={styles.oldPrice}>{price(model.originalPrice, copy)}</s>
-              <span>{price(model.price, copy)}</span>
+              <span className={styles.salePrice}>{price(model.price, copy)}</span>
             </>
           ) : (
             price(model.price, copy)

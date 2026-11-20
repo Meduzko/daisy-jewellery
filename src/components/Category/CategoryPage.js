@@ -25,6 +25,7 @@ export default function CategoryPage({
   facets,
   quickLinks,
   collectionOptions,
+  categoryOptions,
   priceChip,
   showSizes,
   sizeGuideHref,
@@ -64,6 +65,7 @@ export default function CategoryPage({
         facets={facets}
         quickLinks={quickLinks}
         collectionOptions={collectionOptions}
+        categoryOptions={categoryOptions}
         priceChip={priceChip}
         showSizes={showSizes}
         sizeGuideHref={sizeGuideHref}

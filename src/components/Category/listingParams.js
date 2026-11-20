@@ -8,7 +8,7 @@
 //   insertion=a,b   coating=a,b             attribute value slugs
 //   size=16.5,17                            ring/bracelet sizes (in-stock variants)
 //   price_min=550  price_max=2000           effective (sale) price, UAH
-//   cat=ring|earring|necklace|bracer|<code> category (search results page only)
+//   cat=ring,earring                        categories (OR; search page and collection-backed category pages)
 
 export const SORT_KEYS = ['default', 'newest', 'price_asc', 'price_desc'];
 export const ATTRIBUTE_KEYS = ['insertion', 'coating'];
@@ -36,7 +36,7 @@ export const emptyFilters = () => ({
   sizes: [],
   priceMin: null,
   priceMax: null,
-  category: '',
+  categories: [],
 });
 
 /** URLSearchParams | Record<string,string> → normalized listing state. */
@@ -58,9 +58,8 @@ export function parseListingParams(input) {
   state.sizes = cleanList(get('size')).map(Number).filter(Number.isFinite);
   state.priceMin = cleanNumber(get('price_min'));
   state.priceMax = cleanNumber(get('price_max'));
-  const category = get('cat');
-  // storefront key (ring) or the code of a category created in Directus; unknown ones match nothing
-  if (/^[a-z0-9]+(-[a-z0-9]+)*$/.test(category || '') && category.length <= 60) state.category = category;
+  // storefront keys (ring) or codes of categories created in Directus; unknown ones match nothing
+  state.categories = cleanList(get('cat')).filter((c) => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(c));
   return state;
 }
 
@@ -77,7 +76,7 @@ export function serializeListingParams(state) {
   if (state.sizes?.length) params.set('size', state.sizes.join(','));
   if (state.priceMin != null) params.set('price_min', String(state.priceMin));
   if (state.priceMax != null) params.set('price_max', String(state.priceMax));
-  if (state.category) params.set('cat', state.category);
+  if (state.categories?.length) params.set('cat', state.categories.join(','));
   return params.toString();
 }
 
@@ -90,7 +89,7 @@ export function hasActiveFilters(state) {
       state.sizes?.length ||
       state.priceMin != null ||
       state.priceMax != null ||
-      state.category
+      state.categories?.length
   );
 }
 
@@ -110,6 +109,6 @@ export function toRepositoryFilters(state) {
     sizes: state.sizes?.length ? state.sizes : undefined,
     priceMin: state.priceMin ?? undefined,
     priceMax: state.priceMax ?? undefined,
-    category: state.category || undefined,
+    categories: state.categories?.length ? state.categories : undefined,
   };
 }

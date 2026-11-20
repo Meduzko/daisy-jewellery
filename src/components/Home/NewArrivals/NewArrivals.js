@@ -1,5 +1,4 @@
-import { getHomeProducts } from '../../../lib/homeProducts';
-import { NEW_PRODUCTS } from '../config';
+import { getHomeCollectionProducts } from '../../../lib/homeProducts';
 import { getHomeCopy } from '../copy';
 import NewArrivalsGrid from './NewArrivalsGrid';
 import ui from '../ui.module.css';
@@ -8,7 +7,7 @@ import styles from './NewArrivals.module.css';
 export default async function NewArrivals({ lang = 'uk' }) {
   const copy = getHomeCopy(lang);
   const t = copy.arrivals;
-  const products = await getHomeProducts(NEW_PRODUCTS, lang);
+  const products = await getHomeCollectionProducts(['new', 'popular'], lang);
 
   if (!products.length) return null;
 

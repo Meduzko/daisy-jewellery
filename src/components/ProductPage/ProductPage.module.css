@@ -1011,3 +1011,7 @@
         padding: 140px var(--pdp-pad) 160px;
     }
 }
+
+.salePrice {
+    color: #EF4444;
+}

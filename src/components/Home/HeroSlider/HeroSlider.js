@@ -19,7 +19,7 @@ export default function HeroSlider({ lang = 'uk' }) {
     }
     const c = slideCopy[slide.id];
     names.push(c.name);
-    return <PromoSlide key={slide.id} slide={slide} copy={c} preload={preload} />;
+    return <PromoSlide key={slide.id} slide={slide} copy={c} lang={lang} preload={preload} />;
   });
 
   return (

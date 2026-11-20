@@ -8,7 +8,7 @@ import styles from './Categories.module.css';
 
 // Photos of the original categories (until a photo is uploaded in Directus).
 const STATIC_IMAGES = {
-  ring: { src: '/home/category-rings.webp', position: '50% 50%' },
+  ring: { src: '/home/category-rings.jpg', position: '50% 50%' },
   earring: { src: '/home/category-earrings.webp', position: '60% 50%' },
   necklace: { src: '/categories/neclackle.webp', position: '50% 55%' },
   bracer: { src: '/categories/bracer.webp', position: '55% 50%' },

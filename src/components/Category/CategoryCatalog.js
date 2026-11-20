@@ -219,9 +219,17 @@ export default function CategoryCatalog({
                 key={option.key}
                 type="button"
                 className={styles.qchip}
-                aria-pressed={filters.category === option.key}
+                aria-pressed={filters.categories.includes(option.key)}
                 onClick={() =>
-                  applyFilters({ ...filters, category: filters.category === option.key ? '' : option.key }, { scroll: true })
+                  applyFilters(
+                    {
+                      ...filters,
+                      categories: filters.categories.includes(option.key)
+                        ? filters.categories.filter((key) => key !== option.key)
+                        : [...filters.categories, option.key],
+                    },
+                    { scroll: true }
+                  )
                 }
               >
                 {option.label}

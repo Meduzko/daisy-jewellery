@@ -6,7 +6,8 @@ import styles from './PromoSlide.module.css';
 // One image + copy slide of the hero slider. Server component: the markup is static,
 // HeroCarousel only toggles which slide is visible.
 // Art direction: a portrait crop below 900px, the 3:2 original from 900px (same breakpoint as Hero).
-export default function PromoSlide({ slide, copy, preload = false }) {
+export default function PromoSlide({ slide, copy, lang, preload = false }) {
+  const ctaHref = slide.cta.href[lang] ?? slide.cta.href;
   const { desktop, mobile } = slide.image;
   const loading = preload
     ? { loading: 'eager', fetchPriority: 'high' }
@@ -72,7 +73,7 @@ export default function PromoSlide({ slide, copy, preload = false }) {
           <span className={ui.onlyNarrow}>{copy.textShort}</span>
         </p>
         <div className={styles.actions}>
-          <Link href={slide.cta.href} className={styles.cta}>{copy.cta}</Link>
+          <Link href={ctaHref} className={styles.cta}>{copy.cta}</Link>
           {slide.secondary && copy.secondary && (
             <Link href={slide.secondary.href} className={`${ui.navlink} ${ui.ulink} ${styles.secondary}`}>
               {copy.secondary}

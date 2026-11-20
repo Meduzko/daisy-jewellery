@@ -1,16 +1,13 @@
 // Editorial configuration of the homepage. Products are referenced by CMS code
 // and loaded live (title, price, image, link) — edit these lists to re-curate.
 
-// «Прикраси на кожен день» reuses the existing curated «Новинки» list.
-export { NEW_PRODUCTS } from '../RingsSlider/config';
-
 // Collection «Клевер в емалі».
 // `category` must be one of: ring | earring | necklace | bracer
 export const CLOVER_SET = [
-  { category: 'earring', code: 2465 },
-  { category: 'earring', code: 3097 },
-  { category: 'earring', code: 3085 },
-  { category: 'earring', code: 3093 },
+  { category: 'earring', code: 4723 },
+  { category: 'necklace', code: 4737 },
+  { category: 'bracer', code: 4736 },
+  { category: 'ring', code: 4730 },
 ];
 
 // Instagram grid (6 latest posts, curated manually — there is no Instagram API

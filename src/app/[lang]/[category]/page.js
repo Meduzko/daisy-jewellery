@@ -74,6 +74,17 @@ export default async function Page(props) {
     .filter((c) => c.count > 0)
     .map((c) => ({ code: c.code, label: collectionNames[c.code], count: c.count }));
 
+  // «Категорія» filter: only on a category that shows a collection (e.g. Розпродаж), and only when its
+  // products come from more than one category; options are the products' own categories.
+  let categoryOptions = [];
+  if (category.collectionId && facets?.categories?.length > 1) {
+    const categories = await getCachedCategories();
+    categoryOptions = facets.categories
+      .map((f) => ({ ...f, category: categories.find((c) => c.key === f.key) }))
+      .filter((f) => f.category)
+      .map((f) => ({ key: f.key, label: f.category[lang].name, count: f.count }));
+  }
+
   const cards = products
     .filter((item) => item.image_path)
     .map((item) => toCardModel(item, { lang, translations }));
@@ -112,6 +123,7 @@ export default async function Page(props) {
         facets={facets}
         quickLinks={quickLinks}
         collectionOptions={collectionOptions}
+        categoryOptions={categoryOptions}
         priceChip={extras.priceChip}
         showSizes={extras.showSizes}
         sizeGuideHref={extras.sizeGuideHref ? extras.sizeGuideHref(lang) : null}

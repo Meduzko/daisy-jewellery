@@ -8,7 +8,7 @@
 // to the default locale (uk) when a translation or a single field is missing.
 
 import { mapAttributes, mapCategory, mapProduct, mapVariant } from './mapper.js';
-import { toCategoryDbCode } from './categories.js';
+import { toCategoryDbCode, toCategoryKey } from './categories.js';
 import { getArticleBase } from '../../helpers/productFamily.js';
 
 export const LOCALES = ['uk', 'ru'];
@@ -89,6 +89,7 @@ function selectProduct(db, qb) {
  * Filters shared by listing, counting and search.
  * @param {object} f
  * @param {string} [f.category]     storefront key ('ring') or DB code ('rings')
+ * @param {string[]} [f.categories] narrow to products of any of these categories (keys or codes)
  * @param {string} [f.collection]   collections.code ('popular', 'new', …)
  * @param {Record<string,string[]>} [f.attributes]  { insertion: ['onyx'] } (attribute code → value slugs)
  * @param {number} [f.priceMin] / [f.priceMax]  on the effective (sale) price
@@ -99,12 +100,12 @@ function selectProduct(db, qb) {
  * @param {number} [f.excludeId]
  */
 function applyFilters(db, qb, f = {}) {
-  if (f.category) {
-    // Listing of a category: its own products, or — when it shows a collection (categories.collection_id,
-    // migration 20261119000004) — that collection's products, which keep their own category and URLs.
+  // Listing of a category: its own products, or — when it shows a collection (categories.collection_id,
+  // migration 20261119000004) — that collection's products, which keep their own category and URLs.
+  const inCategories = (keys) =>
     qb.whereExists(
       db.select(1).from({ fc: 'categories' })
-        .where('fc.code', toCategoryDbCode(f.category) || '__none__')
+        .whereIn('fc.code', keys.map((k) => toCategoryDbCode(k) || '__none__'))
         .where(function ownOrCollection() {
           this.where(function own() { this.whereNull('fc.collection_id').whereRaw('fc.id = p.category_id'); })
             .orWhereExists(
@@ -115,7 +116,9 @@ function applyFilters(db, qb, f = {}) {
             );
         })
     );
-  }
+  if (f.category) inCategories([f.category]);
+  // «Категорія» filter: any of the selected categories (OR), within the page scope above (AND)
+  if (f.categories?.length) inCategories(f.categories);
   // The product's own category (product pages, sitemap): never a collection shown by another category.
   if (f.ownCategory) qb.where('c.code', toCategoryDbCode(f.ownCategory) || '__none__');
   if (f.collection) {
@@ -367,6 +370,11 @@ export async function getFacets(db, { category, collection, locale } = {}) {
     .whereRaw('(v.stock_qty IS NULL OR v.stock_qty > 0)')
     .distinct('v.size')
     .orderBy('v.size');
+  // products' own categories (one row per product in scope): «Категорія» options of collection-backed pages
+  const categoryRows = await scope()
+    .groupBy('c.id', 'c.code', 'c.sort_order')
+    .select('c.code', db.raw('count(*)::int AS count'))
+    .orderBy([{ column: 'c.sort_order' }, { column: 'c.id' }]);
 
   const attributes = [];
   for (const r of attributeRows) {
@@ -378,6 +386,7 @@ export async function getFacets(db, { category, collection, locale } = {}) {
     price: { min: price?.min == null ? null : Number(price.min), max: price?.max == null ? null : Number(price.max) },
     attributes,
     sizes: sizeRows.map((r) => Number(r.size)),
+    categories: categoryRows.map((r) => ({ key: toCategoryKey(r.code), count: r.count })),
   };
 }
 

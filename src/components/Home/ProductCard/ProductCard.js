@@ -37,7 +37,7 @@ export default function ProductCard({ product, variant = 'tile', sizes, currency
         {hasDiscount ? (
           <>
             <s className={styles.oldPrice}>{`${formatPrice(originalPrice)} ${currency}`}</s>{' '}
-            <span>{`${formatPrice(price)} ${currency}`}</span>
+            <span className={styles.salePrice}>{`${formatPrice(price)} ${currency}`}</span>
           </>
         ) : (
           `${formatPrice(price)} ${currency}`

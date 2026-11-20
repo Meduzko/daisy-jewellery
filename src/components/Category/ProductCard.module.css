@@ -61,7 +61,7 @@
 
 .badge_new { background: #E4F2EE; }
 .badge_popular { background: #A8D2C9; }
-.badge_sale { background: #2A2927; color: #FFFFFF; }
+.badge_sale { background: #EF4444; color: #FFFFFF; }
 
 .quickAdd {
     position: absolute;
@@ -275,4 +275,8 @@
     .sizes {
         transition: none;
     }
+}
+
+.salePrice {
+    color: #EF4444;
 }
