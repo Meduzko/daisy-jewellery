@@ -167,8 +167,9 @@ if (!(await get('/relations/categories')).some((r) => r.field === 'image')) {
   throw new Error('categories.image has no foreign key yet: re-run db/directus/setup-db.sql now that Directus has started, then restart Directus');
 }
 await relation('categories', 'image', {});
-await relation('collection_products', 'product_id', { one_field: 'collections', junction_field: 'collection_id' });
-await relation('collection_products', 'collection_id', { one_field: 'products', junction_field: 'product_id', sort_field: 'position' });
+// Deselect deletes the link row only (the default nullify breaks the NOT NULL junction keys).
+await relation('collection_products', 'product_id', { one_field: 'collections', junction_field: 'collection_id', one_deselect_action: 'delete' });
+await relation('collection_products', 'collection_id', { one_field: 'products', junction_field: 'product_id', sort_field: 'position', one_deselect_action: 'delete' });
 await relation('order_items', 'order_id', { one_field: 'items' });
 await relation('payments', 'order_id', { one_field: 'payments' });
 await relation('payment_events', 'payment_id', { one_field: 'events' });
