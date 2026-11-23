@@ -21,9 +21,11 @@ import DepartmentAutocomplete from './DepartmentAutocomplete/DepartmentAutocompl
 import CitySelect from './CitySelect/CitySelect';
 import OrderList from './OrderList/OrderList';
 
+import { getOrderCopy } from './copy';
 import styles from './styles.module.css';
 
-const OrderForm = () => {
+const OrderForm = ({ lang = 'uk' }) => {
+  const t = getOrderCopy(lang);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -125,38 +127,38 @@ const OrderForm = () => {
     const { firstName, lastName, email, phone, cityName, department, contact, payment } = formData;
     const rawPhone = phone.replace(/\D/g, '');
 
-    if (!firstName) errors.firstName = 'Ім\'я є обов\'язковим полем';
-    if (!lastName) errors.lastName = 'Прізвище є обов\'язковим полем';
+    if (!firstName) errors.firstName = t.errors.firstName;
+    if (!lastName) errors.lastName = t.errors.lastName;
     if (!email) {
-      errors.email = 'Email є обов\'язковим полем';
+      errors.email = t.errors.email;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Введіть валідну Email адресу';
+      errors.email = t.errors.emailInvalid;
     }
     if (!rawPhone) {
-      errors.phone = 'Телефон є обов\'язковим полем';
+      errors.phone = t.errors.phone;
     } else if (!/^[0-9]{12}$/.test(rawPhone)) {
-      errors.phone = 'Введіть валідний номер телефону у форматі: 380 (##)-##-###-## (12 цифр)';
+      errors.phone = t.errors.phoneInvalid;
     }
-    if (!cityName) errors.cityName = 'Населений пункт є обов\'язковим полем';
-    if (!department) errors.department = 'Відділення є обов\'язковим полем';
+    if (!cityName) errors.cityName = t.errors.cityName;
+    if (!department) errors.department = t.errors.department;
 
-    if (!contact) errors.contact = 'Спосіб зв\'язку є обов\'язковим полем';
+    if (!contact) errors.contact = t.errors.contact;
   
-    if (!payment) errors.payment = 'Метод оплати є обов\'язковим полем';
+    if (!payment) errors.payment = t.errors.payment;
 
     if (formData.isGift) {
       const { giftFirstName, giftLastName, giftEmail, giftPhone } = formData;
       const rawGiftPhone = (giftPhone || '').replace(/\D/g, '');
 
-      if (!giftFirstName) errors.giftFirstName = 'Ім\'я одержувача є обов\'язковим полем';
-      if (!giftLastName) errors.giftLastName = 'Прізвище одержувача є обов\'язковим полем';
+      if (!giftFirstName) errors.giftFirstName = t.errors.giftFirstName;
+      if (!giftLastName) errors.giftLastName = t.errors.giftLastName;
       if (!rawGiftPhone) {
-        errors.giftPhone = 'Телефон одержувача є обов\'язковим полем';
+        errors.giftPhone = t.errors.giftPhone;
       } else if (!/^[0-9]{12}$/.test(rawGiftPhone)) {
-        errors.giftPhone = 'Введіть валідний номер телефону у форматі: 380 (##)-##-###-## (12 цифр)';
+        errors.giftPhone = t.errors.phoneInvalid;
       }
       if (giftEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(giftEmail)) {
-        errors.giftEmail = 'Введіть валідну Email адресу';
+        errors.giftEmail = t.errors.emailInvalid;
       }
     }
 
@@ -187,11 +189,11 @@ const OrderForm = () => {
         handleOrderSuccess();
       } else {
         console.error('Failed to send order email', await emailRes.json().catch(() => ({})));
-        setStatusMessage('Не вдалося оформити замовлення. Спробуйте ще раз.');
+        setStatusMessage(t.submitFailed);
       }
     } catch (error) {
       console.error('Error submitting order:', error);
-      setStatusMessage('Не вдалося оформити замовлення. Спробуйте ще раз.');
+      setStatusMessage(t.submitFailed);
     } finally {
       setLoading(false);
     }
@@ -246,13 +248,13 @@ const OrderForm = () => {
       <Box component="form">
         <Grid container spacing={2} className={styles.formGrid}>
           <Grid item xs={12}>
-            <Typography className={styles.formTitle} variant="h4">Персональні дані</Typography>
+            <Typography className={styles.formTitle} variant="h4">{t.personalData}</Typography>
           </Grid>
 
           <Grid item xs={6}>
             <TextField
               fullWidth
-              label="Ім'я"
+              label={t.firstName}
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
@@ -265,7 +267,7 @@ const OrderForm = () => {
           <Grid item xs={6}>
             <TextField
               fullWidth
-              label="Прізвище"
+              label={t.lastName}
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
@@ -298,7 +300,7 @@ const OrderForm = () => {
               {() => (
                 <TextField
                   fullWidth
-                  label="Телефон"
+                  label={t.phone}
                   name="phone"
                   // value={formData.phone}
                   // onChange={handleChange}
@@ -310,7 +312,7 @@ const OrderForm = () => {
             </InputMask> */}
               <TextField
                 fullWidth
-                label="Телефон"
+                label={t.phone}
                 name="phone"
                 type="tel"
                 value={formData.phone}
@@ -333,20 +335,20 @@ const OrderForm = () => {
                   name="isGift"
                 />
               }
-              label="Оформити замовлення в подарунок"
+              label={t.isGift}
             />
           </Grid>
 
           {formData.isGift && (
             <>
               <Grid item xs={12}>
-                <Typography className={styles.formTitle} variant="h4">Дані одержувача подарунка</Typography>
+                <Typography className={styles.formTitle} variant="h4">{t.giftRecipient}</Typography>
               </Grid>
 
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Ім'я"
+                  label={t.firstName}
                   name="giftFirstName"
                   value={formData.giftFirstName}
                   onChange={handleChange}
@@ -359,7 +361,7 @@ const OrderForm = () => {
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Прізвище"
+                  label={t.lastName}
                   name="giftLastName"
                   value={formData.giftLastName}
                   onChange={handleChange}
@@ -385,7 +387,7 @@ const OrderForm = () => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="Телефон"
+                  label={t.phone}
                   name="giftPhone"
                   type="tel"
                   value={formData.giftPhone}
@@ -401,45 +403,48 @@ const OrderForm = () => {
 
         <Grid container spacing={2} className={styles.formGrid}>
           <Grid item xs={12}>
-            <Typography className={styles.formTitle} variant="h4">Відділення Нової Пошти</Typography>
+            <Typography className={styles.formTitle} variant="h4">{t.novaPoshta}</Typography>
           </Grid>
 
           <Grid item xs={12}>
-            <CitySelect handleChange={handleChange} error={!!formErrors.cityName} helperText={formErrors.cityName} />
+            <CitySelect label={t.city} handleChange={handleChange} error={!!formErrors.cityName} helperText={formErrors.cityName} />
           </Grid>
 
           {formData.cityName && (
             <Grid item xs={12}>
-              <DepartmentAutocomplete handleChange={handleChange} cityName={formData.cityName} error={!!formErrors.department} helperText={formErrors.department} />
+              <DepartmentAutocomplete label={t.department} handleChange={handleChange} cityName={formData.cityName} error={!!formErrors.department} helperText={formErrors.department} />
             </Grid>
           )}
         </Grid>
 
         <Grid container spacing={2} className={styles.formGrid}>
             <Grid item xs={12}>
-              <Typography className={styles.formTitle} variant="h4">Оплата</Typography>
+              <Typography className={styles.formTitle} variant="h4">{t.payment}</Typography>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel error={!!formErrors.payment} id="paymentLabel">Оплата</InputLabel>
+                <InputLabel error={!!formErrors.payment} id="paymentLabel">{t.payment}</InputLabel>
                 <Select
                   labelId="paymentLabel"
                   id="payment"
                   value={formData.payment}
-                  label="Оплата"
+                  label={t.payment}
                   name="payment"
                   onChange={handleChange}
                   required
                   fullWidth
                   className={styles.contactSelect}
                 >
-                  <MenuItem value='liqPay'>Банківська картка (LiqPay)</MenuItem>
-                  <MenuItem value='deliveryPay'>Оплата при доставці</MenuItem>
+                  <MenuItem value='liqPay'>{t.payCard}</MenuItem>
+                  <MenuItem value='deliveryPay'>{t.payCod}</MenuItem>
                 </Select>
                 {formErrors.payment && (
                   <FormHelperText id="component-helper-text" error={true}>
                     {formErrors.payment}
                   </FormHelperText>
+                )}
+                {formData.payment === 'deliveryPay' && (
+                  <FormHelperText>{t.codHint}</FormHelperText>
                 )}
               </FormControl>
             </Grid>
@@ -447,16 +452,16 @@ const OrderForm = () => {
 
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Typography className={styles.formTitle} variant="h4">{`Як з вами зв'язатися?`}</Typography>
+            <Typography className={styles.formTitle} variant="h4">{t.contactTitle}</Typography>
           </Grid>
           <Grid item xs={12}>
             <FormControl fullWidth>
-              <InputLabel error={!!formErrors.contact} id="contactLabel">{`Спосіб зв'язку`}</InputLabel>
+              <InputLabel error={!!formErrors.contact} id="contactLabel">{t.contact}</InputLabel>
               <Select
                 labelId="contactLabel"
                 id="contact"
                 value={formData.contact}
-                label="Спосіб зв'язку"
+                label={t.contact}
                 name="contact"
                 onChange={handleChange}
                 required
@@ -478,7 +483,7 @@ const OrderForm = () => {
           <Grid item xs={12}>
             <TextField
               id="comments"
-              label="Коментар"
+              label={t.comments}
               name="comments"
               multiline
               maxRows={16}
@@ -499,6 +504,7 @@ const OrderForm = () => {
       </Box>
 
       <OrderList
+        t={t}
         handleSubmit={handleSubmit}
         orderDescription={orderDescription}
         triggerValidation={triggerValidation}

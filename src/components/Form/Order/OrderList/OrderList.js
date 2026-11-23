@@ -10,22 +10,8 @@ import { getLinePrices } from '../../../../helpers/productPricing';
 
 import styles from './styles.module.css';
 
-const FIELD_LABELS = {
-  firstName: 'Ім\'я',
-  lastName: 'Прізвище',
-  email: 'Email',
-  phone: 'Телефон',
-  cityName: 'Населений пункт',
-  department: 'Відділення Нової Пошти',
-  contact: 'Спосіб зв\'язку',
-  payment: 'Оплата',
-  giftFirstName: 'Ім\'я одержувача',
-  giftLastName: 'Прізвище одержувача',
-  giftEmail: 'Email одержувача',
-  giftPhone: 'Телефон одержувача'
-};
-
 const OrderList = ({
+  t,
   handleSubmit,
   formData,
   formErrors = {},
@@ -230,17 +216,17 @@ const OrderList = ({
                   <div className={styles.price}>
                     {hasDiscount ? (
                       <>
-                        <span className={styles.oldPrice}>{`${originalPrice} грн`}</span>
-                        <span className={styles.salePrice}>{`${price} грн`}</span>
+                        <span className={styles.oldPrice}>{`${originalPrice} ${t.uah}`}</span>
+                        <span className={styles.salePrice}>{`${price} ${t.uah}`}</span>
                       </>
                     ) : (
-                      `${price} грн`
+                      `${price} ${t.uah}`
                     )}
                   </div>
                   {size && (
-                    <div>{`Розмір: ${size}`}</div>
+                    <div>{`${t.size}: ${size}`}</div>
                   )}
-                  <div>{`Кількість: ${item.quantity}`}</div>
+                  <div>{`${t.quantity}: ${item.quantity}`}</div>
                 </div>
               </div>
             </ListItem>
@@ -250,33 +236,33 @@ const OrderList = ({
       <div className={styles.orderSummary}>
         {/* <div className={styles.summaryItem}>
           <p>Доставка</p>
-          <p className={styles.deliveryTax}>{`За тарифами 'Нової Пошти' - від 70 грн`}</p>
+          <p className={styles.deliveryTax}>{`За тарифами 'Нової Пошти' - від 90 грн`}</p>
         </div> */}
           <div className={styles.deliveryCtn}>
-            <span>Доставка</span>
+            <span>{t.delivery}</span>
             <div className={`${styles.deliveryPrice} ${isFreeDelivery ? styles.freeDeliveryPrice : ''}`}>
               <span className={`${styles.deliveryTax} ${isFreeDelivery ? styles.freeDeliveryOldText : ''}`}>
-                {`За тарифами 'Нової Пошти' - від 70 грн`}
+                {t.deliveryTax}
               </span>
-              {isFreeDelivery && <span>Безкоштовна доставка</span>}
+              {isFreeDelivery && <span>{t.freeDelivery}</span>}
             </div>
           </div>
       </div>
       <Divider />
       <div className={styles.totalSum}>
-        <p className={styles.totalSumTitle}>Загалом</p>
-        <p className={styles.totalSumPrice}>{`${fixedPrice} грн`}</p>
+        <p className={styles.totalSumTitle}>{t.total}</p>
+        <p className={styles.totalSumPrice}>{`${fixedPrice} ${t.uah}`}</p>
       </div>
 
-      {showBuyButton && <ProductBuyButton type="submit" width='100%' onClick={handleSubmitClick} text="Оформити замовлення" />}
+      {showBuyButton && <ProductBuyButton type="submit" width='100%' onClick={handleSubmitClick} text={t.submit} />}
 
       {Object.keys(formErrors).length > 0 && (
         <div className={styles.validationErrors} role="alert">
-          <p className={styles.validationTitle}>Перевірте поля форми:</p>
+          <p className={styles.validationTitle}>{t.checkFields}</p>
           <ul className={styles.validationList}>
             {Object.entries(formErrors).map(([field, message]) => (
               <li key={field}>
-                <strong>{FIELD_LABELS[field] || field}</strong>
+                <strong>{t.fieldLabels[field] || field}</strong>
                 {message ? ` — ${message}` : ''}
               </li>
             ))}
@@ -284,7 +270,7 @@ const OrderList = ({
         </div>
       )}
 
-      <p className={styles.rulesText}>Натискаючи кнопку «Оформити замовлення», я погоджуюся з <button type="button" className={styles.rulesLink} onClick={handleOpenRules}>правилами сайту</button></p>
+      <p className={styles.rulesText}>{t.rulesPrefix} <button type="button" className={styles.rulesLink} onClick={handleOpenRules}>{t.rulesLink}</button></p>
 
       <RulesPopup open={showRulesPopup} onClose={() => setShowRulesPopup(false)} />
 

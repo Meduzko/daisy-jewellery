@@ -108,7 +108,7 @@ function debounce(fn, delay) {
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { TextField, Autocomplete, CircularProgress } from '@mui/material';
 
-const DepartmentAutocomplete = ({ cityName, handleChange, error, helperText }) => {
+const DepartmentAutocomplete = ({ cityName, handleChange, error, helperText, label }) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -219,7 +219,7 @@ const DepartmentAutocomplete = ({ cityName, handleChange, error, helperText }) =
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Відділення Нової Пошти"
+          label={label}
           error={error}
           helperText={helperText}
           required

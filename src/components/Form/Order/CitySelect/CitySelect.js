@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { TextField, Autocomplete, CircularProgress } from '@mui/material';
 
-const CityAutocomplete = ({ handleChange, error, helperText }) => {
+const CityAutocomplete = ({ handleChange, error, helperText, label }) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -63,7 +63,7 @@ const CityAutocomplete = ({ handleChange, error, helperText }) => {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Виберіть населений пункт"
+          label={label}
           required
           error={error}
           helperText={helperText}

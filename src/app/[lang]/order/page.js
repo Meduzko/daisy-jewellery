@@ -23,7 +23,7 @@ export default async function OrderPage(props) {
   const lang = params?.lang === 'ru' ? 'ru' : 'uk';
   return (
     <div className={styles.container}>
-      <OrderForm />
+      <OrderForm lang={lang} />
     </div>
   );
 }

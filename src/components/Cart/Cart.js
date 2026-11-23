@@ -133,7 +133,7 @@ const CartDrawler = ({ lang = 'uk' } = {}) => {
                 <span>Доставка</span>
                 <div className={`${styles.deliveryPrice} ${isFreeDelivery ? styles.freeDeliveryPrice : ''}`}>
                   <span className={`${styles.deliveryTax} ${isFreeDelivery ? styles.freeDeliveryOldText : ''}`}>
-                    {`За тарифами 'Нової Пошти' - від 70 грн`}
+                    {`За тарифами 'Нової Пошти' - від 90 грн`}
                   </span>
                   {isFreeDelivery && <span>Безкоштовна доставка</span>}
                 </div>
