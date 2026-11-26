@@ -24,7 +24,10 @@ export async function generateMetadata(props) {
       title: 'Срібні прикраси 925 проби — інтернет-магазин Daisy Jewellery',
       description: 'Інтернет-магазин срібних прикрас Daisy Jewellery: каблучки, сережки, кольє та браслети зі срібла 925 проби. Безкоштовне подарункове пакування, доставка Новою Поштою по Україні.',
     };
-  return getDefaultMetaData({ pagePath: '', lang, ...meta });
+  return {
+    ...getDefaultMetaData({ pagePath: '', lang, ...meta }),
+    other: { 'facebook-domain-verification': '9f1em5j0oemvw5cmr9orsqxngjf0y1' },
+  };
 }
 
 export default async function Home(props) {
